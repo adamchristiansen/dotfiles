@@ -1,0 +1,7 @@
+#/usr/bin/env sh
+
+USAGE="Apply the current gitignore"
+SUBDIRECTORY_OK=1
+. "$(git --exec-path)/git-sh-setup"
+
+! git ls-files -ci --exclude-standard -z | xargs -0 git rm --cached

@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+# Snap with a gap.
+
+# Can be "left" or "right"
+dir="$1"
+
+# The number of pixels to move the window
+step=32
+
+# The gap size
+gap={{- .dim.window.gap -}}
+
+# Half the gap size
+gap2=$(( gap / 2 ))
+
+# Snap the window
+berryc snap_$dir
+
+# Adjust the window
+berryc window_resize -$(( gap + gap2 )) -$(( 2 * gap ))
+if [ $dir = left ]; then
+    berryc window_move $gap $gap
+else
+    berryc window_move $gap2 $gap
+fi

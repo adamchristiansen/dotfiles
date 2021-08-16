@@ -1,0 +1,137 @@
+#------------------------------------------------------------------------------
+# ncmpcpp paths
+#------------------------------------------------------------------------------
+
+lyrics_directory  = "~/Music/.lyrics"
+ncmpcpp_directory = "~/Music/.ncmpcpp"
+
+#------------------------------------------------------------------------------
+# mpd
+#------------------------------------------------------------------------------
+
+mpd_music_dir          = "~/Music"
+mpd_host               = "localhost"
+mpd_port               = "6600"
+mpd_connection_timeout = "5"
+mpd_crossfade_time     = "1"
+
+#------------------------------------------------------------------------------
+# Behaviour
+#------------------------------------------------------------------------------
+
+autocenter_mode                    = "yes"
+ask_before_clearing_playlists      = "yes"
+ask_for_locked_screen_width_part   = "yes"
+centered_cursor                    = "yes"
+colors_enabled                     = "yes"
+default_place_to_search_in         = "database"
+discard_colors_if_item_is_selected = "yes"
+ignore_leading_the                 = "yes"
+message_delay_time                 = "3"
+mouse_support                      = "no"
+regular_expressions                = "extended"
+startup_screen                     = "media_library"
+
+#------------------------------------------------------------------------------
+# Display
+#------------------------------------------------------------------------------
+
+# Generic
+browser_display_mode   = "columns"
+clock_display_seconds  = "no"
+display_remaining_time = "no"
+display_volume_level   = "no"
+display_bitrate        = "no"
+user_interface         = "alternative"
+
+# Colors
+active_window_border                = "red"
+alternative_ui_separator_color      = "black"
+color1                              = "black"
+color2                              = "black"
+current_item_inactive_column_prefix = "$(magenta)"
+current_item_inactive_column_suffix = "$(default)"
+current_item_prefix                 = "$(magenta)$r"
+current_item_suffix                 = "$/r$(end)"
+empty_tag_color                     = "black"
+header_window_color                 = "black"
+main_window_color                   = "default"
+progressbar_color                   = "black"
+progressbar_elapsed_color           = "yellow"
+state_flags_color                   = "black"
+statusbar_color                     = "black"
+state_line_color                    = "black"
+visualizer_color                    = "black"
+volume_color                        = "black"
+
+# Formats
+# %l - length
+# %f - filename
+# %D - directory
+# %a - artist
+# %A - album artist
+# %t - title
+# %b - album
+# %y - date
+# %n - track number (01/12 -> 01)
+# %N - full track info (01/12 -> 01/12)
+# %g - genre
+# %c - composer
+# %p - performer
+# %d - disc
+# %C - comment
+# %P - priority
+# $R - begin right alignment
+alternative_header_first_line_format  = "$5{%t}|{%f}$0"
+alternative_header_second_line_format = "$0{$6%a}|{$1Unknown}$9 - {$6%b}|{$1Unknown}$9$0"
+empty_tag_marker                      = "───"
+now_playing_prefix                    = "$b$6"
+now_playing_suffix                    = "$/b$9"
+progressbar_look                      = "─⊙─"
+song_columns_list_format              = "(8f)[default]{l} (40)[default]{t}|{f} (30)[default]{b} (20)[default]{a}"
+selected_item_prefix                  = "* "
+selected_item_suffix                  = ""
+
+# Visibility
+header_visibility    = "yes"
+statusbar_visibility = "yes"
+titles_visibility    = "yes"
+
+#------------------------------------------------------------------------------
+# Navigation
+#------------------------------------------------------------------------------
+
+cyclic_scrolling                  = "yes"
+header_text_scrolling             = "yes"
+jump_to_now_playing_song_at_start = "yes"
+lines_scrolled                    = "2"
+incremental_seeking               = "yes"
+seek_time                         = "1"
+
+#------------------------------------------------------------------------------
+# Playlist
+#------------------------------------------------------------------------------
+
+playlist_disable_highlight_delay = "0"
+playlist_display_mode            = "columns"
+playlist_editor_display_mode     = "columns"
+playlist_separate_albums         = "no"
+playlist_shorten_total_times     = "no"
+playlist_show_remaining_time     = "no"
+
+#------------------------------------------------------------------------------
+# Media Library
+#------------------------------------------------------------------------------
+
+media_library_primary_tag = "album_artist"
+
+#------------------------------------------------------------------------------
+# Misc
+#------------------------------------------------------------------------------
+
+allow_for_physical_item_deletion = "no"
+default_find_mode                = "wrapped"
+space_add_mode                   = "always_add"
+enable_window_title              = "no"
+screen_switcher_mode             = "previous"
+tag_editor_extended_numeration   = "no"

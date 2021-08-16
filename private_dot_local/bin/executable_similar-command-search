@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+
+p = argparse.ArgumentParser(description="Look up similar commands")
+p.add_argument("query", type=str, help="the query string")
+p.add_argument("--count", type=int, default=1,
+               help="the maximum number of results to output (default: 1)")
+
+args = p.parse_args()
+
+def list_executables():
+    import os
+    from os.path import expanduser, isdir, join, pathsep
+    paths = os.environ["PATH"].split(pathsep)
+    executables = []
+    for path in filter(isdir, paths):
+        for file_ in os.listdir(path):
+            if os.access(join(path, file_), os.X_OK):
+                executables.append(file_)
+    return sorted(set(executables))
+
+def bigram_similarity(q, p):
+    import itertools
+    def bigrams(s):
+        s = s.lower()
+        return [s[i:i + 2] for i in range(len(s) - 1)]
+    qb = bigrams(q)
+    pb = bigrams(p)
+    w = sum(map(lambda x: x[0] == x[1], itertools.product(qb, pb)))
+    norm_size = len(qb) + len(pb)
+    if norm_size == 0:
+        return 0
+    return (2 * w) / norm_size
+
+def search(query, candidates):
+    pairs = list([(c, bigram_similarity(query, c)) for c in candidates])
+    found = list(filter(lambda x: x[1] > 0, pairs))
+    ranked = sorted(found, key=lambda x: x[1], reverse=True)
+    if ranked:
+        max_weight = ranked[0][1]
+        ranked = list(filter(lambda x: x[1] >= max_weight, ranked))
+    return list(map(lambda x: x[0], ranked))
+
+results = search(args.query, list_executables())
+if results:
+    for result in results[:args.count]:
+        print(result)
+else:
+    sys.exit(1)

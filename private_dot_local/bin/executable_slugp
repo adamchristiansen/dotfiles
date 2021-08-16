@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+# Create a slug of the basename of the current working directory.
+
+slug $(basename "$PWD")

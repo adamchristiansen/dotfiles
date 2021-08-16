@@ -1,0 +1,117 @@
+# Load all config files
+sourceprofile ~/.profile
+set -l profiled ~/.local/etc/profile.d
+if [ -d $profiled ]
+    for f in (ls $profiled)
+        sourceprofile $profiled/$f
+    end
+end
+set -e profiled
+
+# fisher
+set -gx fisher_path $__fish_config_dir
+
+# https://github.com/decors/fish-colored-man settings
+set -gx man_blink     -o red
+set -gx man_bold      -o green
+set -gx man_standout  -o yellow
+set -gx man_underline -u brcyan
+
+# Shell colors
+set -gx fish_color_autosuggestion  black
+set -gx fish_color_cancel          -r
+set -gx fish_color_command         --bold
+set -gx fish_color_comment         black
+set -gx fish_color_cwd             green
+set -gx fish_color_cwd_root        red
+set -gx fish_color_end             brmagenta
+set -gx fish_color_error           brred
+set -gx fish_color_escape          bryellow --bold
+set -gx fish_color_history_current --bold
+set -gx fish_color_host            normal
+set -gx fish_color_match           --background=brblue
+set -gx fish_color_normal          normal
+set -gx fish_color_operator        bryellow
+set -gx fish_color_param           cyan
+set -gx fish_color_quote           yellow
+set -gx fish_color_redirection     brblue
+set -gx fish_color_search_match    bryellow --background=brblack
+set -gx fish_color_selection       white --bold --background=brblack
+set -gx fish_color_user            brgreen
+set -gx fish_color_valid_path      --underline
+
+# Abbreviations
+abbr -ga cb    cargo build
+abbr -ga cba   cargo build --all
+abbr -ga cf    cargo fmt
+abbr -ga cfa   cargo fmt --all
+abbr -ga cr    cargo run
+abbr -ga cz    chezmoi
+abbr -ga cza   chezmoi apply
+abbr -ga czaf  chezmoi apply --force
+abbr -ga czcd  cd '(chezmoi source-path)'
+abbr -ga cze   chezmoi edit
+abbr -ga czga  chezmoi git -- add -A
+abbr -ga czgc  chezmoi git -- commit
+abbr -ga czgp  chezmoi git -- push
+abbr -ga czgpl chezmoi git -- pull --rebase
+abbr -ga czgs  chezmoi git -- status --short
+abbr -ga czgsu chezmoi git -- status --short -u
+abbr -ga czs   chezmoi status
+abbr -ga czx   chezmoi execute-template '<'
+abbr -ga ga    git add -A
+abbr -ga gb    git branch
+abbr -ga gc    git commit
+abbr -ga gcm   git commit -m
+abbr -ga gd    git diff
+abbr -ga gch   git checkout
+abbr -ga gl    git log
+abbr -ga glg   git log --graph --oneline
+abbr -ga gp    git push
+abbr -ga gpl   git pull --rebase
+abbr -ga gr    git reset
+abbr -ga grh   git reset HEAD
+abbr -ga gs    git status --short
+abbr -ga gsu   git status --short -u
+abbr -ga let   set -l
+abbr -ga mux   tmuxinator
+abbr -ga muxc  tmuxinator start code -n '(slugp)'
+abbr -ga muxd  tmuxinator start default -n '(slugp)'
+abbr -ga ta    tmux attach-session -t
+abbr -ga tl    tmux list-sessions
+abbr -ga tn    tmux new -s
+
+# Aliases
+alias cdp    'cd ..'
+alias cdpp   'cd ../..'
+alias cdppp  'cd ../../..'
+alias cdpppp 'cd ../../../..'
+alias e $EDITOR
+alias ep "$EDITOR -c 'set nobackup' -c 'set noswapfile' -c 'set noundofile'"
+if type -q ranger
+    alias r 'ranger'
+end
+if type -q rg
+    alias rq 'rg --no-ignore --hidden --follow --glob "!.git/*"'
+end
+if type -q exa
+    alias x  'exa'
+    alias xa 'exa --git -a'
+    alias xl 'exa --git -al'
+    alias xt "exa --git -alT --ignore-glob='.git'"
+end
+if type -q xclip
+    alias yy 'xclip -selection clipboard'
+    alias yc 'printf "" | yy'
+else if type -q pbcopy
+    alias yy 'pbcopy'
+    alias yc 'printf "" | yy'
+end
+if type -q zathura
+    alias zat 'zathura --fork'
+end
+
+# Start the vi bindings
+fish_vi_key_bindings insert
+
+{{ template "umask" . -}}

@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+# Don't force mpd to restart if it is already running
+if ! pgrep mpd; then
+    mpd
+fi

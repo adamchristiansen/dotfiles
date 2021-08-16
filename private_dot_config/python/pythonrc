@@ -1,0 +1,4 @@
+import readline
+
+# Disable writing readline history to a file
+readline.write_history_file = lambda *args: None

@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+
+"""
+Select a number of songs and and play them.
+
+Requires rofi (as dmenu) and mpc.
+"""
+
+import subprocess
+import sys
+
+# The rofi command to spawn. This returns the zero-indexed selected item,
+# not the text.
+ROFI_COMMAND = ["rofi", "-dmenu", "-i", "-format", "i"]
+
+# The encoding for subprocess communication.
+ENCODING = "utf-8"
+
+# The delimeter to use between tags of a song. Note that mpc uses # to escape
+# characters.
+TAG_DELIM = "#|#|#|"
+
+# The delimiter between fields when displaying the song
+SEL_DELIM = "  ▸  "
+
+def rofi(options):
+    """
+    Run the rofi command and then pipe the options into it. The selection that
+    is made is returned.
+    """
+    return subprocess.run(ROFI_COMMAND,
+            input="\n".join(options).encode(ENCODING),
+            stdout=subprocess.PIPE).stdout.decode(ENCODING).strip()
+
+class Song:
+    """
+    Represents the metadata of a song.
+    """
+    def __init__(self, album, albumartist, artist, filename, title, track):
+        self.album = album
+        self.albumartist = albumartist
+        self.artist = artist
+        self.filename = filename
+        self.title = title
+        self.track = track
+
+class Songs:
+    """
+    Manage and query a collection of songs.
+    """
+    def __init__(self, queue=False):
+        """
+        Load all of the song information.
+
+        # Arguments
+
+        - `queue` (bool): Search in the queue if true. If false, the entire
+          library is searched.
+        """
+        # Find all of the songs
+        p = subprocess.run(
+            ["mpc", "playlist" if queue else "listall", "-f",
+                "%album%" + TAG_DELIM +
+                "%albumartist%" + TAG_DELIM +
+                "%artist%" + TAG_DELIM +
+                "%file%" + TAG_DELIM +
+                "%title%" + TAG_DELIM +
+                "%track%"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if p.returncode:
+            print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
+            sys.exit(1)
+        out = p.stdout.decode(ENCODING).strip()
+        self._songs = []
+        for line in out.split("\n"):
+            fields = line.split(TAG_DELIM.replace("#", ""))
+            self._songs.append(Song(*fields))
+
+    def options(self, *keys):
+        """
+        Prepare a list of options to show in a song chooser, where the keys are
+        the metadata fields to include in the option (from left to right). For
+        example, if `songs.options("albumartist", "album")` is called, then
+        songs will be aggregated by album artist and album. This will return a
+        dictionary whose keys are a string containing the album artist and
+        album, and the values are the `Song` objects which have the superkey.
+        """
+        opts = dict()
+        for song in self._songs:
+            values = list(map(lambda key: getattr(song, key), keys))
+            opt = SEL_DELIM.join(values)
+            if opt not in opts:
+                opts[opt] = [song]
+            else:
+                opts[opt].append(song)
+        return opts
+
+def mpc_play_songs(song_list):
+    """
+    Play all of the songs in the list in the order that they appear.
+    """
+    # The songs must be reversed because each is inserted in front of the
+    # last
+    for song in reversed(song_list):
+        subprocess.run(["mpc", "insert", song.filename])
+    subprocess.run(["mpc", "next"])
+    subprocess.run(["mpc", "play"])
+
+def mpc_play_queue(index):
+    """
+    Play the song at the index in the queue. Note that this starts at 1, not 0.
+    """
+    subprocess.run(["mpc", "play", str(index)])
+
+if __name__ == "__main__":
+    import argparse
+    # Command line arguments
+    parser = argparse.ArgumentParser(
+        description="Choose a song with mpc, mpd, and rofi")
+    parser.add_argument("keys", type=str, nargs="+",
+        help="the song tags to search on")
+    parser.add_argument("--queue", action="store_true",
+        help="only consider the queue")
+    args = parser.parse_args()
+    # Get songs
+    songs = Songs(queue=args.queue)
+    # Show the selection menu
+    opts = songs.options(*args.keys)
+    opts_list = list(opts.keys())
+    try:
+        sel_index = int(rofi(opts_list))
+    except ValueError:
+        # Nothing was selected
+        sys.exit()
+    # Play the selection
+    if args.queue:
+        mpc_play_queue(sel_index + 1)
+    else:
+        mpc_play_songs(opts[opts_list[sel_index]])

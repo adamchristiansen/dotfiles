@@ -1,0 +1,26 @@
+configuration {
+  // Basic Settings
+  modi: "run,drun";
+  theme: "theme";
+
+  // Appearance
+  bw: 0; // Border width
+  columns: 1;
+  font: "{{- .font.name }} {{ add .font.size 1 -}}";
+  hide-scrollbar: true;
+  separator-style: "none";
+
+  // Behaviour
+  auto-select: false;
+  disable-history: true;
+  matching: "normal";
+  terminal: "rofi-sensible-terminal";
+  scroll-method: 1;
+  show-match: true;
+  sort: true;
+  tokenize: true;
+
+  // Fish shell
+  run-command: "fish -c '{cmd}'";
+  run-list-command: "fish -c functions";
+}

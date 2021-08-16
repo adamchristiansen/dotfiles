@@ -1,0 +1,51 @@
+{{- $color := include "_color/color.json" | mustFromJson -}}
+
+[global]
+# The notifications follow keyboard focus
+follow = keyboard
+font = {{ .font.name }} {{ .font.size }}
+# The following format specifiers can be used:
+# %a appname
+# %s summary
+# %b body
+# %i iconname (including its path)
+# %I iconname (without its path)
+# %p progress value ([0%] to [100%])
+# %n progress value without any extra characters
+# %% Literal %
+format = "<b>%a</b> %s\n%b"
+frame_width = 0
+frame_color = "#{{- $color.base05.hex.rgb -}}"
+# The size in position in [{width}][x{height}][+/-{x}[+/-{y}]] coordinates.
+geometry = "320x10-{{- div .dim.window.gap  2 -}}+{{- div .dim.window.gap 2 -}}"
+horizontal_padding = {{ .dim.padding }}
+icon_position = left
+# Allow HTML markup
+markup = yes
+# Vertical padding
+padding = {{ .dim.padding }}
+separator_color = frame
+separator_height = 0
+# Sort by urgency
+sort = yes
+# Show a notification at startup
+startup_notification = true
+# Allowed notifications recalled from history to timeout automatically
+sticky_history = no
+# Wrap long lines
+word_wrap = yes
+
+[urgency_low]
+background = "#{{- $color.base05.hex.rgb -}}"
+foreground = "#{{- $color.base00.hex.rgb -}}"
+timeout = 3
+
+[urgency_normal]
+background = "#{{- $color.base05.hex.rgb -}}"
+foreground = "#{{- $color.base00.hex.rgb -}}"
+timeout = 5
+
+[urgency_critical]
+background = "#{{- $color.base08.hex.rgb -}}"
+foreground = "#{{- $color.base00.hex.rgb -}}"
+timeout = 0

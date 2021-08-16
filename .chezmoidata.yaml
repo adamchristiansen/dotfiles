@@ -1,0 +1,18 @@
+colorscheme: seaside
+
+dim:
+  border:
+    width: 2
+    width_inner: 0
+    width_outer: 0
+  padding: 8
+  title:
+    height: 48
+  window:
+    gap: 48
+
+font:
+  name: Iosevka
+  size: 11
+
+umask: "0022"

@@ -1,0 +1,68 @@
+{{- if (eq .chezmoi.os "linux") -}}
+
+#!/usr/bin/env sh
+
+# Make sure this is running on Void linux
+if [ -f /etc/os-release ]; then
+    if ! grep '"void"' /etc/os-release; then
+        exit 0
+    fi
+else
+    exit 1
+fi
+
+# Install xbps packages
+sudo xbps-install -Su \
+    alacritty \
+    alsa-utils \
+    atool \
+    berry \
+    bspwm \
+    chezmoi \
+    curl \
+    dunst \
+    exa \
+    fish-shell \
+    git \
+    gnome-keyring \
+    hsetroot \
+    i3lock-color \
+    ImageMagick \
+    mpc \
+    mpd \
+    mpv \
+    ncmpcpp \
+    neovim \
+    nerd-fonts \
+    pdf.js \
+    picom \
+    python3 \
+    qutebrowser \
+    ranger \
+    redshift \
+    ripgrep \
+    rofi \
+    ruby-tmuxinator \
+    screen \
+    scrot \
+    seahorse \
+    sxhkd \
+    sxiv \
+    tmux \
+    w3m-img \
+    wicd \
+    wicd-gtk \
+    wmname \
+    xclip \
+    xdotool \
+    xprop \
+    xset \
+    xsetroot \
+    zathura \
+    zathura-pdf-mupdf \
+    zenity
+
+# Change the shell to fish
+chsh -s /usr/bin/fish
+
+{{- end -}}

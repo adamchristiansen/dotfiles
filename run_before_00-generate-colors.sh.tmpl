@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+colorscheme={{ .colorscheme | quote }}
+color_dir="{{ .chezmoi.sourceDir }}/_color"
+script="$color_dir/color.py"
+color_file="$color_dir/color.json"
+
+python3 "$script" "$colorscheme" > "$color_file"

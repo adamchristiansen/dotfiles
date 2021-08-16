@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+
+# Displays the dimensions of the terminal and updates in real time. The
+# following parameters can be used:
+#
+#   -q, --quick
+#       Print dimensions and exit immediately.
+
+quick=0
+
+if [ $# -ge 1 ]; then
+    case "$1" in
+        -q | --quick) quick=1 ;;
+        *)
+            echo "Invalid input" >&2
+            return 1
+            ;;
+    esac
+fi
+
+if [ $quick -eq 1 ]; then
+    printf "\r%d × %d " $(tput cols) $(tput lines)
+else
+    while true; do
+        printf "\r%d × %d " $(tput cols) $(tput lines)
+        sleep 0.1
+    done
+fi

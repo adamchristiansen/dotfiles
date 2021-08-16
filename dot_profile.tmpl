@@ -1,0 +1,15 @@
+export EDITOR={{ .editor | quote }}
+export VISUAL="$EDITOR"
+export GIT_EDITOR="$EDITOR"
+
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_DATA_DIRS="/usr/local/share:/usr/share"
+export XDG_CONFIG_DIRS="/etc/xdg"
+
+# Prevent less from creating a ~/.lesshst file
+export LESSHISTFILE="-"
+
+export PATH="$PATH:$XDG_DATA_HOME/bin"
+export PATH="$HOME/.local/bin:$PATH"
