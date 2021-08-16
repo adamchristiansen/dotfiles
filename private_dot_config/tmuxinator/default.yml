@@ -1,0 +1,12 @@
+name: default
+root: .
+
+startup_window: term
+
+windows:
+  - term:
+      layout: even-horizontal
+      panes:
+        - # Terminal
+        - # Terminal
+  - files: ranger

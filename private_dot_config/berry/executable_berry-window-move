@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+# Move a window.
+
+# Can be "left", "down", "right", "up"
+dir="$1"
+
+# The number of pixels to move the window
+step=32
+
+move_xy() {
+    case $dir in
+        left)  echo -$step      0 ;;
+        down)  echo      0  $step ;;
+        up)    echo      0 -$step ;;
+        right) echo  $step      0 ;;
+    esac
+}
+
+berryc window_move $(move_xy)

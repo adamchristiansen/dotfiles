@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# Sends a notification with time information.
+
+t=$(date '+%-I:%M %p')
+d=$(date '+%A %d %B %Y')
+notify-send -u low --hint=string:x-dunst-stack-tag:time -a "Time" " " "$t\n$d"

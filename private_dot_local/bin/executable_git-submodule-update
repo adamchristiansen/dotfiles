@@ -1,0 +1,7 @@
+#/usr/bin/env sh
+
+USAGE="Update and merge all submodules from the remote"
+SUBDIRECTORY_OK=1
+. "$(git --exec-path)/git-sh-setup"
+
+git submodule update --remote --merge

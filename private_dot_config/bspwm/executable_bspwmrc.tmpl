@@ -1,0 +1,61 @@
+{{- $color := include "_color/color.json" | mustFromJson -}}
+
+#!/usr/bin/env sh
+
+# This indicates that the script is run in startup mode, where everything is
+# initialized. After startup mode it should be called with the parameter
+# "false" to prevent everything from being killed and reloaded
+if [ "$1" = "false" ]; then
+    startup=false
+else
+    startup=true
+fi
+
+# Start the hotkey daemon
+if $startup; then
+    pkill sxhkd
+    SXHKD_SHELL=$(which sh) sxhkd -c "$XDG_CONFIG_HOME/bspwm/sxhkdrc" &
+fi
+
+{{ template "wm_init_wm_independent.sh" }}
+{{ template "wm_init_non_reparenting.sh" }}
+
+# Kill any existing instances of bspc (because of subscriptions)
+pkill bspc
+
+# Set up the monitor
+bspc monitor -d I II III IV V VI VII VIII IX X
+
+# Padding and general layout
+bspc config top_padding    0
+bspc config right_padding  0
+bspc config bottom_padding 0
+bspc config left_padding   0
+bspc config window_gap     {{ .dim.window.gap }}
+bspc config split_ratio    0.5
+
+# Borders
+bspc config border_width {{ .dim.border.width }}
+bspc config normal_border_color   "#{{- $color.base00.hex.rgb -}}"
+bspc config focused_border_color  "#{{- $color.base05.hex.rgb -}}"
+bspc config presel_feedback_color "#{{- $color.base05.hex.rgb -}}"
+
+# Never go fullscreen when tiled. The window is instead made fullscreen within
+# the tile.
+bspc config ignore_ewmh_fullscreen all
+
+# Monocle
+bspc config borderless_monocle  true
+bspc config gapless_monocle     true
+bspc config paddingless_monocle true
+bspc config single_monocle      true
+
+# Rules
+bspc rule -r "*"
+bspc rule -a matplotlib state=floating
+bspc rule -a Matplotlib state=floating
+bspc rule -a mpv state=floating rectangle=480x270+{{- .dim.window.gap -}}+{{- .dim.window.gap }}
+bspc rule -a Zathura state=tiled
+
+# Control
+bspc config click_to_focus button1

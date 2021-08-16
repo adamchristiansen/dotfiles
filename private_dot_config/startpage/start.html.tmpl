@@ -1,0 +1,131 @@
+{{- $color := include "_color/color.json" | mustFromJson -}}
+
+<!DOCTYPE html>
+<html>
+  <header>
+    <title>Start</title>
+    <style>
+      * {
+        color: #{{- $color.base05.hex.rgb }};
+        font-family: "Courier New", Courier, monospace;
+        font-size: 24px;
+        /* Prevent padding from increasing element size */
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      html, body {
+        background: #{{- $color.base00.hex.rgb }};
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+      .wrapper {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+      }
+      .container {
+        max-width: 640px;
+        width: 80%;
+      }
+      /* Search */
+      .search-box {
+        position: relative;
+      }
+      .search-box > * {
+        position: absolute;
+        width: 100%;
+      }
+      .search-input {
+        background: #{{- $color.base01.hex.rgb }};
+        border: none;
+        border-radius: 50vh;
+        box-shadow: none;
+        height: 48px;
+        line-height: 48px;
+        outline: 0;
+        padding: 12px 24px 12px 60px;
+        width: 100%;
+      }
+      .search-icon {
+        background: #{{- $color.base02.hex.rgb }};
+        border-radius: 50vh;
+        height: 48px;
+        width: 48px;
+      }
+      .search-icon > div {
+        position: absolute;
+      }
+      .search-icon-circle {
+        border: 2px solid #{{- $color.base05.hex.rgb }};
+        border-radius: 50vh;
+        height: 16px;
+        margin-left: 12px;
+        margin-top: 12px;
+        width: 16px;
+      }
+      .search-icon-line {
+        border-top: 2px solid #{{- $color.base05.hex.rgb }};
+        transform: rotate(45deg);
+        margin-left: 24px;
+        margin-top: 28px;
+        width: 12px;
+      }
+      /* Utilities */
+      .heading {
+        margin-bottom: 32px;
+        text-align: center;
+        width: 100%;
+      }
+      .heading > span {
+        font-size: 48px;
+      }
+      .heading > span:nth-child(8n+1) { color: #{{- $color.base08.hex.rgb }}; }
+      .heading > span:nth-child(8n+2) { color: #{{- $color.base09.hex.rgb }}; }
+      .heading > span:nth-child(8n+3) { color: #{{- $color.base0a.hex.rgb }}; }
+      .heading > span:nth-child(8n+4) { color: #{{- $color.base0b.hex.rgb }}; }
+      .heading > span:nth-child(8n+5) { color: #{{- $color.base0c.hex.rgb }}; }
+      .heading > span:nth-child(8n+6) { color: #{{- $color.base0d.hex.rgb }}; }
+      .heading > span:nth-child(8n+7) { color: #{{- $color.base0e.hex.rgb }}; }
+      .heading > span:nth-child(8n+8) { color: #{{- $color.base0f.hex.rgb }}; }
+    </style>
+  </header>
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <!-- Greeting -->
+        <div class="heading">
+                    <span>W<!--
+          --></span><span>e</span><!--
+          --></span><span>l</span><!--
+          --></span><span>c</span><!--
+          --></span><span>o</span><!--
+          --></span><span>m</span><!--
+          --></span><span>e</span><!--
+          --></span><span>.</span>
+        </div>
+        <!-- Search -->
+        <div class="search-box">
+          <form action="https://duckduckgo.com" method="get">
+            <input
+              autocomplete="off"
+              autofocus
+              class="search-input"
+              name="q"
+              placeholder="Search the web"
+              type="text" />
+          </form>
+          <!-- A search glass icon made of borders -->
+          <div class="search-icon">
+            <div class="search-icon-circle"></div>
+            <div class="search-icon-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
