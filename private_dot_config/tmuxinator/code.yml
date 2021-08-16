@@ -1,0 +1,12 @@
+name: code
+root: .
+
+startup_window: editor
+
+windows:
+  - editor: eval "$EDITOR"
+  - term:
+      layout: even-horizontal
+      panes:
+        - # Terminal
+        - # Terminal

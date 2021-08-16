@@ -1,0 +1,77 @@
+{{- $color := include "_color/color.json" | mustFromJson -}}
+
+#!/usr/bin/env sh
+
+# The font to use for the lock screen text.
+font={{- .font.name | quote -}}
+
+# The screen background color. This must be in 3-byte RGB format.
+bg={{- $color.base00.hex.rgb | quote -}}
+
+# The accent colors to use. These must be in the 4-byte RGBA format.
+fg="{{- $color.base05.hex.rgb -}}ff"
+accent_color="{{- $color.base0c.hex.rgb -}}ff"
+neg_color="{{- $color.base08.hex.rgb -}}ff"
+pos_color="{{- $color.base0b.hex.rgb -}}ff"
+transparent=00000000
+
+# Generate the background options to use as arguments to i3lock
+background() {
+    # Try to set the background, otherwise use a fallback color
+    if command -v convert > /dev/null && command -v scrot > /dev/null; then
+        img="/tmp/lockscreen-wallpaper-generated.png"
+        mod=$([ "{{- $color.theme -}}" = "dark" ] && echo "-20" || echo "20")
+        scrot --overwrite "$img"
+        convert "$img" \
+            -scale 5% \
+            -brightness-contrast ${mod}x${mod} \
+            -scale 2000% \
+            "$img"
+        echo --image="$img"
+    else
+        echo --color="$bg"
+    fi
+}
+
+# A routine which disables the DPMS
+revert_dpms() {
+    xset dpms 0 0 0
+}
+
+# Make sure that certain events are trapped so that the DPMS settings are
+# reverted to their original values when the computer is unlocked
+trap revert_dpms HUP INT TERM
+
+# Set the screen to turn off after some number of seconds when inactive on the
+# lock screen
+t=15
+xset dpms $t $t $t
+
+# Pause any playing media
+if command -v mpc > /dev/null; then
+    mpc pause
+fi
+
+# Lock the screen and block until the screen is unlocked
+i3lock \
+    $(background) --fill \
+    --indicator --ind-pos="x+64:y+h-64" \
+    --clock --force-clock \
+    --radius=24 --ring-width=8 \
+    --inside-color=$transparent --ring-color=$fg \
+    --insidever-color=$accent_color --ringver-color=$fg \
+    --insidewrong-color=$neg_color --ringwrong-color=$fg \
+    --line-uses-inside \
+    --keyhl-color=$pos_color --bshl-color=$neg_color \
+    --separator-color=$fg \
+    --layout-color=$fg --time-color=$fg --date-color=$fg --greeter-color=$fg \
+    --time-str="%I:%M:%S %p" --time-pos="x+128:y+h-72" \
+    --date-str="%A, %d %B %Y" --date-pos="x+128:y+h-40" \
+    --time-font="$font" --date-font="$font" \
+    --time-size=24 --date-size=16 \
+    --time-align=1 --date-align=1 \
+    --noinput-text="" --verif-text="" --wrong-text="" \
+    --nofork
+
+# Revert the DPMS settings after unlocking
+revert_dpms

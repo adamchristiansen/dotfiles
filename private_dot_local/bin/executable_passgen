@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# A wrapper around the Bitwarden password generation subcommand that uses
+# stronger defaults. Any arguments that `bw generate` accepts can be passed to
+# this script to override the defaults.
+
+bw generate -uln --length 16 --words 5 --separator "-" "$@"

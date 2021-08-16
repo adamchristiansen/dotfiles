@@ -1,0 +1,8 @@
+[include]
+path = user
+
+[init]
+defaultBranch = main
+
+[core]
+excludesfile = ~/.config/git/ignore

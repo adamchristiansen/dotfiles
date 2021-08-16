@@ -1,0 +1,65 @@
+{{- $color := include "_color/color.json" | mustFromJson -}}
+
+* {
+    // Global variables
+    color-bg:        #{{- $color.base00.hex.rgb -}}CC;
+    color-fg:        #{{- $color.base05.hex.rgb }};
+    color-fg-alt:    #{{- $color.base01.hex.rgb }};
+    color-accent:    #{{- $color.base0b.hex.rgb }};
+    padding-element: {{ .dim.padding -}}px;
+}
+
+window {
+    background-color: @color-bg;
+    height: 100%;
+    padding: 20% 20%;
+    width: 100%;
+}
+
+mainbox {
+    background-color: transparent;
+}
+
+listview {
+    background-color: transparent;
+    spacing: 0px;
+}
+
+element {
+    padding: @padding-element;
+}
+
+element normal normal,
+element normal urgent,
+element normal active,
+element selected urgent,
+element selected active,
+element alternate normal,
+element alternate urgent,
+element alternate active {
+    background-color: transparent;
+    text-color: @color-fg;
+}
+
+element selected normal {
+    background-color: @color-fg-alt;
+    text-color: @color-fg;
+}
+
+inputbar {
+    background-color: transparent;
+    children: [textbox-prompt-colon, entry];
+    padding: @padding-element;
+}
+
+textbox-prompt-colon {
+    background-color: transparent;
+    expand: false;
+    str: " ";
+    text-color: @color-accent;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @color-fg;
+}

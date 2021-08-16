@@ -1,0 +1,92 @@
+#!/usr/bin/env sh
+
+# Changes the volume and displays a notification with the information. This
+# script can be called int 4 ways:
+#
+#   notify-volume       Sends a notification without modifying the volume
+#   notify-volume up    Increment volume by 5%
+#   notify-volume down  Decrement volume by 5%
+#   notify-volume mute  Toggle mute/unmute
+
+# The amount to increment in percent. This should be a divisor of 100.
+inc=5
+
+# Find the device to use for `amixer` that works on the system. If no device
+# can be determined then an error notification is displayed in the script
+# exits.
+amixer_cmd=
+if amixer get Master > /dev/null 2>&1; then
+    amixer_cmd="amixer"
+elif amixer -D pulse get Master > /dev/null 2>&1; then
+    amixer_cmd="amixer -D pulse"
+else
+    notify-send --hint=string:x-dunst-stack-tag:volume -a "Volume" \
+        "Controls not supported"
+    exit 1
+fi
+
+# This calls the determined amixer command with the appropriate device for this
+# system. It forwards all arguments and can be used in place of `amixer`.
+sys_mixer() {
+    eval $amixer_cmd $@
+}
+
+# The symbols to use to draw the volume bar
+sym_left="│"
+sym_left_alt="┝"
+sym_right="│"
+sym_right_alt="┥"
+sym_filled="━"
+sym_empty=" "
+
+# Query the volume as as value in the range 0 to 100.
+volume() {
+    sys_mixer get Master              \
+        | grep -o '\[[0-9]\{1,3\}%\]' \
+        | grep -o '[0-9]\{1,3\}'      \
+        | head -n 1 2> /dev/null
+}
+
+# Check if the volume is muted. This must be a function instead of a variable
+# because it is used both before and after changing the volume.
+muted() {
+    sys_mixer get Master | grep -o '\[off\]' > /dev/null
+}
+
+# Increment or decrement the volume. The argument can be `+` for increment and
+# `-` for decrement.
+change_volume() {
+    if [ $(volume) -eq 0 ] && [ $1 = - ]; then
+        # Mute the volume
+        sys_mixer set Master off > /dev/null
+    elif muted; then
+        # Unmute without changing volume
+        sys_mixer set Master on > /dev/null
+    else
+        # Increment/decrement the volume
+        sys_mixer set Master 5%$1 > /dev/null
+    fi
+}
+
+# Change the volume first
+case $1 in
+    up)   change_volume + ;;
+    down) change_volume - ;;
+    mute) sys_mixer set Master toggle > /dev/null ;;
+    *)    ;; # This is a query
+esac
+
+# Build the bar
+volume=$(volume)
+filled=$((volume / inc))
+empty=$(((100 / inc) - filled))
+bar=
+[ $volume -eq 0 ] && bar="$sym_left" || bar="$sym_left_alt"
+for i in $(seq $filled); do bar="$bar$sym_filled"; done
+for i in $(seq $empty); do bar="$bar$sym_empty"; done
+[ $volume -eq 100 ] && bar="$bar$sym_right_alt" || bar="$bar$sym_right"
+
+# Send the notification
+muted && text="Mute" || text="$volume%"
+notify-send -u low --hint=string:x-dunst-stack-tag:volume \
+    -a "Volume" "$bar $text"

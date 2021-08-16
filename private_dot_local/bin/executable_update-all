@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+
+import argparse
+import shutil
+import subprocess
+import sys
+
+parser = argparse.ArgumentParser(
+    description="Install updates automagically.",
+    formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument("--clean", "-c",
+    action="store_true",
+    help="clean cached and orphaned packages")
+parser.add_argument("--dry-run", "-n",
+    action="store_true",
+    help="print actions without running anything")
+parser.add_argument("--no-color",
+    action="store_true",
+    help="do not colorize output")
+parser.add_argument("--sudo", "-s",
+    action="store_true",
+    help="run with sudo (where appropriate)")
+parser.add_argument("--update", "-u",
+    action="store_true",
+    help="update package index")
+parser.add_argument("--upgrade", "-U",
+    action="store_true",
+    help="upgrade packages")
+parser.add_argument("--yes", "-y",
+    action="store_true",
+    help="run without asking for confirmation")
+args = parser.parse_args()
+
+
+class Color:
+    RED     = "\033[31m"
+    GREEN   = "\033[32m"
+    YELLOW  = "\033[33m"
+    BLUE    = "\033[34m"
+    MAGENTA = "\033[35m"
+    CYAN    = "\033[36m"
+    NORMAL  = "\033[0m"
+
+class PackageManager:
+    """
+    Represents a package manager and the commands needed to use it.
+    """
+
+    def __init__(self,
+            name,
+            required_commands,
+            required_conditions,
+            command_update,
+            command_upgrade,
+            command_clean,
+            can_use_sudo,
+            yes_flag):
+        """
+        Create a new package manager.
+
+        # Arguments
+
+        * name (str): The name of the package manager.
+        * required_commands (list<string>): All of the commands that must exist
+            on the system for the package manager.
+        * required_conditions (list<list<string>>): Conditions that must be met
+            for the package manager to be run.
+        * command_update (list<string>): The command (with options) to run for
+            an update.
+        * command_upgrade (list<string>): The command (with options) to run for
+            an upgrade.
+        * command_clean (list<string>): The command (with options) to run for a
+            clean.
+        * can_use_sudo (bool): Indicates that the commands are allowed to be
+            run with as root.
+        * yes_flag (str): The flag to append to the commands when the `--yes`
+            option is used.
+        """
+        self._name = name
+        self._required_commands = required_commands
+        self._required_conditions = required_conditions
+        self._command_update = command_update
+        self._command_upgrade = command_upgrade
+        self._command_clean = command_clean
+        self._can_use_sudo = can_use_sudo
+        self._yes_flag = yes_flag
+
+    def run(self, **kwargs):
+        """
+        Run all prescribed operations if the package manager is present on the
+        system.
+
+        # Arguments
+
+        * kwargs: The same as the arguments to the program.
+        """
+        if self._exists():
+            if "update" in kwargs and kwargs["update"]:
+                self._run_command("update", self._command_update, **kwargs)
+            if "upgrade" in kwargs and kwargs["upgrade"]:
+                self._run_command("upgrade", self._command_upgrade, **kwargs)
+            if "clean" in kwargs and kwargs["clean"]:
+                self._run_command("clean", self._command_clean, **kwargs)
+
+    def _exists(self):
+        """
+        Test whether the package mamanger exists on the system.
+        """
+        for command in self._required_commands:
+            if shutil.which(command) is None:
+                return False
+        for condition in self._required_conditions:
+            completed = subprocess.run(condition)
+            if completed.returncode != 0:
+                return False
+        return True
+
+
+    def _run_command(self, action_name, command, **kwargs):
+        """
+        Run a command. This exits the program if an error occurrs.
+
+        # Arguments
+
+        * action_name (str): The name of the action being run.
+        * command (list<str>): The command to run.
+        * kwargs: The same as the arguments to the program.
+        """
+        if command is None:
+            return True
+        if self._can_use_sudo and "sudo" in kwargs and kwargs["sudo"]:
+            command = ["sudo"] + command
+        if self._yes_flag and "yes" in kwargs and kwargs["yes"]:
+            command = command + [self._yes_flag]
+        command_str = " ".join(command)
+        # Print the header
+        header = "⟩⟩⟩ {} {} ⟩⟩⟩ {}".format(self._name, action_name, command_str)
+        if not ("no_color" in kwargs and kwargs["no_color"]):
+            header = "{}{}{}".format(Color.MAGENTA, header, Color.NORMAL)
+        print(header)
+        # Run the command
+        if not ("dry_run" in kwargs and kwargs["dry_run"]):
+            completed = subprocess.run(command)
+            if completed.returncode != 0:
+                sys.exit(1)
+
+# The available package managers. Keep sorted alphabetically by name
+PACKAGE_MANAGERS = [
+    PackageManager(
+        name="apt-get",
+        required_commands=["apt-get"],
+        required_conditions=[],
+        command_update=["apt-get", "update"],
+        command_upgrade=["apt-get", "upgrade"],
+        command_clean=["apt-get", "autoremove"],
+        can_use_sudo=True,
+        yes_flag="-y"
+    ),
+    PackageManager(
+        name="brew",
+        required_commands=["brew"],
+        required_conditions=[],
+        command_update=["brew", "update"],
+        command_upgrade=["brew", "upgrade"],
+        command_clean=["brew", "cleanup"],
+        can_use_sudo=False,
+        yes_flag=None
+    ),
+    PackageManager(
+        name="fisher",
+        required_commands=["fish"],
+        required_conditions=[
+            ["fish", "-P", "-c", "type -q fisher"]
+        ],
+        command_update=["fish", "-P", "-c", "fisher update"],
+        command_upgrade=None,
+        command_clean=None,
+        can_use_sudo=False,
+        yes_flag=None
+    ),
+    PackageManager(
+        name="pip",
+        required_commands=["pipupgrade"],
+        required_conditions=[],
+        command_update=None,
+        command_upgrade=["pipupgrade", "--latest"],
+        command_clean=None,
+        can_use_sudo=False,
+        yes_flag="-y"
+    ),
+    PackageManager(
+        name="rustup",
+        required_commands=["rustup"],
+        required_conditions=[],
+        command_update=None,
+        command_upgrade=["rustup", "update"],
+        command_clean=None,
+        can_use_sudo=False,
+        yes_flag=None
+    ),
+    PackageManager(
+        name="xbps",
+        required_commands=["xbps-install", "xbps-remove"],
+        required_conditions=[],
+        command_update=["xbps-install", "-S"],
+        command_upgrade=["xbps-install", "-u"],
+        command_clean=["xbps-remove", "-oO"],
+        can_use_sudo=True,
+        yes_flag="-y"
+    ),
+]
+
+for pm in PACKAGE_MANAGERS:
+    pm.run(**vars(args))

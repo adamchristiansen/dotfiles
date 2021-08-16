@@ -1,0 +1,114 @@
+{{- $color := include "_color/color.json" | mustFromJson -}}
+
+<!DOCTYPE html>
+<html>
+  <header>
+    <title>Dots Color Preview</title>
+    <style>
+      html, body {
+        background: #{{ $color.wall.hex.rgb }};
+        font-family: "Courier New", Courier, monospace;
+        font-size: 16px;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+      .wrapper {
+        padding: 64px 0;
+        width: 100%;
+      }
+      .container {
+        margin: 0 auto;
+        width: 640px;
+      }
+      .row {
+        width: 100%;
+      }
+      .color-block {
+        float: left;
+        height: 64px;
+        margin: 8px;
+        width: 64px;
+      }
+      .color-fill {
+        float: left;
+        height: 64px;
+        margin: 8px;
+        width: 624px;
+      }
+      .color-demo {
+        float: left;
+        margin: 8px;
+        width: 304px;
+      }
+      .color-text {
+        line-height: 16px;
+        margin: 8px;
+      }
+    </style>
+  </header>
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <div class="row">
+          <div class="color-block" style="background: #{{ $color.base00.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base01.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base02.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base03.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base04.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base05.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base06.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base07.hex.rgb }};"></div>
+        </div>
+        <div class="row">
+          <div class="color-block" style="background: #{{ $color.base08.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base09.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base0a.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base0b.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base0c.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base0d.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base0e.hex.rgb }};"></div>
+          <div class="color-block" style="background: #{{ $color.base0f.hex.rgb }};"></div>
+        </div>
+        <div class="row">
+          <div class="color-demo" style="background: #{{ $color.base00.hex.rgb }};">
+            <div class="color-text" style="color: #{{ $color.base00.hex.rgb }};">bg</div>
+            <div class="color-text" style="color: #{{ $color.base01.hex.rgb }};">lighter bg</div>
+            <div class="color-text" style="color: #{{ $color.base02.hex.rgb }};">selection bg</div>
+            <div class="color-text" style="color: #{{ $color.base03.hex.rgb }};">comment</div>
+            <div class="color-text" style="color: #{{ $color.base04.hex.rgb }};">dark fg</div>
+            <div class="color-text" style="color: #{{ $color.base05.hex.rgb }};">fg</div>
+            <div class="color-text" style="color: #{{ $color.base06.hex.rgb }};">light fg</div>
+            <div class="color-text" style="color: #{{ $color.base07.hex.rgb }};">light bg</div>
+            <div class="color-text" style="color: #{{ $color.base08.hex.rgb }};">text that is red</div>
+            <div class="color-text" style="color: #{{ $color.base09.hex.rgb }};">text that is orange</div>
+            <div class="color-text" style="color: #{{ $color.base0a.hex.rgb }};">text that is yellow</div>
+            <div class="color-text" style="color: #{{ $color.base0b.hex.rgb }};">text that is green</div>
+            <div class="color-text" style="color: #{{ $color.base0c.hex.rgb }};">text that is cyan</div>
+            <div class="color-text" style="color: #{{ $color.base0d.hex.rgb }};">text that is blue</div>
+            <div class="color-text" style="color: #{{ $color.base0e.hex.rgb }};">text that is pink</div>
+            <div class="color-text" style="color: #{{ $color.base0f.hex.rgb }};">text that is purple</div>
+          </div>
+          <div class="color-demo" style="background: #{{ $color.base07.hex.rgb }};">
+            <div class="color-text" style="color: #{{ $color.base00.hex.rgb }};">bg</div>
+            <div class="color-text" style="color: #{{ $color.base01.hex.rgb }};">lighter bg</div>
+            <div class="color-text" style="color: #{{ $color.base02.hex.rgb }};">selection bg</div>
+            <div class="color-text" style="color: #{{ $color.base03.hex.rgb }};">comment</div>
+            <div class="color-text" style="color: #{{ $color.base04.hex.rgb }};">dark fg</div>
+            <div class="color-text" style="color: #{{ $color.base05.hex.rgb }};">fg</div>
+            <div class="color-text" style="color: #{{ $color.base06.hex.rgb }};">light fg</div>
+            <div class="color-text" style="color: #{{ $color.base07.hex.rgb }};">light bg</div>
+            <div class="color-text" style="color: #{{ $color.base08.hex.rgb }};">text that is red</div>
+            <div class="color-text" style="color: #{{ $color.base09.hex.rgb }};">text that is orange</div>
+            <div class="color-text" style="color: #{{ $color.base0a.hex.rgb }};">text that is yellow</div>
+            <div class="color-text" style="color: #{{ $color.base0b.hex.rgb }};">text that is green</div>
+            <div class="color-text" style="color: #{{ $color.base0c.hex.rgb }};">text that is cyan</div>
+            <div class="color-text" style="color: #{{ $color.base0d.hex.rgb }};">text that is blue</div>
+            <div class="color-text" style="color: #{{ $color.base0e.hex.rgb }};">text that is pink</div>
+            <div class="color-text" style="color: #{{ $color.base0f.hex.rgb }};">text that is purple</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
