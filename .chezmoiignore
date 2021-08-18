@@ -1,4 +1,5 @@
 _*
+**/*.keep
 **/*.md
 LICENSE
 install.sh
@@ -22,4 +23,15 @@ install.sh
 .local/bin/notify-*
 .local/bin/screenlock
 .local/bin/wallpaper-*
+
+# Set the appropriate permission for XDG base directories
+Desktop
+Documents
+Downloads
+Music
+Pictures
+Private
+Public
+Templates
+Videos
 {{ end }}
