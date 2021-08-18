@@ -7,7 +7,7 @@
 # Make sxhkd and bspwm reload its configuration files
 super + Escape
     pkill -USR1 -x sxhkd; \
-    "$XDG_CONFIG_HOME/bspwm/bspwmrc" false
+    "$XDG_CONFIG_HOME/bspwm/bspwmrc" 1
 
 # Quit bspwm normally
 super + ctrl + alt + shift + Escape

@@ -3,12 +3,12 @@
 #!/usr/bin/env sh
 
 # This indicates that the script is run in startup mode, where everything is
-# initialized. After startup mode it should be called with the parameter
-# "false" to prevent everything from being killed and reloaded
-if [ "$1" = "false" ]; then
-    startup=false
-else
+# initialized. After startup mode it should be called with a non-zero parameter
+# to prevent everything from being killed and reloaded.
+if [ "$1" -eq 0 ]; then
     startup=true
+else
+    startup=false
 fi
 
 # Start the hotkey daemon

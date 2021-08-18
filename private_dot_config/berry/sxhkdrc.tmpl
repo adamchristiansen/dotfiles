@@ -7,7 +7,7 @@
 # Make sxhkd and berry reload its configuration files
 super + Escape
     pkill -USR1 -x sxhkd; \
-    "$XDG_CONFIG_HOME/berry/autostart" false
+    "$XDG_CONFIG_HOME/berry/autostart" 1
 
 # Quit berry
 super + shift + alt + Escape

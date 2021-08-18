@@ -227,6 +227,17 @@ set undofile
 " Disable netrw history
 let g:netrw_dirhistmax = 0
 
+" Reload the configuration on SIGUSR1. This is guarded by the if statement so
+" that it is not registered every time the signal is received.
+if !exists('*ReloadConfig')
+    function ReloadConfig()
+        source $MYVIMRC
+        redraw!
+    endfunction
+
+    autocmd Signal SIGUSR1 call ReloadConfig()
+end
+
 "------------------------------------------------------------------------------
 " Status Line
 "------------------------------------------------------------------------------
