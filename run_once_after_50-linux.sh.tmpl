@@ -1,0 +1,8 @@
+{{- if (eq .chezmoi.os "linux") -}}
+
+#!/usr/bin/env sh
+
+# Set the default browser
+xdg-settings set default-web-browser org.qutebrowser.qutebrowser.desktop
+
+{{- end -}}
