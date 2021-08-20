@@ -147,12 +147,12 @@ class PackageManager:
 # The available package managers. Keep sorted alphabetically by name
 PACKAGE_MANAGERS = [
     PackageManager(
-        name="apt-get",
-        required_commands=["apt-get"],
+        name="apt",
+        required_commands=["apt"],
         required_conditions=[],
-        command_update=["apt-get", "update"],
-        command_upgrade=["apt-get", "upgrade"],
-        command_clean=["apt-get", "autoremove"],
+        command_update=["apt", "update"],
+        command_upgrade=["apt", "upgrade"],
+        command_clean=["apt", "autoremove"],
         can_use_sudo=True,
         yes_flag="-y"
     ),
@@ -163,6 +163,16 @@ PACKAGE_MANAGERS = [
         command_update=["brew", "update"],
         command_upgrade=["brew", "upgrade"],
         command_clean=["brew", "cleanup"],
+        can_use_sudo=False,
+        yes_flag=None
+    ),
+    PackageManager(
+        name="chezmoi",
+        required_commands=["chezmoi"],
+        required_conditions=[],
+        command_update=None,
+        command_upgrade=["chezmoi", "upgrade"],
+        command_clean=None,
         can_use_sudo=False,
         yes_flag=None
     ),
