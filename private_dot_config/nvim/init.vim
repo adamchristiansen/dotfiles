@@ -269,13 +269,6 @@ function! StatuslineModeInfo()
     return toupper(g:statusline_mode_lookup[mode()])
 endfunction
 
-function! StatuslineBufferInfo()
-    let l:s  = ''
-    let l:s .= &readonly || !&modifiable ? '' : ''
-    let l:s .= &modified ? '●' : ''
-    return len(l:s) ?  l:s  : ''
-endfunction
-
 " Build a statusline format string. The [window] argument is the window number
 " the statusline is attached to.
 function! StatuslineBuild(window)
