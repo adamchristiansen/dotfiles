@@ -138,4 +138,5 @@ Use a decimal RGB format.
 
 The following themes are available:
 
-- `seaside`: my own custom dark color scheme
+- `moonlight`: a custom medium contrast dark color scheme
+- `seaside`: a custom low contrast dark color scheme
