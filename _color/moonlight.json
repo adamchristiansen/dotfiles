@@ -1,0 +1,20 @@
+{
+  "theme": "dark",
+  "base00": "262626",
+  "base01": "333333",
+  "base02": "404040",
+  "base03": "808080",
+  "base04": "a6a6a6",
+  "base05": "e3e3e3",
+  "base06": "f2f2f2",
+  "base07": "ffffff",
+  "base08": "cc9b99",
+  "base09": "ccaf99",
+  "base0a": "ccc899",
+  "base0b": "aecc99",
+  "base0c": "99c5cc",
+  "base0d": "99aecc",
+  "base0e": "cc99ba",
+  "base0f": "b199cc",
+  "wall": "ffffff"
+}
