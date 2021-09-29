@@ -1,6 +1,6 @@
 function psgrep --description="Search running processes"
     set -l args $argv
-    for i in (seq 1 1 (count $args) ^ /dev/null)
+    for i in (seq 1 1 (count $args) 2> /dev/null)
         set -l a $args[$i]
         # Only modify the argument if it is not an option
         if [ (string sub -s 1 -l 1 -- $a) != - ]
