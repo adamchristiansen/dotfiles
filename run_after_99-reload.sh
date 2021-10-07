@@ -23,11 +23,10 @@ when_running() {
 
 when_running berry "$XDG_CONFIG_HOME/berry/autostart 1"
 when_running bspwm "$XDG_CONFIG_HOME/bspwm/bspwmrc 1"
-send_sigusr1 nvim
 send_sigusr1 picom
 when_running qutebrowser "qutebrowser --target=tab-silent :config-source"
 send_sigusr1 sxhkd
-when_running tmux "tmux source-file ~/.config/tmux/tmux.conf"
+when_running tmux "tmux source-file $XDG_CONFIG_HOME/tmux/tmux.conf"
 
 # This script always exits successfully
 exit 0
