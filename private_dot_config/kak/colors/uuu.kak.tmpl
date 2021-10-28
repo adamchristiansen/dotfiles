@@ -1,0 +1,70 @@
+{{- $color := include "_color/color.json" | mustFromJson -}}
+
+# Base16 colors
+declare-option -hidden str base00 "rgb:{{ $color.base00.hex.rgb }}"
+declare-option -hidden str base01 "rgb:{{ $color.base01.hex.rgb }}"
+declare-option -hidden str base02 "rgb:{{ $color.base02.hex.rgb }}"
+declare-option -hidden str base03 "rgb:{{ $color.base03.hex.rgb }}"
+declare-option -hidden str base04 "rgb:{{ $color.base04.hex.rgb }}"
+declare-option -hidden str base05 "rgb:{{ $color.base05.hex.rgb }}"
+declare-option -hidden str base06 "rgb:{{ $color.base06.hex.rgb }}"
+declare-option -hidden str base07 "rgb:{{ $color.base07.hex.rgb }}"
+declare-option -hidden str base08 "rgb:{{ $color.base08.hex.rgb }}"
+declare-option -hidden str base09 "rgb:{{ $color.base09.hex.rgb }}"
+declare-option -hidden str base0a "rgb:{{ $color.base0a.hex.rgb }}"
+declare-option -hidden str base0b "rgb:{{ $color.base0b.hex.rgb }}"
+declare-option -hidden str base0c "rgb:{{ $color.base0c.hex.rgb }}"
+declare-option -hidden str base0d "rgb:{{ $color.base0d.hex.rgb }}"
+declare-option -hidden str base0e "rgb:{{ $color.base0e.hex.rgb }}"
+declare-option -hidden str base0f "rgb:{{ $color.base0f.hex.rgb }}"
+
+# Code
+face global value         "%opt{base08}"
+face global type          "%opt{base0a}"
+face global variable      "%opt{base08}"
+face global module        "%opt{base0d}"
+face global function      "%opt{base0d}"
+face global string        "%opt{base0b}"
+face global keyword       "%opt{base0e}"
+face global operator      "%opt{base09}"
+face global attribute     "%opt{base0d}"
+face global comment       "%opt{base03}"
+face global documentation "%opt{base0c}"
+face global meta          "%opt{base0a}"
+face global builtin       default+b
+
+# Markup
+face global title  blue
+face global header cyan
+face global mono   green
+face global block  magenta
+face global link   cyan
+face global bullet cyan
+face global list   yellow
+
+# Builtin
+face global Default            default,default
+face global PrimarySelection   "%opt{base05},%opt{base02}"
+face global SecondarySelection black,blue+fg
+face global PrimaryCursor      black,white+fg
+face global SecondaryCursor    black,white+fg
+face global PrimaryCursorEol   black,cyan+fg
+face global SecondaryCursorEol black,cyan+fg
+face global LineNumbers        "%opt{base03},default"
+face global LineNumberCursor   "%opt{base09},default"
+face global MenuForeground     "%opt{base01},%opt{base09}"
+face global MenuBackground     "%opt{base05},%opt{base01}"
+face global MenuInfo           cyan
+face global Information        "%opt{base05},%opt{base01}"
+face global Error              black,red
+face global DiagnosticError    red
+face global DiagnosticWarning  yellow
+face global StatusLine         cyan,default
+face global StatusLineMode     yellow,default
+face global StatusLineInfo     blue,default
+face global StatusLineValue    green,default
+face global StatusCursor       black,cyan
+face global Prompt             yellow,default
+face global MatchingChar       default,default+b
+face global Whitespace         default,default+fd
+face global BufferPadding      "%opt{base03},default"
