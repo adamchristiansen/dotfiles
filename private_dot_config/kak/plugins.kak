@@ -8,6 +8,10 @@ evaluate-commands %sh{
 }
 plug "andreyorst/plug.kak" noload
 
+plug "AdamChristiansen/kakclip" config %{
+    kakclip-enable
+}
+
 plug "andreyorst/kaktree" defer kaktree %{
     define-command -hidden kaktree-show-focus %{ evaluate-commands %sh{
         if [ "${kak_opt_kaktree__active}" = "true" ]; then
