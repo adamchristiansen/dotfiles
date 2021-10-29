@@ -30,7 +30,7 @@ hook global InsertCompletionHide .* %{
 source "%val{config}/plugins.kak"
 
 define-command trim-whitespace \
-        -docstring "trim-whitespace: Trim trailing whitespace in buffer" %{
+        -docstring "trim trailing whitespace in buffer" %{
     try %{
         # [\s\r\n]+\z matches all whitespace at the end of the buffer
         execute-keys -draft '%s([\s\r\n]+\z|\h+$)<ret>d<space>'
@@ -40,3 +40,9 @@ define-command trim-whitespace \
 hook global BufWritePre .* %{
     trim-whitespace
 }
+
+map global user p -docstring 'paste from clipboard after' ':kakclip-paste-after<ret>'
+map global user P -docstring 'paste from clipboard before' ':kakclip-paste-before<ret>'
+map global user R -docstring 'replace from clipboard' ':kakclip-replace<ret>'
+map global user y -docstring 'yank selection to clipboard' ':kakclip-yank-selection<ret>'
+map global user Y -docstring 'yank entire buffer to clipboard' ':kakclip-yank-buffer<ret>'
