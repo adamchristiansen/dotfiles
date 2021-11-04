@@ -12,7 +12,7 @@ set-option global startup_info_version 99999999 # Disable startup message
 colorscheme uuu
 hook global BufCreate .* %{
     add-highlighter buffer/ number-lines \
-        -relative -hlcursor -separator ' │ ' -min-digits 4
+        -relative -hlcursor -separator '  ' -min-digits 4
     add-highlighter buffer/ show-whitespaces \
         -lf ' ' -spc ' ' -nbsp '~' -tab '»' -tabpad '·'
     add-highlighter buffer/trailing-whitespaces regex "(\h+)$" 1:Error
@@ -28,6 +28,7 @@ hook global InsertCompletionHide .* %{
 }
 
 source "%val{config}/plugins.kak"
+source "%val{config}/modeline.kak"
 
 define-command trim-whitespace \
         -docstring "trim trailing whitespace in buffer" %{
