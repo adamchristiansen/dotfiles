@@ -4,7 +4,7 @@
 
 # Make sure this is running on Void linux
 if [ -f /etc/os-release ]; then
-    if ! grep '"void"' /etc/os-release; then
+    if ! grep '"void"' /etc/os-release > /dev/null 2>&1; then
         exit 0
     fi
 else
@@ -18,7 +18,6 @@ sudo xbps-install -Su \
     atool \
     berry \
     bspwm \
-    chezmoi \
     curl \
     dunst \
     exa \
