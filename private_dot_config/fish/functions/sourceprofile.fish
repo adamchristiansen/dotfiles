@@ -31,7 +31,7 @@ function sourceprofile -a file \
                     if [ $v != "\$PATH" ]
                         # Expand the path in case it contains $HOME, and only
                         # add the path if it does not already exist.
-                        set -l path (eval echo $v)
+                        set -l path (expandvars $v)
                         if not contains $path $PATH \
                                 && not contains $path $fish_user_paths
                             set -Ua fish_user_paths $path
@@ -39,7 +39,7 @@ function sourceprofile -a file \
                     end
                 end
             else
-                set -gx $var (eval echo $value)
+                set -gx $var (expandvars $value)
             end
         else
             # Get the variable name and value
@@ -49,7 +49,7 @@ function sourceprofile -a file \
             set value (echo $value | sed -E "s/^\"(.*)\"\$/\1/")
             # Assign the variable in function scope so that it can be used in
             # other variables
-            set $var (eval echo $value)
+            set $var (expandvars $value)
         end
     end
 end
