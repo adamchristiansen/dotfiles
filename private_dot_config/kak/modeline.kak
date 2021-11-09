@@ -13,7 +13,7 @@ declare-option -hidden str modeline_readonly
 define-command -hidden modeline-update-readonly %{
     set-option buffer modeline_readonly %sh{
         if [ "$kak_opt_readonly" = true -o ! -w "$kak_buffile" ]; then
-            printf "%s \n" ""
+            printf "%s \n" ""
         else
             printf "\n"
         fi
@@ -52,7 +52,7 @@ define-command -hidden modeline-bufname-setup-hooks %{
 declare-option -hidden bool modeline_enabled true
 define-command -docstring "enable modeline" modeline-enable %{
     set-option global modeline_enabled true
-    set-option global modelinefmt '{StatusLineInfo}視%opt{modeline_selections} %opt{modeline_modified}%opt{modeline_readonly}%val{bufname} %val{cursor_line}:%val{cursor_char_column} %val{client}‧%val{session}'
+    set-option global modelinefmt '{StatusLineValue}%opt{modeline_modified}{StatusLineInfo}%opt{modeline_readonly}%val{bufname} 視%opt{modeline_selections} ﳗ %val{cursor_line}:%val{cursor_char_column} 歷%val{client}‧%val{session}'
     modeline-bufname-setup-hooks
 }
 define-command -docstring "disable modeline" modeline-disable %{
