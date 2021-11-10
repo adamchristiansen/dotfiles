@@ -1,3 +1,5 @@
+{{- $color := include "_color/color.json" | mustFromJson -}}
+
 # Make colors work properly
 set -g default-terminal "screen-256color"
 set -ga terminal-overrides ",*256col*:Tc" # True color
@@ -51,20 +53,19 @@ bind L swap-window -t +1 \; select-window -t +1
 bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'xclip -in -selection clipboard'
 
 # Status bar
-set -g status-style bg=default
-set -g status-fg black
+set -g status-style fg='#{{ $color.base03.hex.rgb }}',bg=default
 set -g status-justify centre
-set -g status-left ""
 set -g status-position bottom
+set -g status-left ""
 set -g status-right ""
-set -g window-status-format "#[fg=black] #W#{?window_zoomed_flag, ,} "
-set -g window-status-current-format "#[fg=red] #W#{?window_zoomed_flag, ,} "
+set -g window-status-format "#[fg=#{{ $color.base03.hex.rgb }}] #W#{?window_zoomed_flag, ,} "
+set -g window-status-current-format "#[fg=#{{ $color.base09.hex.rgb }}] #W#{?window_zoomed_flag, ,} "
 set -g window-status-current-style none
 
 # Modes and selections
-set -g message-style fg=default,bg=black
-set -g mode-style fg=default,bg=black
+set -g message-style fg=default,bg=#{{ $color.base03.hex.rgb }}
+set -g mode-style fg=default,bg=#{{ $color.base03.hex.rgb }}
 
 # Border colors
-set -g pane-border-style fg=black
-set -g pane-active-border-style fg=red
+set -g pane-border-style fg=#{{ $color.base03.hex.rgb }}
+set -g pane-active-border-style fg=#{{ $color.base09.hex.rgb }}

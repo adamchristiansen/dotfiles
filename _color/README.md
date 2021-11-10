@@ -27,9 +27,10 @@ Color themes are defined using the
 - `base0e`: keywords, storage, selector, markup italic, diff changed
 - `base0f`: deprecated, opening/closing embedded language tags
 
-In addition, the `base16` colors are treated in following way:
+In addition, some of the `base16` colors are treated in following way:
 
-- `base00` to `base07`: Same as above
+- `base03`: Black
+- `base05`: White
 - `base08`: Red
 - `base09`: Orange
 - `base0a`: Yellow
