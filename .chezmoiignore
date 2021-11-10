@@ -6,7 +6,6 @@ install.sh
 
 {{ if ne .chezmoi.os "darwin" }}
 .config/iterm2
-Movies
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}
@@ -24,15 +23,4 @@ Movies
 .local/bin/notify-*
 .local/bin/screenlock
 .local/bin/wallpaper-*
-
-# Set the appropriate permission for XDG base directories
-Desktop
-Documents
-Downloads
-Music
-Pictures
-Private
-Public
-Templates
-Videos
 {{ end }}

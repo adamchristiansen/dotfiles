@@ -1,0 +1,11 @@
+{{- if (eq .chezmoi.os "linux") -}}
+
+#!/usr/bin/env sh
+
+# Change the permissions on the home directory so that only the owner can
+# access them. This is safe, and it is the default on distributions such
+# as Void Linux.
+
+chmod 700 "$HOME"
+
+{{- end -}}
