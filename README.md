@@ -1,6 +1,6 @@
 # Dotfiles
 
-These are my dotfiles, mamanged by
+These are my dotfiles, managed by
 [chezmoi](https://github.com/twpayne/chezmoi).
 
 
@@ -36,7 +36,7 @@ See the [color README](_color/README.md) for more information on using colors.
 ## Profile
 
 To maintain compatibility with non-POSIX shells like fish, files such as
-`.profile` and the contents of `.local/etc/profile.d/*` should adhere to the
+`.profile` and the contents of `.local/etc/profile.d/*` must adhere to the
 following rules:
 
 - Empty lines are allowed

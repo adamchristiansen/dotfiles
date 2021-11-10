@@ -78,7 +78,7 @@ following JSON:
 
 where
 
-- `them_type` is either `dark` or `light`. This is used by some applications
+- `theme_type` is either `dark` or `light`. This is used by some applications
   for additional context on how the colors should be applied. Use `dark` for
   themes with a `dark` beckground and vice versa.
 - `xxxxxx` is a color specified in hexadecimal RGB (without a leading `#`).
