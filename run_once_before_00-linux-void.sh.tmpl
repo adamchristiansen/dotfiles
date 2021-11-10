@@ -1,15 +1,7 @@
 {{- if (eq .chezmoi.os "linux") -}}
+{{- if (eq .chezmoi.osRelease.id "void") -}}
 
 #!/usr/bin/env sh
-
-# Make sure this is running on Void linux
-if [ -f /etc/os-release ]; then
-    if ! grep '"void"' /etc/os-release > /dev/null 2>&1; then
-        exit 0
-    fi
-else
-    exit 1
-fi
 
 # Install xbps packages
 sudo xbps-install -Su \
@@ -61,4 +53,5 @@ sudo xbps-install -Su \
     zathura-pdf-mupdf \
     zenity
 
+{{- end -}}
 {{- end -}}
