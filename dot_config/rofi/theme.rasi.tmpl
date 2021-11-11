@@ -3,10 +3,12 @@
 * {
     // Global variables
     color-bg:        #{{- $color.base00.hex.rgb -}}CC;
-    color-fg:        #{{- $color.base05.hex.rgb }};
-    color-fg-alt:    #{{- $color.base01.hex.rgb }};
-    color-accent:    #{{- $color.base0b.hex.rgb }};
+    color-fg:        #{{- $color.base05.hex.rgb -}};
+    color-accent:    #{{- $color.base09.hex.rgb -}};
     padding-element: {{ .dim.padding -}}px;
+
+    background-color: transparent;
+    text-color: @color-fg;
 }
 
 window {
@@ -17,11 +19,15 @@ window {
 }
 
 mainbox {
-    background-color: transparent;
+}
+
+message {
+}
+
+textbox {
 }
 
 listview {
-    background-color: transparent;
     spacing: 0px;
 }
 
@@ -29,37 +35,55 @@ element {
     padding: @padding-element;
 }
 
-element normal normal,
-element normal urgent,
-element normal active,
-element selected urgent,
-element selected active,
-element alternate normal,
-element alternate urgent,
-element alternate active {
-    background-color: transparent;
+element.normal.normal,
+element.normal.urgent,
+element.normal.active,
+element.selected.normal,
+element.selected.urgent,
+element.selected.active,
+element.alternate.normal,
+element.alternate.urgent,
+element.alternate.active {
     text-color: @color-fg;
 }
 
-element selected normal {
-    background-color: @color-fg-alt;
+element.selected.normal {
+    background-color: @color-accent;
     text-color: @color-fg;
+}
+
+scrollbar {
+}
+
+mode-switcher {
+}
+
+button {
+}
+
+button.selected {
 }
 
 inputbar {
-    background-color: transparent;
+}
+
+case-indicator {
+}
+
+entry {
+    text-color: @color-fg;
+}
+
+prompt {
+}
+
+inputbar {
     children: [textbox-prompt-colon, entry];
     padding: @padding-element;
 }
 
 textbox-prompt-colon {
-    background-color: transparent;
     expand: false;
     str: " ";
     text-color: @color-accent;
-}
-
-entry {
-    background-color: transparent;
-    text-color: @color-fg;
 }
