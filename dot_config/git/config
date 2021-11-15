@@ -1,8 +1,11 @@
 [include]
 path = user
 
+[core]
+excludesfile = ~/.config/git/ignore
+
 [init]
 defaultBranch = main
 
-[core]
-excludesfile = ~/.config/git/ignore
+[pull]
+ff = only
