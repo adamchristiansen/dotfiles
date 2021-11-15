@@ -54,7 +54,7 @@ abbr -ga cze   chezmoi edit
 abbr -ga czga  chezmoi git -- add -A
 abbr -ga czgc  chezmoi git -- commit
 abbr -ga czgp  chezmoi git -- push
-abbr -ga czgpl chezmoi git -- pull --rebase
+abbr -ga czgpl chezmoi git -- pull
 abbr -ga czgs  chezmoi git -- status --short
 abbr -ga czgsu chezmoi git -- status --short -u
 abbr -ga czs   chezmoi status
@@ -69,7 +69,10 @@ abbr -ga gd    git diff
 abbr -ga gl    git log
 abbr -ga glg   git log --graph --oneline
 abbr -ga gp    git push
-abbr -ga gpl   git pull --rebase
+abbr -ga gpl   git pull
+abbr -ga gplf  git pull --no-rebase --ff-only
+abbr -ga gplm  git pull --no-rebase --ff
+abbr -ga gplr  git pull --rebase
 abbr -ga gr    git reset
 abbr -ga grh   git reset HEAD
 abbr -ga gs    git status --short
