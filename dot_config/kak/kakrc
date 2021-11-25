@@ -42,6 +42,9 @@ hook global BufWritePre .* %{
     trim-whitespace
 }
 
+map global user c -docstring 'comment line' ':comment-line<ret>'
+map global user C -docstring 'comment block' ':comment-block<ret>'
+
 map global user p -docstring 'paste from clipboard after' ':kakclip-paste-after<ret>'
 map global user P -docstring 'paste from clipboard before' ':kakclip-paste-before<ret>'
 map global user R -docstring 'replace from clipboard' ':kakclip-replace<ret>'
