@@ -91,28 +91,22 @@ alias cdpp   'cd ../..'
 alias cdppp  'cd ../../..'
 alias cdpppp 'cd ../../../..'
 alias e $EDITOR
-if type -q ranger
-    alias f 'ranger'
-end
-if type -q rg
-    alias rq 'rg --no-ignore --hidden --follow --glob "!.git/*"'
-end
-if type -q exa
-    alias x  'exa'
-    alias xa 'exa --git -a'
-    alias xl 'exa --git -al'
-    alias xt "exa --git -alT --ignore-glob='.git'"
-end
+alias f ranger
+alias j just
+alias m make
+alias rq 'rg --no-ignore --hidden --follow --glob "!.git/*"'
+alias l exa
+alias la 'exa --git -a'
+alias ll 'exa --git -al'
+alias lt "exa --git -alT --ignore-glob='.git'"
 if type -q xclip
     alias yy 'xclip -selection clipboard'
     alias yc 'printf "" | yy'
 else if type -q pbcopy
-    alias yy 'pbcopy'
+    alias yy pbcopy
     alias yc 'printf "" | yy'
 end
-if type -q zathura
-    alias zat 'zathura --fork'
-end
+alias zat 'zathura --fork'
 
 # Start the vi bindings
 fish_vi_key_bindings insert
