@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=Keyring
+Comment=GNOME Keyring
+Exec=gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,keyring
+OnlyShowIn=XFCE;
+RunHook=0
+StartupNotify=false
+Terminal=false
+Hidden=false
