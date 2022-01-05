@@ -2,6 +2,11 @@
 
 #!/usr/bin/env sh
 
+# Pause any playing media
+if command -v mpc > /dev/null; then
+    mpc pause
+fi
+
 # Try to lock on an XFCE session
 xfce4-screensaver-command --lock
 if [ $? -eq 0 ]; then
@@ -52,11 +57,6 @@ trap revert_dpms HUP INT TERM
 # lock screen
 t=15
 xset dpms $t $t $t
-
-# Pause any playing media
-if command -v mpc > /dev/null; then
-    mpc pause
-fi
 
 # Lock the screen and block until the screen is unlocked
 i3lock \
