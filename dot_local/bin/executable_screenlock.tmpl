@@ -2,6 +2,12 @@
 
 #!/usr/bin/env sh
 
+# Try to lock on an XFCE session
+xfce4-screensaver-command --lock
+if [ $? -eq 0 ]; then
+    return 0
+fi
+
 # The font to use for the lock screen text.
 font={{- .font.name | quote -}}
 
