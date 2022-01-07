@@ -34,7 +34,7 @@ super + Tab; p; {p, u, t}
 
 # Lock the screen
 ctrl + alt + l
-    "$HOME/.local/bin/screenlock"
+    "$HOME/.local/bin/session-lock"
 
 #------------------------------------------------------------------------------
 # Audio and Video
