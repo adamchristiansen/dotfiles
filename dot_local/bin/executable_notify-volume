@@ -88,10 +88,21 @@ def notify(volume, mute):
         text = "{}%".format(volume)
     else:
         text = "Mute ({}%)".format(volume)
+    # Select the icon to show
+    if mute:
+        icon = "audio-volume-muted"
+    else:
+        if volume <= 33:
+            icon = "audio-volume-low"
+        elif volume <= 67:
+            icon = "audio-volume-medium"
+        else:
+            icon = "audio-volume-high"
     # Show notification
     run(["notify-send",
         "-u", "low",
         "--hint=string:x-dunst-stack-tag:volume",
+        "--icon=" + icon,
         "-a", "Volume",
         text])
         # bar + " " + text]) # Use this version for the volume bar
