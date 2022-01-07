@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+if command -v zenity > /dev/null; then
+    zenity --question --default-cancel \
+        --no-wrap --text="Are you sure you want to suspend?" \
+        --icon-name="dialog-warning"
+    if [ $? -ne 0 ]; then
+        return 0
+    fi
+fi
+
+if command -v mpc > /dev/null; then
+    mpc pause
+fi
+
+session=$(echo $XDG_CURRENT_DESKTOP | tr "[:upper:]" "[:lower:]")
+
+if [ "$session" = "xfce" ]; then
+    xfce4-session-logout --suspend
+else
+    echo "Unknown session: `$session`" 1>&2
+    return 1
+fi
