@@ -23,6 +23,10 @@ super + Tab; {a,n,t,v}
         "$HOME/.local/bin/notify-volume"   \
     }
 
+# Clear notifications
+super + Tab; space
+    dunstctl close-all
+
 # Change the wallpaper
 super + Tab; w
     "$HOME/.local/bin/wallpaper-changer"
