@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-# This script runs all notifications that are passed in as arguments.
-
 notify-time
-notify-volume
+volume --notify
 notify-network
