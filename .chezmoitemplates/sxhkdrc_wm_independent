@@ -16,7 +16,7 @@ super + Tab; {a,n,t,v}
         "$HOME/.local/bin/notify-all",     \
         "$HOME/.local/bin/notify-network", \
         "$HOME/.local/bin/notify-time",    \
-        "$HOME/.local/bin/notify-volume"   \
+        "$HOME/.local/bin/volume" --notify   \
     }
 
 # Clear notifications
@@ -41,10 +41,10 @@ ctrl + alt + l
 #------------------------------------------------------------------------------
 
 super + a; {s, d, a}
-    "$HOME/.local/bin/notify-volume" {down,up,mute}
+    "$HOME/.local/bin/volume" {down,up,mute} --notify
 
 super + a; {1-9}
-    "$HOME/.local/bin/notify-volume" {1-9}0
+    "$HOME/.local/bin/volume" {1-9}0 --notify
 
 super + a; c; {a, s}
     "$HOME/.local/bin/music-choose" albumartist album { , title}
