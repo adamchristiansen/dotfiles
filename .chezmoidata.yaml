@@ -1,15 +1,9 @@
 colorscheme: moonlight
 
 dim:
-  border:
-    width: 2
-    width_inner: 0
-    width_outer: 0
+  border: 2
   padding: 8
-  title:
-    height: 48
-  window:
-    gap: 48
+  gap: 48
 
 font:
   name: Iosevka

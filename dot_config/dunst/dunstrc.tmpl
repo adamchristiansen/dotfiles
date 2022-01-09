@@ -17,7 +17,7 @@ format = "<b>%a</b> %s\n%b"
 frame_width = 0
 frame_color = "#{{- $color.base05.hex.rgb -}}"
 # The size in position in [{width}][x{height}][+/-{x}[+/-{y}]] coordinates.
-geometry = "320x10-{{- div .dim.window.gap  2 -}}+{{- div .dim.window.gap 2 -}}"
+geometry = "320x10-{{- div .dim.gap 2 -}}+{{- div .dim.gap 2 -}}"
 horizontal_padding = {{ .dim.padding }}
 icon_position = left
 # Allow HTML markup
