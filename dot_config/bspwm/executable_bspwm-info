@@ -52,4 +52,7 @@ for i in $(seq $(desktop_count)); do
     text="$text$s "
 done
 
-notify-send -u low --hint=string:x-dunst-stack-tag:workspaces -a "Workspaces" "$text"
+notify-send -u low \
+    --hint=string:x-dunst-stack-tag:workspaces \
+    --icon=preferences-system-windows \
+    -a "Workspaces" "$text"
