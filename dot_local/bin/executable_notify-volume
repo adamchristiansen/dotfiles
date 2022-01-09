@@ -74,15 +74,6 @@ def mixer_set(volume, mute):
 
 # Notify the volume percentage and muted state.
 def notify(volume, mute):
-    # Build the bar
-    length = int(round(100 / DELTA))
-    fill = int(round(volume / DELTA))
-    empty = length - fill
-    bar = ""
-    bar += SYM["left"] if fill else SYM["left_alt"]
-    bar += SYM["fill"] * fill
-    bar += SYM["empty"] * empty
-    bar += SYM["right"] if empty else SYM["right_alt"]
     # Get the volume text
     if not mute:
         text = "{}%".format(volume)
@@ -98,14 +89,16 @@ def notify(volume, mute):
             icon = "audio-volume-medium"
         else:
             icon = "audio-volume-high"
+    # The percentage for the progress bar
+    percent = volume if not mute else 0
     # Show notification
     run(["notify-send",
         "-u", "low",
         "--hint=string:x-dunst-stack-tag:volume",
+        "--hint=int:value:{}".format(percent),
         "--icon=" + icon,
         "-a", "Volume",
         text])
-        # bar + " " + text]) # Use this version for the volume bar
 
 # Computes the next volume for an absolute change.
 class ModeAbs:

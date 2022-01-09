@@ -4,4 +4,8 @@
 
 t=$(date '+%-I:%M %p')
 d=$(date '+%A %d %B %Y')
-notify-send -u low --hint=string:x-dunst-stack-tag:time -a "Time" " " "$t\n$d"
+notify-send \
+    -u low \
+    --hint=string:x-dunst-stack-tag:time \
+    --icon=x-office-calendar \
+    -a "Time" " " "$t\n$d"
