@@ -6,12 +6,8 @@
 super + Return
     alacritty || LIBGL_ALWAYS_SOFTWARE=1 alacritty
 
-# Run a browser
-super + b
-    qutebrowser || LIBGL_ALWAYS_SOFTWARE=1 qutebrowser
-
 # Show an application launcher
-super + {_, shift + }@space
+super + {_, shift + } @space
     rofi -show {run,drun}
 
 # Show information as a notification
