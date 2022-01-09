@@ -1,0 +1,165 @@
+#!/usr/bin/env python
+
+{{ template "util.py" }}
+
+import argparse
+import re
+import sys
+import textwrap
+
+class ModeAbs:
+    """
+    Computes the next volume for an absolute change.
+    """
+    def __init__(self, volume):
+        self.__volume = volume
+
+    def next(self, _volume, _mute):
+        return (clamp_percent(self.__volume), False)
+
+class ModeRel:
+    """
+    Computes the next volume for a relative change.
+    """
+    def __init__(self, n):
+        self.__n = n
+
+    def next(self, volume, _mute):
+        next_volume = clamp_percent(volume + args.delta * self.__n)
+        next_mute = False
+        if next_volume == 0:
+            next_mute = True
+        return (next_volume, next_mute)
+
+class ModeMute:
+    """
+    Computes the next volume for a mute.
+    """
+    def __init__(self):
+        pass
+
+    def next(self, volume, mute):
+        return (volume, not mute if volume > 0 else True)
+
+def mode(arg):
+    """
+    Parse the volume control mode.
+    """
+    if arg is None:
+        return None
+    elif re.match(r"^\d+$", arg):
+        return ModeAbs(int(arg))
+    elif re.match(r"^[+-]\d+$", arg):
+        return ModeRel(int(arg))
+    elif arg.lower() == "up":
+        return ModeRel(+1)
+    elif arg.lower() == "down":
+        return ModeRel(-1)
+    elif arg.lower() == "mute":
+        return ModeMute()
+    else:
+        raise ValueError("unknown mode")
+
+parser = argparse.ArgumentParser(
+    description=textwrap.dedent("""
+        Changes the volume and displays a notification with the information. This
+        script can be called in several ways by settings the mode argument:
+
+            {name}       Does not modifying the volume
+            {name} p     Set volume to p percent
+            {name} +n    Increment volume by delta n times
+            {name} -n    Decrement volume by delta n times
+            {name} up    Increment volume by delta
+            {name} down  Decrement volume by delta
+            {name} mute  Toggle mute/unmute
+    """.format(name=sys.argv[0].split("/")[-1])),
+    formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument("mode",
+    type=mode,
+    nargs="?",
+    help="the control mode")
+parser.add_argument("--delta",
+    type=int, default=5,
+    help="send a notification")
+parser.add_argument("--notify",
+    action="store_true",
+    help="send a notification")
+
+args = parser.parse_args()
+
+def clamp_percent(v):
+    return clamp(v, 0, 100)
+
+def mixer_run(args):
+    """
+    Run a command on the mixer. This automatically determines the approrpriate
+    mixer command so only the arguments need to be given.
+    """
+    # Find the device to use for `amixer` that works on the system
+    cmd = None
+    if run(["amixer", "get", "Master"]).exitcode == 0:
+        cmd = ["amixer"]
+    elif run(["amixer", "-D", "pulse", "get", "Master"]).exitcode == 0:
+        cmd = ["amixer", "-D", "pulse"]
+    if cmd is None:
+        print("could not find mixer command", file=sys.stderr)
+        sys.exit(1)
+    cmd.extend(args)
+    return run(cmd)
+
+def mixer_state(nearest=True):
+    """
+    Return the volume percentage and muted state.
+    """
+    _, s, _ = mixer_run(["get", "Master"])
+    mute = "[off]" in s
+    volume = int(re.search("(\d+)%", s).group(1))
+    if nearest:
+        # Match the volume to the nearest multiple of delta
+        volume = clamp_percent(int(args.delta * round(volume / args.delta)))
+    return volume, mute
+
+def mixer_set(volume, mute):
+    """
+    Set the volume percentage and muted state.
+    """
+    mixer_run(["set", "Master", str(volume) + "%"])
+    mixer_run(["set", "Master", "off" if mute else "on"])
+
+def notify_volume(volume, mute):
+    """
+    Notify the volume percentage and muted state.
+    """
+    # Get the volume text
+    if not mute:
+        text = "{}%".format(volume)
+    else:
+        text = "Mute ({}%)".format(volume)
+    # Select the icon to show
+    if mute:
+        icon = "audio-volume-muted"
+    else:
+        if volume <= 33:
+            icon = "audio-volume-low"
+        elif volume <= 67:
+            icon = "audio-volume-medium"
+        else:
+            icon = "audio-volume-high"
+    # The percentage for the progress bar
+    percent = volume if not mute else 0
+    # Show notification
+    notify(
+        app="Volume",
+        summary=text,
+        icon=icon,
+        tag="volume",
+        progress=percent,
+        urgency="low"
+    )
+
+# Set the new volume
+if args.mode is not None:
+    mixer_set(*args.mode.next(*mixer_state()))
+# Notify the new volume state
+if args.notify:
+    notify_volume(*mixer_state())
