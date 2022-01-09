@@ -3,7 +3,9 @@
 [global]
 # The notifications follow keyboard focus
 follow = keyboard
+
 font = {{ .font.name }} {{ .font.size }}
+
 # The following format specifiers can be used:
 # %a appname
 # %s summary
@@ -14,38 +16,68 @@ font = {{ .font.name }} {{ .font.size }}
 # %n progress value without any extra characters
 # %% Literal %
 format = "<b>%a</b> %s\n%b"
+
+# Frame
 frame_width = 0
-frame_color = "#{{- $color.base05.hex.rgb -}}"
-# The size in position in [{width}][x{height}][+/-{x}[+/-{y}]] coordinates.
-geometry = "320x10-{{- div .dim.gap 2 -}}+{{- div .dim.gap 2 -}}"
+frame_color = "#{{- $color.base03.hex.rgb -}}"
+
+# Geometry
+width = 320
+height = 200
+origin = top-right
+offset = {{ div .dim.gap 2 -}}x{{- div .dim.gap 2 }}
+padding = {{ .dim.padding }}
 horizontal_padding = {{ .dim.padding }}
+
+# Icon
+enable_recursive_icon_lookup = true
 icon_position = left
+# TODO Get the theme from a template variable
+icon_theme = Papirus
+# The icon size of 24 is used because it has the most icons for SVG themes.
+# The icon is upscaled using the (min|max)_icon_size.
+icon_size = 24
+min_icon_size = 48
+max_icon_size = 48
+
+# Progress bar
+progress_bar = true
+# TODO Get these dimensions from template variables (this requires the notification size as well)
+progress_bar_height = 10
+progress_bar_min_width = 300
+progress_bar_max_width = 300
+progress_bar_frame_width = 1
+
 # Allow HTML markup
 markup = yes
-# Vertical padding
-padding = {{ .dim.padding }}
+
+# Separator
 separator_color = frame
 separator_height = 0
+
 # Sort by urgency
 sort = yes
-# Show a notification at startup
-startup_notification = true
+
 # Allowed notifications recalled from history to timeout automatically
 sticky_history = no
+
 # Wrap long lines
 word_wrap = yes
 
 [urgency_low]
-background = "#{{- $color.base05.hex.rgb -}}"
+background = "#{{- $color.base07.hex.rgb -}}"
 foreground = "#{{- $color.base00.hex.rgb -}}"
-timeout = 3
+highlight  = "#{{- $color.base03.hex.rgb -}}"
+timeout    = 3
 
 [urgency_normal]
-background = "#{{- $color.base05.hex.rgb -}}"
+background = "#{{- $color.base07.hex.rgb -}}"
 foreground = "#{{- $color.base00.hex.rgb -}}"
-timeout = 5
+highlight  = "#{{- $color.base03.hex.rgb -}}"
+timeout    = 5
 
 [urgency_critical]
 background = "#{{- $color.base08.hex.rgb -}}"
 foreground = "#{{- $color.base00.hex.rgb -}}"
-timeout = 0
+highlight  = "#{{- $color.base03.hex.rgb -}}"
+timeout    = 0
