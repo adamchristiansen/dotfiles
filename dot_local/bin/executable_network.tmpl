@@ -1,0 +1,227 @@
+#!/usr/bin/env python
+
+{{ template "util.py" }}
+
+import collections
+import re
+
+def dbm_to_percent(dbm):
+    """
+    Convert dBm to a percentage.
+
+    # Arguments
+
+    - `dbm` (float): The signal strength in dBm.
+
+    # Returns
+
+    (int): The signal strength as a percentage.
+    """
+    # The following model is used:
+    #
+    #   dBm >= -40  => 100%
+    #   dBm <= -110 => 0%
+    #   anything else is linearly interpolated
+    dbm = abs(dbm)
+    if dbm <= 40:
+        return 100
+    elif dbm >= 110:
+        return 0
+    else:
+        m = -10 / 7
+        b = 1100 / 7
+        return int(round(m * dbm + b))
+
+# An object representing a network interface.
+#
+# - `device` (string): Device name.
+# - `type` (string): "wireless" or "wired".
+# - `ssid` (string|None): SSID of wireless networks.
+# - `strength` (int|None): Signal strength (in percent) of wireless networks.
+# - `connected` (bool): Whether there is a network connection.
+Interface = collections.namedtuple("Interface",
+    ["device", "type", "ssid", "strength", "connected"])
+
+def interfaces():
+    """
+    Enumerate all of the interfaces.
+
+    # Returns
+
+    (list<Interface>): All of the interfaces found.
+    """
+    # Get the interfaces
+    r = run(["iw", "dev"])
+    if r.exitcode != 0:
+        raise IOError(f"iw exited with {r.exitcode}\nstdout: {r.stdout}\nstderr{r.stderr}")
+    # Spearate each interface into individual strings
+    int_texts = []
+    mark = 0
+    lines = r.stdout.splitlines()
+    for i, line in enumerate(lines):
+        if i == mark:
+            continue
+        elif len(line.lstrip()) != len(line):
+            continue
+        else:
+            int_texts.append("\n".join(lines[mark:i]))
+            mark = i
+    int_texts.append("\n".join(lines[mark:]))
+    # Build the interfaces
+    ints = []
+    for text in int_texts:
+        device = None
+        type = None
+        ssid = None
+        strength = None
+        connected = None
+
+        # Get the device name
+        m = re.search(r"interface\s+(\w+)", text, re.I)
+        if m:
+            device = m.group(1)
+        # Get the interface type
+        m = re.search(r"txpower\s+[.\d]+", text, re.I)
+        if m:
+            type = "wireless"
+        else:
+            type = "wired"
+        # Get the SSID
+        m = re.search(r"ssid\s+([\w ]+)$", text, re.I | re.M)
+        if m:
+            ssid = m.group(1)
+        # Get the signal strength in percent
+        m = re.search(r"txpower\s+([.\d]+)", text, re.I)
+        if m:
+            dbm = abs(float(m.group(1)))
+            strength = dbm_to_percent(dbm)
+        # Get connected status
+        ip = run(["ip", "link", "show", device])
+        if ip.exitcode != 0:
+            raise IOError(f"ip exited with {ip.exitcode}\nstdout: {ip.stdout}\nstderr{ip.stderr}")
+        connected = re.search(r"state[ ]+UP", ip.stdout, re.I) is not None
+        # Add to the list
+        ints.append(Interface(device, type, ssid, strength, connected))
+
+    return sorted(ints, key=lambda x: x.device)
+
+def notify_network(i, send_notification=False):
+    """
+    Generate a notification for a wired interface.
+
+    # Arguments
+
+    - i (Interface): The interface status.
+    - send_notification (bool): Send a notification instead of printing to the command line.
+    """
+    wireless = i.type == "wireless"
+
+    # Build the notification
+    summary = i.device
+    body = None
+    icon = None
+    urgency = "low"
+
+    if wireless:
+        # Wireless
+        if not i.connected:
+            icon = "network-wireless-offline"
+            body = "Offline"
+            urgency = "critical"
+        elif i.strength >= 100:
+            summary = i.ssid
+            body = f"Connected ({i.strength}%)"
+            icon = "network-wireless-signal-excellent"
+        elif i.strength >= 70:
+            summary = i.ssid
+            body = f"Connected ({i.strength}%)"
+            icon = "network-wireless-signal-good"
+        elif i.strength >= 30:
+            summary = i.ssid
+            body = f"Connected ({i.strength}%)"
+            icon = "network-wireless-signal-ok"
+        elif i.strength > 0:
+            summary = i.ssid
+            body = f"Connected ({i.strength}%)"
+            icon = "network-wireless-signal-weak"
+        else:
+            summary = i.ssid
+            body = f"Connected ({i.strength}%)"
+            icon = "network-wireless-signal-none"
+    else:
+        # Wired
+        if not i.connected:
+            icon = "network-offline"
+            body = "Offline"
+            urgency = "critical"
+        else:
+            icon = "network-transmit-receive"
+            body = "Connected"
+
+    if send_notification:
+        # Generate a notification
+        notify(
+            app=f"Wire{'less' if wireless else 'd'} Network",
+            summary=summary,
+            body=body,
+            icon=icon,
+            urgency=urgency,
+            tag=f"network-{i.device}"
+        )
+    else:
+        # Print on stdout
+        if i.device    is not None: print(f"Device:      {i.device}")
+        if i.type      is not None: print(f"  Type:      {i.type}")
+        if i.ssid      is not None: print(f"  SSID:      {i.ssid}")
+        if i.strength  is not None: print(f"  Strength:  {i.strength}")
+        if i.connected is not None: print(f"  Connected: {i.connected}")
+
+if __name__ == "__main__":
+    import argparse
+    import time
+
+    parser = argparse.ArgumentParser(
+        description="Query network state")
+    parser.add_argument("--interval",
+        type=float, default=3,
+        help="time in seconds to sleep between monitor queries")
+    parser.add_argument("--monitor",
+        action="store_true",
+        help="run until manually stopped")
+    parser.add_argument("--notify",
+        action="store_true",
+        help="send a notification")
+    args = parser.parse_args()
+
+    def show_all():
+        for i in interfaces():
+            show_one(i)
+
+    def show_one(i):
+        notify_network(i, args.notify)
+
+    if args.monitor:
+        prev = None
+        while True:
+            ints = interfaces()
+            if prev is None:
+                # Show everything at startup
+                show_all()
+            else:
+                # Check to changes to existing devices
+                for i in ints:
+                    if i.device in prev:
+                        p = prev[i.device]
+                        if not i.connected and p.connected:
+                            show_one(i)
+                        elif i.connected and not p.connected:
+                            show_one(i)
+                    else:
+                        # This is a new connection so it is always notified
+                        show_one(i)
+            # Update and sleep
+            prev = {i.device: i for i in ints}
+            time.sleep(args.interval)
+    else:
+        # Display once and then exit
+        show_all()

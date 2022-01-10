@@ -80,7 +80,7 @@ parser.add_argument("mode",
     help="the control mode")
 parser.add_argument("--delta",
     type=int, default=5,
-    help="send a notification")
+    help="the amount to change the volume")
 parser.add_argument("--notify",
     action="store_true",
     help="send a notification")
@@ -123,18 +123,18 @@ def mixer_set(volume, mute):
     """
     Set the volume percentage and muted state.
     """
-    mixer_run(["set", "Master", str(volume) + "%"])
+    mixer_run(["set", "Master", f"{volume}%"])
     mixer_run(["set", "Master", "off" if mute else "on"])
 
-def notify_volume(volume, mute):
+def show_volume(volume, mute):
     """
     Notify the volume percentage and muted state.
     """
     # Get the volume text
     if not mute:
-        text = "{}%".format(volume)
+        text = f"{volume}%"
     else:
-        text = "Mute ({}%)".format(volume)
+        text = f"Mute ({volume}%)"
     # Select the icon to show
     if mute:
         icon = "audio-volume-muted"
@@ -148,18 +148,21 @@ def notify_volume(volume, mute):
     # The percentage for the progress bar
     percent = volume if not mute else 0
     # Show notification
-    notify(
-        app="Volume",
-        summary=text,
-        icon=icon,
-        tag="volume",
-        progress=percent,
-        urgency="low"
-    )
+    if args.notify:
+        notify(
+            app="Volume",
+            summary=text,
+            icon=icon,
+            tag="volume",
+            progress=percent,
+            urgency="low"
+        )
+    else:
+        s = f"{volume}%"
+        if mute:
+            s += " mute"
+        print(s)
 
-# Set the new volume
 if args.mode is not None:
     mixer_set(*args.mode.next(*mixer_state()))
-# Notify the new volume state
-if args.notify:
-    notify_volume(*mixer_state())
+show_volume(*mixer_state())
