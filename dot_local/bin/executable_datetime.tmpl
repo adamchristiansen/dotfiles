@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+{{ template "util.py" }}
+
+import argparse
+import datetime
+
+parser = argparse.ArgumentParser(
+    description="Show date and time information")
+parser.add_argument("--notify",
+    action="store_true",
+    help="send a notification")
+
+args = parser.parse_args()
+
+now = datetime.datetime.now()
+
+time = now.strftime("%-I:%M %p")
+date = now.strftime("%Y %B %d")
+
+if args.notify:
+    notify(
+        app="Time",
+        body=f"{time}\n{date}",
+        icon="x-office-calendar",
+        urgency="low",
+        tag="datetime",
+    )
+else:
+    print(f"{time} on {date}")

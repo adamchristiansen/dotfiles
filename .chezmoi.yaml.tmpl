@@ -1,10 +1,6 @@
 {{ $editor := promptString "What text editor do you use" -}}
 {{ $git_name := promptString "What is you full name for git" -}}
 {{ $git_email := promptString "What is your email address for git" -}}
-{{ $hw_iface_wired := promptString
-    "What is the name of the default wired interface (optional)" -}}
-{{ $hw_iface_wireless := promptString
-    "What is the name of the default wireless interface (optional)" -}}
 
 format: yaml
 mode: file
@@ -16,8 +12,3 @@ data:
   git:
     email: {{ $git_email | quote }}
     name: {{ $git_name | quote }}
-
-  hardware:
-    interface:
-      wired: {{ $hw_iface_wired | quote }}
-      wireless: {{ $hw_iface_wireless | quote }}

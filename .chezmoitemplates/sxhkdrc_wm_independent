@@ -12,11 +12,11 @@ super + {_, shift + } @space
 
 # Show information as a notification
 super + Tab; {a,n,t,v}
-    {                                      \
-        "$HOME/.local/bin/notify-all",     \
-        "$HOME/.local/bin/notify-network", \
-        "$HOME/.local/bin/notify-time",    \
-        "$HOME/.local/bin/volume" --notify   \
+    {                                         \
+        "$HOME/.local/bin/notify-all",        \
+        "$HOME/.local/bin/network" --notify,  \
+        "$HOME/.local/bin/datetime" --notify, \
+        "$HOME/.local/bin/volume" --notify    \
     }
 
 # Clear notifications
