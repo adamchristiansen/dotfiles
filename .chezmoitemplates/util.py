@@ -89,7 +89,7 @@ def notify(
     if summary is not None:
         cmd.append(summary)
     else:
-        cmd.append("(no summary)")
+        cmd.append(" ")
     if body is not None:
         cmd.append(body)
 

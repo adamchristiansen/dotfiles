@@ -11,13 +11,16 @@
 #       Ideal for the night. Moderately prefers reds.
 #   witching, w
 #       Ideal for the witching hour. Aggressively prefers reds.
+#
+# When no shift parameter is supplied, the screen is reset to the default
+# temperature.
 
-# The temperature to the display
-temperature="6500K"
+# The temperature to set the display
+temperature=""
 
 if [ $# -ge 1 ]; then
     case "$1" in
-        o | off)      temperature="6500K" ;;
+        o | off)      temperature="" ;;
         d | dusk )    temperature="5500K" ;;
         n | night)    temperature="4500K" ;;
         w | witching) temperature="3500K" ;;
@@ -30,4 +33,6 @@ fi
 
 # Always clear the screen since the temperature changes stack multiplicatively
 redshift -x > /dev/null
-redshift -O $temperature > /dev/null
+if [ ! -z "$temperature" ]; then
+    redshift -O $temperature > /dev/null
+fi
