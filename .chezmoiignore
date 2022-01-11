@@ -21,6 +21,7 @@ install.sh
 .config/zathura
 .local/bin/music-choose
 .local/bin/nightshift
+.local/bin/notify-*
 .local/bin/screenlock
 .local/bin/session-*
 .local/bin/wallpaper-*
