@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 if command -v mpc > /dev/null; then
-    mpc pause
+    mpc pause > /dev/null 2>&1
 fi
 
 session=$(echo $XDG_CURRENT_DESKTOP | tr "[:upper:]" "[:lower:]")
