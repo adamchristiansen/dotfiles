@@ -5,12 +5,12 @@ if command -v zenity > /dev/null; then
         --no-wrap --text="Are you sure you want to shutdown?" \
         --icon-name="dialog-warning"
     if [ $? -ne 0 ]; then
-        return 0
+        return 1
     fi
 fi
 
 if command -v mpc > /dev/null; then
-    mpc pause
+    mpc pause > /dev/null 2>&1
 fi
 
 session=$(echo $XDG_CURRENT_DESKTOP | tr "[:upper:]" "[:lower:]")
