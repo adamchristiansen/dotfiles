@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+if ! pgrep polybar; then
+    polybar bar &
+else
+    polybar-msg cmd toggle
+fi

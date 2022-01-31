@@ -1,4 +1,72 @@
-{{ template "sxhkdrc_wm_independent" }}
+#------------------------------------------------------------------------------
+# General
+#------------------------------------------------------------------------------
+
+# Run a terminal
+super + Return
+    alacritty || LIBGL_ALWAYS_SOFTWARE=1 alacritty
+
+# Show an application launcher
+super + {_, shift + } @space
+    rofi -show {run,drun}
+
+# Show information as a notification
+super + Tab; {a,n,t,v}
+    {                                         \
+        "$HOME/.local/bin/notify-all",        \
+        "$HOME/.local/bin/network" --notify,  \
+        "$HOME/.local/bin/datetime" --notify, \
+        "$HOME/.local/bin/volume" --notify    \
+    }
+
+# Clear notifications
+super + Tab; space
+    dunstctl close-all
+
+# Change the wallpaper
+super + Tab; w
+    "$HOME/.local/bin/wallpaper-changer"
+
+# Show a password chooser to copy to clipboard
+super + Tab; p; {p, u, t}
+    "$HOME/.local/bin/bw-query" --sync {-p,-u,-t} --rofi --ask-gui \
+        | xclip -selection clipboard
+
+# Lock the screen
+ctrl + alt + l
+    "$HOME/.local/bin/session-lock"
+
+# Toggle the status bar
+super + b
+    "$HOME/.config/polybar/toggle"
+
+#------------------------------------------------------------------------------
+# Audio and Video
+#------------------------------------------------------------------------------
+
+super + a; {s, d, a}
+    "$HOME/.local/bin/volume" {down,up,mute} --notify
+
+super + a; {1-9}
+    "$HOME/.local/bin/volume" {1-9}0 --notify
+
+super + a; c; {a, s}
+    "$HOME/.local/bin/music-choose" albumartist album { , title}
+
+super + a; c; q
+    "$HOME/.local/bin/music-choose" --queue albumartist album title
+
+super + a; {b, n}
+    mpc -q {prev, next}
+
+super + a; {shift + p, p, s}
+    mpc -q {pause, toggle, stop}
+
+super + a; {_, shift + } x
+    mpc {crop, clear}
+
+super + alt + a; p
+    xdotool key --window "$(xdotool search --class mpv)" p
 
 #------------------------------------------------------------------------------
 # BSPWM General
@@ -6,8 +74,7 @@
 
 # Make sxhkd and bspwm reload its configuration files
 super + Escape
-    pkill -USR1 -x sxhkd; \
-    "$XDG_CONFIG_HOME/bspwm/bspwmrc" 1
+    pkill -USR1 -x sxhkd; "$XDG_CONFIG_HOME/bspwm/bspwmrc"
 
 # Quit bspwm normally
 super + ctrl + alt + shift + Escape
