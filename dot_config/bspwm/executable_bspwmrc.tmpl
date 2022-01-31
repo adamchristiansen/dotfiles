@@ -2,23 +2,22 @@
 
 #!/usr/bin/env sh
 
-# This indicates that the script is run in startup mode, where everything is
-# initialized. After startup mode it should be called with a non-zero parameter
-# to prevent everything from being killed and reloaded.
-if [ "$1" -eq 0 ]; then
-    startup=true
-else
-    startup=false
-fi
-
 # Start the hotkey daemon
-if $startup; then
-    pkill sxhkd
+if ! pgrep sxhkd; then
     SXHKD_SHELL=$(which sh) sxhkd -c "$XDG_CONFIG_HOME/bspwm/sxhkdrc" &
+else
+    pkill -USR1 -x sxhkd
 fi
 
-{{ template "wm_init_wm_independent.sh" }}
-{{ template "wm_init_non_reparenting.sh" }}
+# Prevent the cursor from changing to an X when hovering over non-window
+# space
+xsetroot -cursor_name left_ptr &
+
+# The standard Java GUI tookit keeps a list of known non-reparenting window
+# managers. If using one that is not on that list, the windows might display a
+# blank screen. This can be solved by setting the name of the WM to one that is
+# known to be non-reparenting.
+wmname LG3D
 
 # Kill any existing instances of bspc (because of subscriptions)
 pkill bspc

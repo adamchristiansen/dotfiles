@@ -10,19 +10,12 @@ send_sigusr1() {
 # If at least one instance of the program in $1 is running, then execute the
 # command in $2.
 when_running() {
-    # Change the format of the command "name" to "[n]ame". Adding these
-    # brackets prevents grep from reporting itself in the process list
-    h=$(echo "$1" | awk '{print substr($1,0,1)}')
-    t=$(echo "$1" | awk '{print substr($1,2)}')
-    query="[$h]$t"
-
-    if [ ! -z "$(ps aux | grep "$query")" ]; then
+    if pgrep -x "$1" > /dev/null; then
         $2 > /dev/null 2>&1 &
     fi
 }
 
-when_running berry "$XDG_CONFIG_HOME/berry/autostart 1"
-when_running bspwm "$XDG_CONFIG_HOME/bspwm/bspwmrc 1"
+when_running bspwm "$XDG_CONFIG_HOME/bspwm/bspwmrc"
 send_sigusr1 picom
 when_running qutebrowser "qutebrowser --target=tab-silent :config-source"
 send_sigusr1 sxhkd
