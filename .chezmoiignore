@@ -14,15 +14,19 @@ install.sh
 .config/bspwm
 .config/dunst
 .config/picom
+.config/polybar
 .config/rofi
 .config/wallpaper
 .config/user-dirs.*
 .config/xfce4
 .config/zathura
+.local/bin/datetime
 .local/bin/music-choose
+.local/bin/network
 .local/bin/nightshift
 .local/bin/notify-*
 .local/bin/screenlock
 .local/bin/session-*
+.local/bin/volume
 .local/bin/wallpaper-*
 {{ end }}
