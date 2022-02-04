@@ -42,6 +42,8 @@ hook global BufWritePre .* %{
     trim-whitespace
 }
 
+map global user w -docstring 'write buffer' ':w<ret>'
+
 map global user c -docstring 'comment line' ':comment-line<ret>'
 map global user C -docstring 'comment block' ':comment-block<ret>'
 
