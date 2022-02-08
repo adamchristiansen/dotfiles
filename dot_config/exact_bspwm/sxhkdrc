@@ -11,7 +11,7 @@ super + {_, shift + } @space
     rofi -show {run,drun}
 
 # Show information as a notification
-super + Tab; {a,n,t,v}
+super + Tab; n; {a,n,t,v}
     {                                         \
         "$HOME/.local/bin/notify-all",        \
         "$HOME/.local/bin/network" --notify,  \
@@ -31,6 +31,10 @@ super + Tab; w
 super + Tab; p; {p, u, t}
     "$HOME/.local/bin/bw-query" --sync {-p,-u,-t} --rofi --ask-gui \
         | xclip -selection clipboard
+
+# Show a session menu
+super + shift + s
+    "$HOME/.local/bin/session-menu"
 
 # Lock the screen
 ctrl + alt + l

@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+
+"""
+Display a menu to select one of the `session-*` commands to run.
+"""
+
+import subprocess
+import sys
+
+# The rofi command to spawn. This returns the zero-indexed selected item,
+# not the text.
+ROFI_COMMAND = ["rofi", "-dmenu", "-i", "-format", "i"]
+
+# The encoding for subprocess communication.
+ENCODING = "utf-8"
+
+def rofi(options):
+    """
+    Run the rofi command and then pipe the options into it. The selection that
+    is made is returned.
+    """
+    return subprocess.run(ROFI_COMMAND,
+            input="\n".join(options).encode(ENCODING),
+            stdout=subprocess.PIPE).stdout.decode(ENCODING).strip()
+
+if __name__ == "__main__":
+    opts = ["Lock", "Logout", "Reboot", "Shutdown", "Suspend"]
+    try:
+        i = int(rofi(opts))
+    except ValueError:
+        # Nothing was selected
+        sys.exit()
+    subprocess.run(f"session-{opts[i].lower()}")
