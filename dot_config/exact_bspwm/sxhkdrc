@@ -12,11 +12,11 @@ super + {_, shift + } @space
 
 # Show information as a notification
 super + Tab; n; {a,n,t,v}
-    {                                         \
-        "$HOME/.local/bin/notify-all",        \
-        "$HOME/.local/bin/network" --notify,  \
-        "$HOME/.local/bin/datetime" --notify, \
-        "$HOME/.local/bin/volume" --notify    \
+    {                                                \
+        "$HOME/.local/bin/notify-all",               \
+        "$HOME/.local/bin/notify-network" --notify,  \
+        "$HOME/.local/bin/notify-datetime" --notify, \
+        "$HOME/.local/bin/notify-volume" --notify    \
     }
 
 # Clear notifications
@@ -49,10 +49,10 @@ super + b
 #------------------------------------------------------------------------------
 
 super + a; {s, d, a}
-    "$HOME/.local/bin/volume" {down,up,mute} --notify
+    "$HOME/.local/bin/notify-volume" {down,up,mute} --notify
 
 super + a; {1-9}
-    "$HOME/.local/bin/volume" {1-9}0 --notify
+    "$HOME/.local/bin/notify-volume" {1-9}0 --notify
 
 super + a; c; {a, s}
     "$HOME/.local/bin/music-choose" albumartist album { , title}
