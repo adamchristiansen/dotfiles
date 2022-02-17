@@ -6,6 +6,7 @@ Select a number of songs and and play them.
 Requires rofi (as dmenu) and mpc.
 """
 
+from collections import OrderedDict
 import subprocess
 import sys
 
@@ -36,13 +37,14 @@ class Song:
     """
     Represents the metadata of a song.
     """
-    def __init__(self, album, albumartist, artist, filename, title, track):
+    def __init__(self, album, albumartist, artist, filename, title, track, index):
         self.album = album
         self.albumartist = albumartist
         self.artist = artist
         self.filename = filename
         self.title = title
         self.track = track
+        self.index = str(index)
 
 class Songs:
     """
@@ -72,20 +74,21 @@ class Songs:
             sys.exit(1)
         out = p.stdout.decode(ENCODING).strip()
         self._songs = []
-        for line in out.split("\n"):
+        for i, line in enumerate(out.split("\n")):
             fields = line.split(TAG_DELIM.replace("#", ""))
-            self._songs.append(Song(*fields))
+            self._songs.append(Song(*fields, i + 1))
 
     def options(self, *keys):
         """
         Prepare a list of options to show in a song chooser, where the keys are
         the metadata fields to include in the option (from left to right). For
         example, if `songs.options("albumartist", "album")` is called, then
-        songs will be aggregated by album artist and album. This will return a
-        dictionary whose keys are a string containing the album artist and
-        album, and the values are the `Song` objects which have the superkey.
+        songs will be aggregated by album artist and album. This will return an
+        ordered dictionary whose keys are a string containing the album artist
+        and album, and the values are the `Song` objects which have the
+        superkey.
         """
-        opts = dict()
+        opts = OrderedDict()
         for song in self._songs:
             values = list(map(lambda key: getattr(song, key), keys))
             opt = SEL_DELIM.join(values)
