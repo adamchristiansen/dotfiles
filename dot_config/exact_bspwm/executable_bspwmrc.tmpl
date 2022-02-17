@@ -5,8 +5,6 @@
 # Start the hotkey daemon
 if ! pgrep sxhkd; then
     SXHKD_SHELL=$(which sh) sxhkd -c "$XDG_CONFIG_HOME/bspwm/sxhkdrc" &
-else
-    pkill -USR1 -x sxhkd
 fi
 
 # Prevent the cursor from changing to an X when hovering over non-window

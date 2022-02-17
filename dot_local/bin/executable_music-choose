@@ -112,7 +112,7 @@ def mpc_play_songs(song_list):
     # Add the songs and start playing the first one
     for song in song_list:
         subprocess.run(["mpc", "add", song.filename])
-    mpc_play_queue(count)
+    mpc_play_queue(count - 1)
 
 def mpc_play_queue(index):
     """
