@@ -108,11 +108,12 @@ def mpc_play_songs(song_list):
     if p.returncode:
         print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
         sys.exit(1)
-    count = len(p.stdout.decode(ENCODING).strip().split("\n"))
+    text = p.stdout.decode(ENCODING).strip()
+    count = len(text.split("\n")) if text else 0
     # Add the songs and start playing the first one
     for song in song_list:
         subprocess.run(["mpc", "add", song.filename])
-    mpc_play_queue(count - 1)
+    mpc_play_queue(count)
 
 def mpc_play_queue(index):
     """
