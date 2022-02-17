@@ -58,7 +58,7 @@ super + a; c; {a, s}
     "$HOME/.local/bin/music-choose" albumartist album { , title}
 
 super + a; c; q
-    "$HOME/.local/bin/music-choose" --queue albumartist album title
+    "$HOME/.local/bin/music-choose" --queue index albumartist album title
 
 super + a; {b, n}
     mpc -q {prev, next}
@@ -66,8 +66,8 @@ super + a; {b, n}
 super + a; {shift + p, p, s}
     mpc -q {pause, toggle, stop}
 
-super + a; {_, shift + } x
-    mpc {crop, clear}
+super + a; x
+    mpc clear
 
 super + alt + a; p
     xdotool key --window "$(xdotool search --class mpv)" p
