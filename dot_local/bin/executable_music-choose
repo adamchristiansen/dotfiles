@@ -99,18 +99,23 @@ def mpc_play_songs(song_list):
     """
     Play all of the songs in the list in the order that they appear.
     """
-    # The songs must be reversed because each is inserted in front of the
-    # last
-    for song in reversed(song_list):
-        subprocess.run(["mpc", "insert", song.filename])
-    subprocess.run(["mpc", "next"])
-    subprocess.run(["mpc", "play"])
+    # Get the number of songs in queue
+    p = subprocess.run(["mpc", "playlist"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if p.returncode:
+        print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
+        sys.exit(1)
+    count = len(p.stdout.decode(ENCODING).strip().split("\n"))
+    # Add the songs and start playing the first one
+    for song in song_list:
+        subprocess.run(["mpc", "add", song.filename])
+    mpc_play_queue(count)
 
 def mpc_play_queue(index):
     """
     Play the song at the index in the queue. Note that this starts at 1, not 0.
     """
-    subprocess.run(["mpc", "play", str(index)])
+    subprocess.run(["mpc", "play", str(index + 1)])
 
 if __name__ == "__main__":
     import argparse
@@ -134,6 +139,6 @@ if __name__ == "__main__":
         sys.exit()
     # Play the selection
     if args.queue:
-        mpc_play_queue(sel_index + 1)
+        mpc_play_queue(sel_index)
     else:
         mpc_play_songs(opts[opts_list[sel_index]])
