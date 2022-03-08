@@ -99,13 +99,9 @@ alias l exa
 alias la 'exa --git -a'
 alias ll 'exa --git -al'
 alias lt "exa --git -alT --ignore-glob='.git'"
-if type -q xclip
-    alias yy 'xclip -selection clipboard'
-    alias yc 'printf "" | yy'
-else if type -q pbcopy
-    alias yy pbcopy
-    alias yc 'printf "" | yy'
-end
+alias pp "clipboard -pn"
+alias yc "clipboard -xn"
+alias yy "clipboard -cn"
 alias zat 'zathura --fork'
 
 # Start the vi bindings

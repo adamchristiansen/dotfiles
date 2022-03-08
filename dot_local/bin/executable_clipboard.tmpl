@@ -1,0 +1,250 @@
+#!/usr/bin/env python3
+
+{{ template "util.py" }}
+
+from abc import ABC, abstractmethod as abstract
+import os
+import shutil
+
+def exists(command):
+    """
+    Check that a `command` exists in `$PATH`.
+    """
+    return shutil.which(command) is not None
+
+def defined(variable):
+    """
+    Check that an environment variable is defined.
+    """
+    return os.getenv(variable) is not None
+
+class Clip(ABC):
+    """
+    The interface the a clipboard manager must conform to.
+    """
+
+    # The output of a command.
+    #
+    # - `stdout` (bytes)
+    # - `stderr` (bytes)
+    CmdResult = collections.namedtuple("CmdResult", ["stdout", "stderr"])
+
+    def run(self, cmd, input=None):
+        """
+        Run a `cmd` as a list of strings. When `input` is specified as a
+        `bytes` object, it is directed to `stdin` of the command.
+
+        When `input` is not `None`, `stdout` and `stderr` are not captured.
+        When `input` is `None`, `stdout` and `stderr` are captured. This is to
+        avoid a _bug_ in `xclip` which confuses the Python `subprocess` by not
+        closing `stdout`.
+
+        When the subprocess exits with a non-zero return value, an exception is
+        raised.
+        """
+        if input is not None and not isinstance(input, bytes):
+            raise TypeError("input must be bytes")
+        if input is not None:
+            p = subprocess.run(cmd, input=input)
+        else:
+            p = subprocess.run(cmd, capture_output=True)
+        if p.returncode != 0:
+            raise RuntimeError(
+                "subprocess returned non-zero exit code ({}): {}".format(
+                    p.returncode,
+                    " ".join(cmd),
+                ))
+        return Clip.CmdResult(
+            stdout = (p.stdout if p.stdout is not None else b""),
+            stderr = (p.stderr if p.stderr is not None else b""),
+        )
+
+    @abstract
+    def clear(self, data=b""):
+        """
+        Clears the contents of all clipboards by storing `data` (a `bytes`
+        object) in them.
+        """
+        pass
+
+    @abstract
+    def copy(self, data):
+        """
+        Stores `data` (a `bytes` object) into the main clipboard. This is the
+        clipboard that `CTRL-C` writes to, which is typically not primary or
+        secondary clipboards.
+        """
+        pass
+
+    @abstract
+    def paste(self):
+        """
+        Returns a `bytes` object from the clipboard that is read by `CTRL-V`,
+        which is typically not the primary or secondary clipboard.
+        """
+        pass
+
+class ClipPb(Clip):
+    """
+    A clipboard manager using `pbcopy` and `pbpaste` on macOS.
+    """
+
+    def clear(self, data=b""):
+        self.run(["pbcopy", "-pboard", "general"], data)
+        self.run(["pbcopy", "-pboard", "ruler"], data)
+        self.run(["pbcopy", "-pboard", "find"], data)
+        self.run(["pbcopy", "-pboard", "font"], data)
+
+    def copy(self, data):
+        self.run(["pbcopy"], data)
+
+    def paste(self):
+        return self.run(["pbpaste"]).stdout
+
+class ClipWayland(Clip):
+    """
+    A clipboard manager using `wl-copy` and `wl-paste` on Wayland
+    """
+
+    def clear(self, data=b""):
+        self.run(["wl-copy", "--foreground"], data)
+        self.run(["wl-copy", "--foreground", "--primary"], data)
+
+    def copy(self, data):
+        self.run(["wl-copy", "--foreground"], data)
+
+    def paste(self):
+        return self.run(["wl-paste"]).stdout
+
+class ClipXClip(Clip):
+    """
+    A clipboard manager using `xclip` on X sessions.
+    """
+
+    def clear(self, data=b""):
+        self.run(["xclip", "-in", "-selection", "primary"], data)
+        self.run(["xclip", "-in", "-selection", "secondary"], data)
+        self.run(["xclip", "-in", "-selection", "clipboard"], data)
+
+    def copy(self, data):
+        self.run(["xclip", "-in", "-selection", "clipboard"], data)
+
+    def paste(self):
+        return self.run(["xclip", "-out", "-selection", "clipboard"]).stdout
+
+class ClipXSel(Clip):
+    """
+    A clipboard manager using `xsel` on X sessions.
+    """
+
+    def clear(self, data=b""):
+        self.run(["xsel", "--input", "--primary"], data)
+        self.run(["xsel", "--input", "--secondary"], data)
+        self.run(["xsel", "--input", "--clipboard"], data)
+
+    def copy(self, data):
+        self.run(["xsel", "--input", "--clipboard"], data)
+
+    def paste(self):
+        return self.run(["xsel", "--output", "--clipboard"]).stdout
+
+def detect_clip():
+    """
+    Detect a clipboard manager to use.
+    """
+    if exists("pbcopy") and exists("pbpaste"):
+        return ClipPb()
+    elif defined("WAYLAND_DISPLAY") and exists("wl-copy") and exists("wl-paste"):
+        return ClipWayland()
+    elif defined("DISPLAY") and exists("xclip"):
+        return ClipXClip()
+    elif defined("DISPLAY") and exists("xsel"):
+        return ClipXSel()
+    else:
+        raise RuntimeError("could not determine a suitable clipboard manager")
+
+import sys
+
+def write_stdout(bs):
+    """
+    Write a `bytes` object to `stdout`.
+    """
+    if not isinstance(bs, bytes):
+        raise TypeError("bs must be bytes")
+    with open(sys.stdout.fileno(), "wb") as f:
+        f.write(bs)
+        f.flush()
+
+def read_stdin():
+    """
+    Read a `bytes` object from `stdin`.
+    """
+    with open(sys.stdin.fileno(), "rb") as f:
+        return f.read()
+
+def send_notification(body, urgency="low"):
+    """
+    Send a notification.
+    """
+    notify(
+        app="Clipboard",
+        body=body,
+        icon="edit-copy",
+        urgency=urgency,
+        tag="clipboard",
+    )
+
+def main(args):
+    clip = detect_clip()
+
+    # The paste, clear, and copy must be in this order
+    if args.paste:
+        write_stdout(clip.paste())
+    if args.clear:
+        clip.clear()
+    if args.copy:
+        clip.copy(read_stdin())
+
+    if not any([args.paste, args.clear, args.copy]):
+        raise RuntimeError("at least one action (copy, paste, clear) must be specified")
+
+    if args.notify:
+        actions = []
+        if args.paste:
+            actions.append("pasted from")
+        if args.clear:
+            actions.append("cleared")
+        if args.copy:
+            actions.append("copied to")
+        if actions:
+            if len(actions) == 1:
+                body = actions[0]
+            else:
+                body = ", ".join(actions[:-1])
+                if len(actions) > 2:
+                    body += ","
+                if len(actions) > 1:
+                    body += " and " + actions[-1]
+            body = body.capitalize() + " clipboard"
+        else:
+            body="Nothing was changed..."
+        send_notification(body)
+
+if __name__ == "__main__":
+    import argparse
+
+    p = argparse.ArgumentParser(description="Manage the system clipboard")
+    p.add_argument("-x", "--clear", action="store_true", help="Clear all clipboards")
+    p.add_argument("-c", "--copy", action="store_true", help="Copy stdin to clipboard")
+    p.add_argument("-p", "--paste", action="store_true", help="Paste to stdout from clipboard")
+    p.add_argument("-n", "--notify", action="store_true", help="Trigger a notification")
+    args = p.parse_args()
+
+    try:
+        main(args)
+    except Exception as e:
+        message = str(e).capitalize()
+        if args.notify:
+            send_notification(message, urgency="critical")
+        else:
+            print(message, file=sys.stderr)
