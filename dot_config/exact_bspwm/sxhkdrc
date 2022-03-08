@@ -29,8 +29,12 @@ super + Tab; w
 
 # Show a password chooser to copy to clipboard
 super + Tab; p; {p, u, t}
-    "$HOME/.local/bin/bw-query" --sync {-p,-u,-t} --rofi --ask-gui \
-        | xclip -selection clipboard
+    set -e; \
+    x=$("$HOME/.local/bin/bw-query" --sync {-p,-u,-t} --rofi --ask-gui); \
+    printf "$x" | "$HOME/.local/bin/clipboard" --copy --notify
+
+super Tab; x
+    "$HOME/.local/bin/clipboard" --clear --notify
 
 # Show a session menu
 super + shift + s
