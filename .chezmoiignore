@@ -26,6 +26,7 @@ install.sh
 .local/bin/nightshift
 .local/bin/notify-*
 .local/bin/screenlock
+.local/bin/replit
 .local/bin/session-*
 .local/bin/volume
 .local/bin/wallpaper-*
