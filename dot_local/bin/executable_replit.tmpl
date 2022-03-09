@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+
+"""
+Display a menu to select a language to run on https://replit.com.
+"""
+
+import subprocess
+import re
+import sys
+
+# The rofi command to spawn. This returns the text of the selected item.
+ROFI_COMMAND = ["rofi", "-dmenu", "-i"]
+
+# The encoding for subprocess communication.
+ENCODING = "utf-8"
+
+def rofi(options):
+    """
+    Run the rofi command and then pipe the options into it. The selection that
+    is made is returned.
+    """
+    return subprocess.run(ROFI_COMMAND,
+            input="\n".join(options).encode(ENCODING),
+            stdout=subprocess.PIPE).stdout.decode(ENCODING).strip()
+
+# A dictionary mapping a language name to a URL slug on replit.com.
+#
+# Entries that are `None` can be converted to a slug by making them lowercase
+# and keeping alphanumeric characters.
+LANGUAGES = {
+    "Bash": None,
+    "C": None,
+    "Crystal": None,
+    "C#": "csharp",
+    "C++": "cpp",
+    "Dart": None,
+    "Deno": None,
+    "Elixir": None,
+    "Emacs List (ELisp)": "elisp",
+    "Erlang": None,
+    "F#": "fsharp",
+    "Go": None,
+    "Haskell": None,
+    "Java": None,
+    "JavaScript": "nodejs",
+    "Julia": None,
+    "Kotlin": None,
+    "Lua": None,
+    "Nim": None,
+    "Node.js": None,
+    "Python": "python3",
+    "R": "rlang",
+    "Raku": None,
+    "Reason Node.js": "reason_nodejs",
+    "Ruby": None,
+    "Rust": None,
+    "Scala": None,
+    "Swift": None,
+    "Tcl": None,
+    "TypeScript": None,
+}
+
+def language(name):
+    if LANGUAGES[name] is not None:
+        return LANGUAGES[name]
+    return re.sub(r"[^a-z0-9]+", "", name.lower())
+
+if __name__ == "__main__":
+    name = rofi(sorted(LANGUAGES.keys()))
+    if not name:
+        # Nothing was selected
+        sys.exit()
+    url = f"https://replit.com/languages/{language(name)}"
+    subprocess.run(["xdg-open", url], capture_output=True)
