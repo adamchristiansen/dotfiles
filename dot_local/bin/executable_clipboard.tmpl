@@ -5,6 +5,7 @@
 from abc import ABC, abstractmethod as abstract
 import os
 import shutil
+import sys
 
 def exists(command):
     """
@@ -162,8 +163,6 @@ def detect_clip():
         return ClipXSel()
     else:
         raise RuntimeError("could not determine a suitable clipboard manager")
-
-import sys
 
 def write_stdout(bs):
     """
