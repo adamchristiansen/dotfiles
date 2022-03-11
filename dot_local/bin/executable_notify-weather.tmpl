@@ -1,0 +1,308 @@
+#!/usr/bin/env python3
+
+{{ template "util.py" }}
+
+import json
+
+# Lookup for wether code to human readable description.
+#
+# https://github.com/chubin/wttr.in/blob/master/lib/constants.py
+WWO_CODE = {
+    "113": "Sunny",
+    "116": "PartlyCloudy",
+    "119": "Cloudy",
+    "122": "VeryCloudy",
+    "143": "Fog",
+    "176": "LightShowers",
+    "179": "LightSleetShowers",
+    "182": "LightSleet",
+    "185": "LightSleet",
+    "200": "ThunderyShowers",
+    "227": "LightSnow",
+    "230": "HeavySnow",
+    "248": "Fog",
+    "260": "Fog",
+    "263": "LightShowers",
+    "266": "LightRain",
+    "281": "LightSleet",
+    "284": "LightSleet",
+    "293": "LightRain",
+    "296": "LightRain",
+    "299": "HeavyShowers",
+    "302": "HeavyRain",
+    "305": "HeavyShowers",
+    "308": "HeavyRain",
+    "311": "LightSleet",
+    "314": "LightSleet",
+    "317": "LightSleet",
+    "320": "LightSnow",
+    "323": "LightSnowShowers",
+    "326": "LightSnowShowers",
+    "329": "HeavySnow",
+    "332": "HeavySnow",
+    "335": "HeavySnowShowers",
+    "338": "HeavySnow",
+    "350": "LightSleet",
+    "353": "LightShowers",
+    "356": "HeavyShowers",
+    "359": "HeavyRain",
+    "362": "LightSleetShowers",
+    "365": "LightSleetShowers",
+    "368": "LightSnowShowers",
+    "371": "HeavySnowShowers",
+    "374": "LightSleetShowers",
+    "377": "LightSleet",
+    "386": "ThunderyShowers",
+    "389": "ThunderyHeavyRain",
+    "392": "ThunderySnowShowers",
+    "395": "HeavySnowShowers",
+}
+
+# Get wind direction as an arrow from an 8-point direction.
+WIND_DIRECTION = {
+    "N": "↑",
+    "NE": "↗",
+    "E": "→",
+    "SE": "↘",
+    "S": "↓",
+    "SW": "↙",
+    "W": "←",
+    "NW": "↖",
+}
+
+# Get an icon from the weather description.
+ICON = {
+    "Cloudy": "weather-few-clouds",
+    "Fog": "weather-fog",
+    "Heavy rain": "weather-showers",
+    "Heavy showers": "weather-showers",
+    "Heavy snow": "weather-snow",
+    "Heavy snow showers": "weather-snow",
+    "Light rain": "weather-showers-scattered",
+    "Light showers": "weather-showers-scattered",
+    "Light sleet": "weather-showers",
+    "Light sleet showers": "weather-showers",
+    "Light snow": "weather-snow",
+    "Light snow showers": "weather-snow",
+    "Partly cloudy": "weather-few-clouds",
+    "Sunny": "weather-clear",
+    "Thundery heavy rain": "weather-storm",
+    "Thundery showers": "weather-storm",
+    "Thundery snow showers": "weather-snow",
+    "Very cloudy": "weather-overcast",
+}
+
+# These icons can be overridden using some heuristics.
+OVERRIDABLE_ICONS = [
+    "weather-clear",
+    "weather-few-clouds",
+    "weather-overcast",
+]
+
+# The threshold wind in km/h to be considered windy.
+WIND_THRESHOLD = 40
+
+def int_like(x):
+    """
+    Get an integer from a value that may be an integer or a float.
+    """
+    return int(round(float(x)))
+
+def int_scale(scale):
+    """
+    Get an integer from a value that may be an integer or a float after
+    applying a scaling factor to it.
+    """
+    return lambda x: int(round(scale * float(x)))
+
+def float_scale(scale):
+    """
+    Get an float from a value that may be an integer or a float after applying
+    a scaling factor to it.
+    """
+    return lambda x: scale * float(x)
+
+class Weather:
+    """
+    Fetch the weather data for a location and process it.
+    """
+
+    def __init__(self, location):
+        """
+        Get the weather for a location.
+        """
+        r = run(["curl", f"wttr.in/{location.replace(' ', '-')}?format=j1"])
+        if r.exitcode != 0:
+            raise RuntimeError("Could not get weather")
+        self._data = json.loads(r.stdout)
+
+    def _get(self, convert, *path):
+        """
+        Query `self._data` along some `path` and then call `convert` on the
+        object. `None` is returned if something goes wrong.
+        """
+        try:
+            v = self._data
+            for p in path:
+                v = v[p]
+        except Exception as e:
+            return None
+        return convert(v)
+
+    @property
+    def icon(self):
+        """The icon name to show."""
+        try:
+            icon = ICON[self.weather_desc]
+            if icon in OVERRIDABLE_ICONS:
+                if self.wind_speed is not None and self.wind_speed >= WIND_THRESHOLD:
+                    return "weather-windy"
+                # TODO Night time
+            return icon
+        except:
+            return None
+
+    @property
+    def location(self):
+        """The full location."""
+        places = [
+            self.location_area,
+            self.location_region,
+            self.location_country
+        ]
+        places = list(filter(lambda x: x is not None, places))
+        return ", ".join(places) if places else None
+
+    @property
+    def location_area(self):
+        """The local area, likely the city."""
+        return self._get(str, "nearest_area", 0, "areaName", 0, "value")
+
+    @property
+    def location_country(self):
+        """The country name."""
+        return self._get(str, "nearest_area", 0, "country", 0, "value")
+
+    @property
+    def location_region(self):
+        """The region name, likely the province or territory."""
+        return self._get(str, "nearest_area", 0, "region", 0, "value")
+
+    @property
+    def pressure(self):
+        """Pressure in kPa."""
+        return self._get(float_scale(0.1), "current_condition", 0, "pressure")
+
+    @property
+    def temperature(self):
+        """Temperature in Celsius."""
+        return self._get(int_like, "current_condition", 0, "temp_C")
+
+    @property
+    def temperature_feel(self):
+        """Feels like temperature in Celsius."""
+        return self._get(int_like, "current_condition", 0, "FeelsLikeC")
+
+    @property
+    def weather_code(self):
+        """The weather code."""
+        return self._get(str, "current_condition", 0, "weatherCode")
+
+    @property
+    def weather_desc(self):
+        """The weather description."""
+        # Try to get the description directly
+        desc = self._get(str, "current_condition", 0, "weatherDesc", 0, "value")
+        if desc is not None:
+            return desc
+        # Get the description from the code
+        code = self.weather_code
+        if code is not None:
+            desc = WWO_CODE[code]
+            # Convert the description to a nicer string
+            s = ""
+            for c in desc:
+                s += " " + c if c.isupper() else c
+            return s.strip().lower().capitalize()
+        # Could not get description
+        return None
+
+    @property
+    def wind_speed(self):
+        """The wind speed in km/h."""
+        return self._get(int_like, "current_condition", 0, "windspeedKmph")
+
+    @property
+    def wind_dir_card(self):
+        """The 16-point cardinal wind direction."""
+        return self._get(str, "current_condition", 0, "winddir16Point")
+
+    @property
+    def wind_dir_arrow(self):
+        """The 16-point cardinal wind direction."""
+        card = self._get(str, "current_condition", 0, "winddir16Point")
+        # For directions like "SSE", only consider the last two letters
+        if len(card) == 3:
+            card = card[1:]
+        return WIND_DIRECTION[card]
+
+def send_notification(w):
+    body = []
+    if w.location:
+        body.append(w.location)
+    if w.temperature is not None:
+        s = f"{w.temperature} °C"
+        if w.temperature_feel is not None:
+            s += f" (feels like {w.temperature_feel} °C)"
+        body.append(s)
+    elif w.temperature_feel:
+        body.append(f"Feels like {w.temperature_feel} °C")
+    if w.wind_speed is not None:
+        if w.wind_speed:
+            s = f"{w.wind_speed} km/h"
+            if w.wind_dir_arrow is not None:
+                s += f" {w.wind_dir_arrow}"
+            body.append(s)
+        else:
+            body.append("Calm, no wind")
+    if w.pressure:
+        body.append(f"{w.pressure:.01f} kPa")
+    body = "\n".join(body)
+    notify(
+        app="Weather",
+        summary=w.weather_desc,
+        body=body if body else None,
+        icon=w.icon,
+        tag="weather",
+    )
+
+def main(args):
+    w = Weather(args.location)
+    if args.notify:
+        send_notification(w)
+    else:
+        print(f"Location     => {w.location}")
+        print(f"Pressure     => {w.pressure} kPa")
+        print(f"Temperature  => {w.temperature} C, feels like {w.temperature_feel} C")
+        print(f"Weather Code => {w.weather_code}")
+        print(f"Weather Desc => {w.weather_desc}")
+        print(f"Wind         => {w.wind_speed} km/h, {w.wind_dir_card}, {w.wind_dir_arrow}")
+
+if __name__ == "__main__":
+    import argparse
+
+    p = argparse.ArgumentParser(description="Get the current weather")
+    p.add_argument("location", nargs="?",
+        default="{{ .location.wttr }}",
+        help="Override the default location")
+    p.add_argument("-n", "--notify", action="store_true", help="Trigger a notification")
+    args = p.parse_args()
+
+    try:
+        main(args)
+    except Exception as e:
+        message = str(e).capitalize()
+        if args.notify:
+            send_notification(message, urgency="critical")
+        else:
+            print(message, file=sys.stderr)

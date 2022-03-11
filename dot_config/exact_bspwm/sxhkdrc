@@ -11,12 +11,13 @@ super + {_, shift + } @space
     rofi -show {run,drun}
 
 # Show information as a notification
-super + Tab; n; {a,n,t,v}
+super + Tab; n; {a,n,t,v,w}
     {                                                \
         "$HOME/.local/bin/notify-all",               \
         "$HOME/.local/bin/notify-network" --notify,  \
         "$HOME/.local/bin/notify-datetime" --notify, \
-        "$HOME/.local/bin/notify-volume" --notify    \
+        "$HOME/.local/bin/notify-volume" --notify,   \
+        "$HOME/.local/bin/notify-weather" --notify   \
     }
 
 # Clear notifications
