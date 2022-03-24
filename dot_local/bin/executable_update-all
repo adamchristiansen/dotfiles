@@ -167,6 +167,16 @@ PACKAGE_MANAGERS = [
         yes_flag=None
     ),
     PackageManager(
+        name="cargo",
+        required_commands=["cargo", "cargo-install-upgrade"],
+        required_conditions=[],
+        command_update=None,
+        command_upgrade=["cargo", "install-upgrade"],
+        command_clean=None,
+        can_use_sudo=False,
+        yes_flag=None
+    ),
+    PackageManager(
         name="chezmoi",
         required_commands=["chezmoi"],
         required_conditions=[],
