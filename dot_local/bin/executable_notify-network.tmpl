@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-{{ template "util.py" }}
-
 import collections
 import re
+
+from dotfiles import notify, run
 
 def dbm_to_percent(dbm):
     """
