@@ -1,39 +1,7 @@
-import collections
-import subprocess
 import shutil
 
-def clamp(v, lo, hi):
-    """
-    Clamp a value between low and high limits.
-    """
-    return lo if v < lo else (hi if v > hi else v)
-
-# The output of a command.
-#
-# - `exitcode` (int)
-# - `stdout` (str)
-# - `stderr` (str)
-Run = collections.namedtuple("Run", ["exitcode", "stdout", "stderr"])
-
-def run(cmd):
-    """
-    Run a command.
-
-    # Arguments
-
-    - cmd (list<str>): The command to run.
-
-    # Returns
-
-    (Run): The command output.
-    """
-    ENCODING = "utf-8"
-    p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return Run(
-        p.returncode,
-        stdout = (p.stdout if p.stdout is not None else b"").decode(ENCODING).strip(),
-        stderr = (p.stderr if p.stderr is not None else b"").decode(ENCODING).strip(),
-    )
+from .numeric import clamp
+from .run import run
 
 def notify(
         app=None,

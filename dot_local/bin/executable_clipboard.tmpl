@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
-{{ template "util.py" }}
-
 from abc import ABC, abstractmethod as abstract
+import collections
 import os
 import shutil
+import subprocess
 import sys
+
+from dotfiles import notify
 
 def exists(command):
     """

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-{{ template "util.py" }}
-
 import argparse
 import re
 import sys
 import textwrap
+
+from dotfiles import clamp, notify, run
 
 class ModeAbs:
     """
