@@ -34,6 +34,10 @@ ctrl + alt + l
 # Utilities
 #------------------------------------------------------------------------------
 
+### Show hotkey hints
+super + Tab; h
+    "$HOME/.local/bin/hotkey-hints"
+
 ### Change the desktop wallpaper
 super + Tab; w
     "$HOME/.local/bin/wallpaper-changer"
