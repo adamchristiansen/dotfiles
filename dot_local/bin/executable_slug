@@ -50,10 +50,8 @@ def slug(s):
             break
     return s.strip(FILL)
 
-s = slug(FILL.join(sys.argv[1:]))
-
 if len(sys.argv) > 1:
-    print(s)
+    print(slug(FILL.join(sys.argv[1:])))
 else:
     lines = []
     for line in sys.stdin:
