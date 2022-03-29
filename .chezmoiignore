@@ -16,18 +16,16 @@ install.sh
 .config/picom
 .config/polybar
 .config/rofi
+.config/sxhkd
 .config/wallpaper
 .config/user-dirs.*
 .config/xfce4
 .config/zathura
-.local/bin/datetime
+.local/bin/hotkey-*
 .local/bin/music-choose
-.local/bin/network
 .local/bin/nightshift
 .local/bin/notify-*
-.local/bin/screenlock
 .local/bin/replit
 .local/bin/session-*
-.local/bin/volume
 .local/bin/wallpaper-*
 {{ end }}

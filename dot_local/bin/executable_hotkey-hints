@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+
+import os
+import subprocess
+
+# The rofi command to spawn. This returns the zero-indexed selected item,
+# not the text.
+ROFI_COMMAND = ["rofi", "-dmenu", "-i", "-format", "i"]
+
+# The encoding for subprocess communication.
+ENCODING = "utf-8"
+
+def rofi(options):
+    """
+    Run the rofi command and then pipe the options into it. The selection that
+    is made is returned.
+    """
+    return subprocess.run(ROFI_COMMAND,
+            input="\n".join(options).encode(ENCODING),
+            stdout=subprocess.PIPE).stdout.decode(ENCODING).strip()
+
+class Hotkey:
+    """
+    Represents a hotkey with a canonicalized key combination and action description.
+    """
+
+    def __init__(self, hotkey, description):
+        self.hotkey = hotkey \
+            .lower() \
+            .replace("@space", "space") \
+            .replace("super", "Ƨ") \
+            .replace("ctrl", "C") \
+            .replace("alt", "M") \
+            .replace("shift", "S") \
+            .replace("escape", "E") \
+            .replace("tab", "T") \
+            .replace("return", "R") \
+            .replace("space", "⎵") \
+            .replace(" + ", "-") \
+            .replace("; ", " -> ")
+        self.description = description
+
+class Hints:
+    """
+    A collection of hotkey hints.
+    """
+
+    def __init__(self, filename, doc_start="###"):
+        """
+        Initialize a set of hints in the sxhkdrc located at `filename`.
+        `doc_start` is the toke which starts a documentation comment.
+        """
+        hints = []
+        with open(filename) as f:
+            seen = False
+            description = []
+            for line in f:
+                if line.startswith(doc_start):
+                    seen = True
+                    description.append(line[len(doc_start):].strip())
+                elif seen:
+                    hotkey = line.strip()
+                    hints.append(Hotkey(hotkey, " ".join(description)))
+                    seen = False
+                    description = []
+        self.hints = list(sorted(hints, key=lambda x: x.description))
+
+    @property
+    def tabular(self):
+        """
+        Get a tabulated list of hotkeys to show.
+        """
+        max_length = 0
+        for hint in self.hints:
+            max_length = max(max_length, len(hint.hotkey))
+        fmt = "{{:{}}} ==> {{}}".format(max_length)
+        return list(map(
+            lambda x: fmt.format(x.hotkey, x.description), self.hints))
+
+if __name__ == "__main__":
+    XDG_CONFIG_HOME = os.environ["XDG_CONFIG_HOME"]
+    SXHKDRC = os.path.join(XDG_CONFIG_HOME, "sxhkd", "sxhkdrc")
+    hints = Hints(SXHKDRC).tabular
+    rofi(hints)
