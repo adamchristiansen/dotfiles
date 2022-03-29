@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-
-notify-datetime --notify
-notify-network --notify
-notify-volume --notify
