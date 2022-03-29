@@ -3,21 +3,7 @@
 import os
 import subprocess
 
-# The rofi command to spawn. This returns the zero-indexed selected item,
-# not the text.
-ROFI_COMMAND = ["rofi", "-dmenu", "-i", "-format", "i"]
-
-# The encoding for subprocess communication.
-ENCODING = "utf-8"
-
-def rofi(options):
-    """
-    Run the rofi command and then pipe the options into it. The selection that
-    is made is returned.
-    """
-    return subprocess.run(ROFI_COMMAND,
-            input="\n".join(options).encode(ENCODING),
-            stdout=subprocess.PIPE).stdout.decode(ENCODING).strip()
+from dotfiles import menu
 
 class Hotkey:
     """
@@ -81,4 +67,4 @@ if __name__ == "__main__":
     XDG_CONFIG_HOME = os.environ["XDG_CONFIG_HOME"]
     SXHKDRC = os.path.join(XDG_CONFIG_HOME, "sxhkd", "sxhkdrc")
     hints = Hints(SXHKDRC).tabular
-    rofi(hints)
+    menu(hints)

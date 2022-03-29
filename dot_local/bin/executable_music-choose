@@ -2,17 +2,13 @@
 
 """
 Select a number of songs and and play them.
-
-Requires rofi (as dmenu) and mpc.
 """
 
 from collections import OrderedDict
 import subprocess
 import sys
 
-# The rofi command to spawn. This returns the zero-indexed selected item,
-# not the text.
-ROFI_COMMAND = ["rofi", "-dmenu", "-i", "-format", "i"]
+from dotfiles import menu
 
 # The encoding for subprocess communication.
 ENCODING = "utf-8"
@@ -23,15 +19,6 @@ TAG_DELIM = "#|#|#|"
 
 # The delimiter between fields when displaying the song
 SEL_DELIM = "  ▸  "
-
-def rofi(options):
-    """
-    Run the rofi command and then pipe the options into it. The selection that
-    is made is returned.
-    """
-    return subprocess.run(ROFI_COMMAND,
-            input="\n".join(options).encode(ENCODING),
-            stdout=subprocess.PIPE).stdout.decode(ENCODING).strip()
 
 class Song:
     """
@@ -125,7 +112,7 @@ if __name__ == "__main__":
     import argparse
     # Command line arguments
     parser = argparse.ArgumentParser(
-        description="Choose a song with mpc, mpd, and rofi")
+        description="Choose a song to play")
     parser.add_argument("keys", type=str, nargs="+",
         help="the song tags to search on")
     parser.add_argument("--queue", action="store_true",
@@ -136,9 +123,8 @@ if __name__ == "__main__":
     # Show the selection menu
     opts = songs.options(*args.keys)
     opts_list = list(opts.keys())
-    try:
-        sel_index = int(rofi(opts_list))
-    except ValueError:
+    sel_index = menu(opts_list)
+    if sel_index is None:
         # Nothing was selected
         sys.exit()
     # Play the selection
