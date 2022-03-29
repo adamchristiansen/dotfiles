@@ -1,79 +1,130 @@
+# In this file, all key bindings are documented with a comment that begins with
+# `###`. These are to allow easy parsing of keys so interactive documentation
+# can be easily generated.
+
 #------------------------------------------------------------------------------
-# General
+# Launchers
 #------------------------------------------------------------------------------
 
-# Run a terminal
+### Run a terminal
 super + Return
     alacritty || LIBGL_ALWAYS_SOFTWARE=1 alacritty
 
-# Show an application launcher
-super + {_, shift + } @space
-    rofi -show {run,drun}
+### Show an application launcher
+super + shift + @space
+    rofi -show drun
 
-# Show information as a notification
-super + Tab; n; {a,n,t,v,w}
-    {                                                \
-        "$HOME/.local/bin/notify-all",               \
-        "$HOME/.local/bin/notify-network" --notify,  \
-        "$HOME/.local/bin/notify-datetime" --notify, \
-        "$HOME/.local/bin/notify-volume" --notify,   \
-        "$HOME/.local/bin/notify-weather" --notify   \
-    }
+### Show a command launcher
+super + @space
+    rofi -show run
 
-# Clear notifications
-super + Tab; space
-    dunstctl close-all
+#------------------------------------------------------------------------------
+# Session
+#------------------------------------------------------------------------------
 
-# Change the wallpaper
+### Show a session menu
+super + shift + s
+    "$HOME/.local/bin/session-menu"
+
+### Lock the screen
+ctrl + alt + l
+    "$HOME/.local/bin/session-lock"
+
+#------------------------------------------------------------------------------
+# Utilities
+#------------------------------------------------------------------------------
+
+### Change the desktop wallpaper
 super + Tab; w
     "$HOME/.local/bin/wallpaper-changer"
 
-# Show a password chooser to copy to clipboard
-super + Tab; p; {p, u, t}
+### Copy password, username, or TOTP to clipboard
+super + Tab; p; {p,u,t}
     set -e; \
     x=$("$HOME/.local/bin/bw-query" --sync {-p,-u,-t} --rofi --ask-gui); \
     printf "$x" | "$HOME/.local/bin/clipboard" --copy --notify
 
-super Tab; x
+### Clear the clipboard
+super + Tab; x
     "$HOME/.local/bin/clipboard" --clear --notify
 
-# Show a session menu
-super + shift + s
-    "$HOME/.local/bin/session-menu"
-
-# Lock the screen
-ctrl + alt + l
-    "$HOME/.local/bin/session-lock"
-
-# Toggle the status bar
+### Toggle the status bar
 super + b
     "$HOME/.config/polybar/toggle"
+
+#------------------------------------------------------------------------------
+# Notifications
+#------------------------------------------------------------------------------
+
+### Show network information
+super + Tab; n; n
+    "$HOME/.local/bin/notify-network" --notify
+
+### Show current time
+super + Tab; n; t
+    "$HOME/.local/bin/notify-datetime" --notify
+
+### Show volume
+super + Tab; n; v
+    "$HOME/.local/bin/notify-volume" --notify
+
+### Show current weather
+super + Tab; n; w
+    "$HOME/.local/bin/notify-weather" --notify
+
+### Clear notifications
+super + Tab; space
+    dunstctl close-all
 
 #------------------------------------------------------------------------------
 # Audio and Video
 #------------------------------------------------------------------------------
 
-super + a; {s, d, a}
-    "$HOME/.local/bin/notify-volume" {down,up,mute} --notify
+### Mute volume
+super + a; a
+    "$HOME/.local/bin/notify-volume" mute --notify
 
+### Decrease the volume
+super + a; s
+    "$HOME/.local/bin/notify-volume" down --notify
+
+### Increase the volume
+super + a; d
+    "$HOME/.local/bin/notify-volume" up --notify
+
+### Set the volume to a value out of 10
 super + a; {1-9}
     "$HOME/.local/bin/notify-volume" {1-9}0 --notify
 
-super + a; c; {a, s}
-    "$HOME/.local/bin/music-choose" albumartist album { , title}
+### Choose an album to play
+super + a; c; a
+    "$HOME/.local/bin/music-choose" albumartist album
 
+### Choose a song to play
+super + a; c; s
+    "$HOME/.local/bin/music-choose" albumartist album title
+
+### Choose a song to play from the music queue
 super + a; c; q
     "$HOME/.local/bin/music-choose" --queue index albumartist album title
 
-super + a; {b, n}
-    mpc -q {prev, next}
+### Play the previous song in the music queue
+super + a; b
+    mpc -q prev
 
-super + a; {shift + p, p, s}
-    mpc -q {pause, toggle, stop}
+### Play the next song in the music queue
+super + a; n
+    mpc -q next
 
+### Pause music
+super + a; p
+    mpc -q toggle
+
+### Clear the music queue
 super + a; x
     mpc clear
 
+### Pause video player
 super + alt + a; p
     xdotool key --window "$(xdotool search --class mpv)" p
 
@@ -81,29 +132,35 @@ super + alt + a; p
 # BSPWM General
 #------------------------------------------------------------------------------
 
-# Make sxhkd and bspwm reload its configuration files
+### Make sxhkd and bspwm reload its configuration files
 super + Escape
     pkill -USR1 -x sxhkd; "$XDG_CONFIG_HOME/bspwm/bspwmrc"
 
-# Quit bspwm normally
+### Quit bspwm normally
 super + ctrl + alt + shift + Escape
     bspc quit
 
-# Close and kill
-super + {_,shift + }w
-    bspc node -{c,k}
+### Close a window
+super + w
+    bspc node -c
 
-# Alternate between the tiled and monocle layout
+### Kill a window
+super + shift + w
+    bspc node -k
+
+### Alternate between the tiled and monocle layout
 super + m
     bspc desktop -l next
 
-# Insert a receptacle or clear all receptacles on the current desktop
-super + {_,shift} + r
-    insert={true,false}; \
-    $insert && bspc node -i || \
+### Insert a receptacle
+super + r
+    bspc node -i
+
+### Clear all receptacles in the current desktop
+super + shift + r
     for win in `bspc query -N -n .leaf.!window`; do bspc node $win -k; done;
 
-# Show desktop information
+### Show desktop information
 super + d
     "$XDG_CONFIG_HOME/bspwm/bspwm-info"
 
@@ -111,67 +168,114 @@ super + d
 # BSPWM State and Flags
 #------------------------------------------------------------------------------
 
-# Set the window state
-super + {t,shift + t,f,shift f}
-    bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+### Set the window state to tiled
+super + t
+    bspc node -t tiled
 
-# Set the node flags
-super + ctrl + {m,x,y,z}
-    bspc node -g {marked,locked,sticky,private}
+### Set the window state to pseudo-tiled
+super + shift + t
+    bspc node -t pseudo_tiled
+
+### Set the window state to floating
+super + f
+    bspc node -t floating
+
+### Set the window state to fullscreen
+super + shift + f
+    bspc node -t fullscreen
+
+### Toggle the node marked flag
+super + ctrl + m
+    bspc node -g marked
+
+### Toggle the node locked flag
+super + ctrl + x
+    bspc node -g locked
+
+### Toggle the node sticky flag
+super + ctrl + y
+    bspc node -g sticky
+
+### Toggle the node private flag
+super + ctrl + z
+    bspc node -g private
 
 #------------------------------------------------------------------------------
 # BSPWM Focus, Swap, and Move
 #------------------------------------------------------------------------------
 
-# Focus the node in the given direction
-super + {_,shift + }{h,j,k,l}
-    fs=-{f,s}; \
+### Focus a node in a direction
+super + {h,j,k,l}
+    bspc node -f {west,south,north,east}
+
+### Move a node in a direction
+super + shift + {h,j,k,l}
     args="{west -16 0,south 0 16,north 0 -16,east 16 0}"; \
     direction=$(echo "$args" | awk '\{print $1\}'); \
     move=$(echo "$args" | awk '\{printf "%d %d\n", $2, $3\}'); \
-    if [ $fs = "-s" ] && bspc query -N focused.floating > /dev/null; then \
+    if bspc query -N focused.floating > /dev/null; then \
         bspc node -v $move; \
     else \
-        bspc node $fs $direction; \
+        bspc node -s $direction; \
     fi;
 
-# Focus the next/previous node in the current desktop
-super + {_,shift + }c
-    bspc node -f {next,prev}.local.!hidden.window
+### Focus the next window
+super + c
+    bspc node -f next.local.!hidden.window
 
-# Focus or send to the given desktop
-super + {_,shift + }{1-9,0}
-    bspc {desktop -f,node -d} '^{1-9,10}'
+### Focus the previous window
+super + shift + c
+    bspc node -f prev.local.!hidden.window
+
+### Focus a desktop
+super + {1-9,0}
+    bspc desktop -f '^{1-9,10}'
+
+### Send the focused node to a desktop
+super + shift + {1-9,0}
+    bspc node -d '^{1-9,10}'
 
 #------------------------------------------------------------------------------
 # BSPWM Layout
 #------------------------------------------------------------------------------
 
-# Balance windows
+### Balance windows by area
 super + Tab; l; b
     bspc node @/ -B
 
-# Circulate windows
-super + Tab; l; {_,shift + }c
-    bspc node @/ -C {forward,backward}
+### Circulate windows forward
+super + Tab; l; c
+    bspc node @/ -C forward
 
-# Flip layout
-super + Tab; l; f; {h,v}
-    bspc node @/ -F {horizontal,vertical}
+### Circulate windows backward
+super + Tab; l; shift + c
+    bspc node @/ -C backward
 
-# Rotate layout
-super + Tab; l; {_,shift + }r
-    bspc node @/ -R {90,-90}
+### Flip windows horizontally
+super + Tab; l; f; h
+    bspc node @/ -F horizontal
+
+### Flip windows verticallwy
+super + Tab; l; f; v
+    bspc node @/ -F vertical
+
+### Rotate windows clockwise
+super + Tab; l; r
+    bspc node @/ -R 90
+
+### Rotate windows anticlockwise
+super + Tab; l; shift + r
+    bspc node @/ -R -90
 
 #------------------------------------------------------------------------------
 # BSPWM Resize
 #------------------------------------------------------------------------------
 
-# Expand a window by moving one of its sides outward
+### Expand a window by moving a side outward
 super + alt + {h,j,k,l}
     bspc node -z {left -16 0,bottom 0 16,top 0 -16,right 16 0}
 
-# Contract a window by moving one of its sides inward
+### Contract a window by moving a side inward
 super + alt + shift + {h,j,k,l}
     bspc node -z {right -16 0,top 0 16,bottom 0 -16,left 16 0}
 
@@ -179,14 +283,14 @@ super + alt + shift + {h,j,k,l}
 # BSPWM Preselect
 #------------------------------------------------------------------------------
 
-# Preselect the direction
+### Preselect in a direction
 super + ctrl + {h,j,k,l}
     bspc node -p {west,south,north,east}
 
-# Preselect the ratio
+### Change the preselection ratio
 super + ctrl + {1-9}
     bspc node -o 0.{1-9}
 
-# Cancel the preselection for the focused node and desktop
+### Cancel a preselection
 super + ctrl + Escape
     bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
