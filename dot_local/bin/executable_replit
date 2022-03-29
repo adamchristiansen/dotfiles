@@ -8,20 +8,7 @@ import subprocess
 import re
 import sys
 
-# The rofi command to spawn. This returns the text of the selected item.
-ROFI_COMMAND = ["rofi", "-dmenu", "-i"]
-
-# The encoding for subprocess communication.
-ENCODING = "utf-8"
-
-def rofi(options):
-    """
-    Run the rofi command and then pipe the options into it. The selection that
-    is made is returned.
-    """
-    return subprocess.run(ROFI_COMMAND,
-            input="\n".join(options).encode(ENCODING),
-            stdout=subprocess.PIPE).stdout.decode(ENCODING).strip()
+from dotfiles import menu
 
 # A dictionary mapping a language name to a URL slug on replit.com.
 #
@@ -66,9 +53,10 @@ def language(name):
     return re.sub(r"[^a-z0-9]+", "", name.lower())
 
 if __name__ == "__main__":
-    name = rofi(sorted(LANGUAGES.keys()))
-    if not name:
+    names = sorted(LANGUAGES.keys())
+    index = menu(names)
+    if index is None:
         # Nothing was selected
         sys.exit()
-    url = f"https://replit.com/languages/{language(name)}"
+    url = f"https://replit.com/languages/{language(names[index])}"
     subprocess.run(["xdg-open", url], capture_output=True)
