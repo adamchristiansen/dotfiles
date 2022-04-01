@@ -2,10 +2,10 @@
 BASE=$XDG_CONFIG_HOME/texlive
 
 # Personal directory for variable and automatically generated data
-export TEXMFVAR=$BASE/texmf-var
+export TEXMFVAR="$BASE/texmf-var"
 
 # Personal directory for local config
-export TEXMFCONFIG=$BASE/texmf-config
+export TEXMFCONFIG="$BASE/texmf-config"
 
 # Directory for user-specific files
-export TEXMFHOME=$BASE/texmf
+export TEXMFHOME="$BASE/texmf"
