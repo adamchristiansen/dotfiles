@@ -50,11 +50,4 @@ plug "andreyorst/kaktree" defer kaktree %{
     kaktree-enable
 }
 
-plug "andreyorst/smarttab.kak" defer smarttab %{
-    set-option global softtabstop 4
-} config %{
-    # By default, do not expand tabs. If tabs are used they are to be
-    # overridden explicitly
-    hook global WinSetOption filetype=.*       expandtab
-    hook global WinSetOption filetype=makefile noexpandtab
-}
+plug "andreyorst/smarttab.kak"

@@ -18,6 +18,11 @@ hook global BufCreate .* %{
     add-highlighter buffer/trailing-whitespaces regex "(\h+)$" 1:Error
 }
 
+hook global BufCreate .* %{
+    editorconfig-load
+    autoconfigtab
+}
+
 hook global InsertCompletionShow .* %{
     map window insert <tab> <c-n>
     map window insert <s-tab> <c-p>
@@ -29,18 +34,6 @@ hook global InsertCompletionHide .* %{
 
 source "%val{config}/plugins.kak"
 source "%val{config}/modeline.kak"
-
-define-command trim-whitespace \
-        -docstring "trim trailing whitespace in buffer" %{
-    try %{
-        # [\s\r\n]+\z matches all whitespace at the end of the buffer
-        execute-keys -draft '%s([\s\r\n]+\z|\h+$)<ret>d<space>'
-    }
-}
-
-hook global BufWritePre .* %{
-    trim-whitespace
-}
 
 map global user w -docstring 'write buffer' ':w<ret>'
 
