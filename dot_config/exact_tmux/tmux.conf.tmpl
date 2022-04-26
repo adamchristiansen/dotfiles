@@ -18,49 +18,107 @@ set -g renumber-windows on
 # Aliases
 set -g command-alias quit=kill-session
 
+# Unbind all default keys
+unbind -na
+unbind -a
+
 # Change prefix to C-a
-unbind C-b
 set -g prefix C-a
 bind C-a send-prefix
 
-# Reload config file
-bind r source-file ~/.config/tmux/tmux.conf
+# Basics
+bind -N "Enter command prompt"      :   command-prompt
+bind -N "Show pane indexes"         q   display-panes
+bind -N "Clear screen"              C   send-keys C-l \; run-shell "sleep 0.1" \; clear-history
+bind -N "Detach current client"     D   detach-client
+bind -N "Reload configuration file" M-r source-file ~/.config/tmux/tmux.conf \; display-message "tmux.conf reloaded"
+bind -N "Toggle status bar"         B   set -g status
+bind -N "Rename current window"     ,   command-prompt -p "Rename window:" "rename-window '%%'"
+bind -N "List keybindings"          ?   list-keys -N
 
-# Show/hide the status bar
-bind e set -g status
-
-# Better split commands
-unbind '"'
-unbind %
-bind | split-window -h
-bind - split-window -v
-
-# Pane navigation
-bind -n C-h select-pane -L
-bind -n C-j select-pane -D
-bind -n C-k select-pane -U
-bind -n C-l select-pane -R
-
-# Clear the screen
-bind C send-keys C-l \; run-shell "sleep 0.1" \; clear-history
+# Session navigation
+bind -N "Switch to next session"       j       switch-client -n
+bind -N "Switch to previous session"   k       switch-client -p
+bind -N "Switch to last session"       M-Space switch-client -l
+bind -N "Select session interactively" s       choose-tree -Zs
 
 # Window navigation
-unbind n
-unbind p
-bind h select-window -t -1
-bind l select-window -t +1
-bind H swap-window -t -1 \; select-window -t -1
-bind L swap-window -t +1 \; select-window -t +1
+bind -N "Select previous window"      h     select-window -t -1
+bind -N "Select next window"          l     select-window -t +1
+bind -N "Select last window"          Space select-window -l
+bind -N "Select window interactively" w     choose-tree -Zs
+bind -N "Select window 1"             1     select-window -t 1
+bind -N "Select window 2"             2     select-window -t 2
+bind -N "Select window 3"             3     select-window -t 3
+bind -N "Select window 4"             4     select-window -t 4
+bind -N "Select window 5"             5     select-window -t 5
+bind -N "Select window 6"             6     select-window -t 6
+bind -N "Select window 7"             7     select-window -t 7
+bind -N "Select window 8"             8     select-window -t 8
+bind -N "Select window 9"             9     select-window -t 9
+bind -N "Select window 10"            0     select-window -t 10
 
-# VI mode copy to clipboard
-bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'xclip -in -selection clipboard'
+# Window control
+bind -N "Create new window"                   c   new-window -a -n "[new]"
+bind -N "Create new window with current path" M-c new-window -a -n "[new]" -c "#{pane_current_path}"
+bind -N "Swap with previous window"           M-h swap-window -t -1 \; select-window -t -1
+bind -N "Swap with next window"               M-l swap-window -t +1 \; select-window -t +1
+bind -N "Kill the current window"             X   kill-window
+
+# Pane navigation
+bind -N "Select pane to the left"  -n C-h select-pane -L
+bind -N "Select pane below"        -n C-j select-pane -D
+bind -N "Select pane above"        -n C-k select-pane -U
+bind -N "Select pane to the right" -n C-l select-pane -R
+
+# Pane control
+bind -N "Mark the current pane"                        m   select-pane -m
+bind -N "Unmark the current pane"                      M   select-pane -M
+bind -N "Split window vertically"                      |   split-window -h
+bind -N "Split window horizontally"                    -   split-window -v
+bind -N "Split window vertically with current path"    M-| split-window -h -c "#{pane_current_path}"
+bind -N "Split window horizontally with current path"  M-- split-window -v -c "#{pane_current_path}"
+bind -N "Rotate panes forward"                         r   rotate-window -DZ
+bind -N "Rotate panes reverse"                         R   rotate-window -UZ
+bind -N "Swap with pane to left"                       H swap-pane -d -t "{left-of}"
+bind -N "Swap with pane below"                         J swap-pane -d -t "{down-of}"
+bind -N "Swap with pane above"                         K swap-pane -d -t "{up-of}"
+bind -N "Swap with pane to right"                      L swap-pane -d -t "{right-of}"
+bind -N "Swap with marked pane"                        M-s swap-pane -d
+bind -N "Break pane into new window"                   !   break-pane -a -n [broken]
+bind -N "Kill the current pane"                        x   kill-pane
+
+# Resize panes
+bind -N "Toggle pane zoom"           z       resize-pane -Z
+bind -N "Resize pane left by 1"      C-Left  resize-pane -L
+bind -N "Resize pane downward by 1"  C-Down  resize-pane -D
+bind -N "Resize pane upward by 1"    C-Up    resize-pane -U
+bind -N "Resize pane right by 1"     C-Right resize-pane -R
+bind -N "Resize pane left by 10"     M-Left  resize-pane -L 10
+bind -N "Resize pane downward by 10" M-Down  resize-pane -D 10
+bind -N "Resize pane upward by 10"   M-Up    resize-pane -U 10
+bind -N "Resize pane right by 10"    M-Right resize-pane -R 10
+
+# Layout
+bind -N "Switch to layout mode"                \#  switch-client -T layout
+bind -N "Use even-horizontal layout" -T layout h   select-layout even-horizontal
+bind -N "Use even-vertical layout"   -T layout v   select-layout even-vertical
+bind -N "Use main-horizontal layout" -T layout m   select-layout main-horizontal
+bind -N "Use main-vertical layout"   -T layout M-m select-layout main-vertical
+bind -N "Use tiled layout"           -T layout t   select-layout tiled
+bind -N "Use next layout"            -T layout n   next-layout
+
+# VI mode
+bind -N "Enter copy mode"                   v copy-mode
+bind -N "Search for text"                   / copy-mode \; send-keys ?
+bind -N "Copy to clipboard" -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clipboard --copy --notify"
 
 # Status bar
-set -g status-style fg='#{{ $color.base03.hex.rgb }}',bg=default
-set -g status-justify centre
+set -g status-style fg="#{{ $color.base03.hex.rgb }}",bg=default
+set -g status-justify absolute-centre
 set -g status-position bottom
 set -g status-left ""
-set -g status-right ""
+set -g status-right "#{?client_prefix,#[fg=#{{ $color.base09.hex.rgb }}]● ,}#[fg=#{{ $color.base03.hex.rgb }}]歷#S"
 set -g window-status-format "#[fg=#{{ $color.base03.hex.rgb }}] #W#{?window_zoomed_flag, ,} "
 set -g window-status-current-format "#[fg=#{{ $color.base09.hex.rgb }}] #W#{?window_zoomed_flag, ,} "
 set -g window-status-current-style none
