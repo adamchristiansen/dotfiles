@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+# Attach to or create a default tmux tmux session.
+
+tmux attach-session -t default || tmux new-session -s default
