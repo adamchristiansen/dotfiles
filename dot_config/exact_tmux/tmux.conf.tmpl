@@ -111,7 +111,7 @@ bind -N "Use next layout"            -T layout n   next-layout
 # VI mode
 bind -N "Enter copy mode"                   v copy-mode
 bind -N "Search for text"                   / copy-mode \; send-keys ?
-bind -N "Copy to clipboard" -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clipboard --copy --notify"
+bind -N "Copy to clipboard" -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clipboard --copy"
 
 # Status bar
 set -g status-style fg="#{{ $color.base03.hex.rgb }}",bg=default
