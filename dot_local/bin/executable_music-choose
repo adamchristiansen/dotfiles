@@ -21,114 +21,113 @@ TAG_DELIM = "#|#|#|"
 SEL_DELIM = "  ▸  "
 
 class Song:
-    """
-    Represents the metadata of a song.
-    """
-    def __init__(self, album, albumartist, artist, filename, title, track, index):
-        self.album = album
-        self.albumartist = albumartist
-        self.artist = artist
-        self.filename = filename
-        self.title = title
-        self.track = track
-        self.index = str(index)
+  """
+  Represents the metadata of a song.
+  """
+  def __init__(self, album, albumartist, artist, filename, title, track, index):
+    self.album = album
+    self.albumartist = albumartist
+    self.artist = artist
+    self.filename = filename
+    self.title = title
+    self.track = track
+    self.index = str(index)
 
 class Songs:
+  """
+  Manage and query a collection of songs.
+  """
+  def __init__(self, queue=False):
     """
-    Manage and query a collection of songs.
+    Load all of the song information.
+
+    # Arguments
+
+    - `queue` (bool): Search in the queue if true. If false, the entire library
+      is searched.
     """
-    def __init__(self, queue=False):
-        """
-        Load all of the song information.
+    # Find all of the songs
+    p = subprocess.run(
+      ["mpc", "playlist" if queue else "listall", "-f",
+        "%album%" + TAG_DELIM +
+        "%albumartist%" + TAG_DELIM +
+        "%artist%" + TAG_DELIM +
+        "%file%" + TAG_DELIM +
+        "%title%" + TAG_DELIM +
+        "%track%"],
+      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if p.returncode:
+      print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
+      sys.exit(1)
+    out = p.stdout.decode(ENCODING).strip()
+    self._songs = []
+    for i, line in enumerate(out.split("\n")):
+      fields = line.split(TAG_DELIM.replace("#", ""))
+      self._songs.append(Song(*fields, i + 1))
 
-        # Arguments
-
-        - `queue` (bool): Search in the queue if true. If false, the entire
-          library is searched.
-        """
-        # Find all of the songs
-        p = subprocess.run(
-            ["mpc", "playlist" if queue else "listall", "-f",
-                "%album%" + TAG_DELIM +
-                "%albumartist%" + TAG_DELIM +
-                "%artist%" + TAG_DELIM +
-                "%file%" + TAG_DELIM +
-                "%title%" + TAG_DELIM +
-                "%track%"],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if p.returncode:
-            print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
-            sys.exit(1)
-        out = p.stdout.decode(ENCODING).strip()
-        self._songs = []
-        for i, line in enumerate(out.split("\n")):
-            fields = line.split(TAG_DELIM.replace("#", ""))
-            self._songs.append(Song(*fields, i + 1))
-
-    def options(self, *keys):
-        """
-        Prepare a list of options to show in a song chooser, where the keys are
-        the metadata fields to include in the option (from left to right). For
-        example, if `songs.options("albumartist", "album")` is called, then
-        songs will be aggregated by album artist and album. This will return an
-        ordered dictionary whose keys are a string containing the album artist
-        and album, and the values are the `Song` objects which have the
-        superkey.
-        """
-        opts = OrderedDict()
-        for song in self._songs:
-            values = list(map(lambda key: getattr(song, key), keys))
-            opt = SEL_DELIM.join(values)
-            if opt not in opts:
-                opts[opt] = [song]
-            else:
-                opts[opt].append(song)
-        return opts
+  def options(self, *keys):
+    """
+    Prepare a list of options to show in a song chooser, where the keys are
+    the metadata fields to include in the option (from left to right). For
+    example, if `songs.options("albumartist", "album")` is called, then songs
+    will be aggregated by album artist and album. This will return an ordered
+    dictionary whose keys are a string containing the album artist and album,
+    and the values are the `Song` objects which have the superkey.
+    """
+    opts = OrderedDict()
+    for song in self._songs:
+      values = list(map(lambda key: getattr(song, key), keys))
+      opt = SEL_DELIM.join(values)
+      if opt not in opts:
+        opts[opt] = [song]
+      else:
+        opts[opt].append(song)
+    return opts
 
 def mpc_play_songs(song_list):
-    """
-    Play all of the songs in the list in the order that they appear.
-    """
-    # Get the number of songs in queue
-    p = subprocess.run(["mpc", "playlist"],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if p.returncode:
-        print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
-        sys.exit(1)
-    text = p.stdout.decode(ENCODING).strip()
-    count = len(text.split("\n")) if text else 0
-    # Add the songs and start playing the first one
-    for song in song_list:
-        subprocess.run(["mpc", "add", song.filename])
-    mpc_play_queue(count)
+  """
+  Play all of the songs in the list in the order that they appear.
+  """
+  # Get the number of songs in queue
+  p = subprocess.run(["mpc", "playlist"],
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  if p.returncode:
+    print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
+    sys.exit(1)
+  text = p.stdout.decode(ENCODING).strip()
+  count = len(text.split("\n")) if text else 0
+  # Add the songs and start playing the first one
+  for song in song_list:
+    subprocess.run(["mpc", "add", song.filename])
+  mpc_play_queue(count)
 
 def mpc_play_queue(index):
-    """
-    Play the song at the index in the queue. Note that this starts at 1, not 0.
-    """
-    subprocess.run(["mpc", "play", str(index + 1)])
+  """
+  Play the song at the index in the queue. Note that this starts at 1, not 0.
+  """
+  subprocess.run(["mpc", "play", str(index + 1)])
 
 if __name__ == "__main__":
-    import argparse
-    # Command line arguments
-    parser = argparse.ArgumentParser(
-        description="Choose a song to play")
-    parser.add_argument("keys", type=str, nargs="+",
-        help="the song tags to search on")
-    parser.add_argument("--queue", action="store_true",
-        help="only consider the queue")
-    args = parser.parse_args()
-    # Get songs
-    songs = Songs(queue=args.queue)
-    # Show the selection menu
-    opts = songs.options(*args.keys)
-    opts_list = list(opts.keys())
-    sel_index = menu(opts_list)
-    if sel_index is None:
-        # Nothing was selected
-        sys.exit()
-    # Play the selection
-    if args.queue:
-        mpc_play_queue(sel_index)
-    else:
-        mpc_play_songs(opts[opts_list[sel_index]])
+  import argparse
+  # Command line arguments
+  parser = argparse.ArgumentParser(
+    description="Choose a song to play")
+  parser.add_argument("keys", type=str, nargs="+",
+    help="the song tags to search on")
+  parser.add_argument("--queue", action="store_true",
+    help="only consider the queue")
+  args = parser.parse_args()
+  # Get songs
+  songs = Songs(queue=args.queue)
+  # Show the selection menu
+  opts = songs.options(*args.keys)
+  opts_list = list(opts.keys())
+  sel_index = menu(opts_list)
+  if sel_index is None:
+    # Nothing was selected
+    sys.exit()
+  # Play the selection
+  if args.queue:
+    mpc_play_queue(sel_index)
+  else:
+    mpc_play_songs(opts[opts_list[sel_index]])

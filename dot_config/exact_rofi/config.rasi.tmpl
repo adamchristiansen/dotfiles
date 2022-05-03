@@ -1,89 +1,89 @@
 @theme "theme"
 
 configuration {
-    auto-select: false;
-    case-sensitive: false;
-    disable-history: true;
-    drun-display-format: "{name}";
-    font: "{{- .font.name }} {{ add .font.size -}}";
-    matching: "normal";
-    normalize-match: true;
-    run-command: "fish -c '{cmd}'";
-    run-list-command: "fish -c functions";
-    scroll-method: 1; // continuous
-    show-icons: false;
-    sidebar-mode: false;
-    sort: true;
-    terminal: "rofi-sensible-terminal";
-    tokenize: true;
+  auto-select: false;
+  case-sensitive: false;
+  disable-history: true;
+  drun-display-format: "{name}";
+  font: "{{- .font.name }} {{ add .font.size -}}";
+  matching: "normal";
+  normalize-match: true;
+  run-command: "fish -c '{cmd}'";
+  run-list-command: "fish -c functions";
+  scroll-method: 1; // continuous
+  show-icons: false;
+  sidebar-mode: false;
+  sort: true;
+  terminal: "rofi-sensible-terminal";
+  tokenize: true;
 }
 
 window {
-    background-color: @background;
-    border: {{ .dim.border -}}px {{ .dim.border -}}px 0 {{ .dim.border -}}px;
-    border-color: @border;
-    location: south;
-    height: 38%;
-    text-color: @foreground;
-    width: 62%;
-    x-offset: 0;
-    y-offset: 0;
+  background-color: @background;
+  border: {{ .dim.border -}}px {{ .dim.border -}}px 0 {{ .dim.border -}}px;
+  border-color: @border;
+  location: south;
+  height: 38%;
+  text-color: @foreground;
+  width: 62%;
+  x-offset: 0;
+  y-offset: 0;
 }
 
 entry {
-    background-color: @background;
-    blink: true;
-    expand: true;
-    horizontal-align: 0;
-    placeholder: "Search";
-    placeholder-color: @foreground-alt;
-    text-color: @foreground;
+  background-color: @background;
+  blink: true;
+  expand: true;
+  horizontal-align: 0;
+  placeholder: "Search";
+  placeholder-color: @foreground-alt;
+  text-color: @foreground;
 }
 
 inputbar {
-    background-color: @background;
-    border: 0 0 {{ .dim.border -}}px 0;
-    border-color: @border;
-    children: [ entry ];
-    expand: false;
-    margin: 0;
-    padding: {{ mul 2 .dim.padding -}}px;
-    text-color: @foreground;
+  background-color: @background;
+  border: 0 0 {{ .dim.border -}}px 0;
+  border-color: @border;
+  children: [ entry ];
+  expand: false;
+  margin: 0;
+  padding: {{ mul 2 .dim.padding -}}px;
+  text-color: @foreground;
 }
 
 listview {
-    background-color: @background;
-    cycle: false;
-    dynamic: false;
-    layout: vertical;
-    spacing: 0;
+  background-color: @background;
+  cycle: false;
+  dynamic: false;
+  layout: vertical;
+  spacing: 0;
 }
 
 mainbox {
-    background-color: @background;
-    children: [ inputbar, listview ];
-    padding: {{ .dim.padding -}}px {{ mul 2 .dim.padding -}}px {{ mul 2 .dim.padding -}}px {{ mul 2 .dim.padding -}}px;
-    spacing: {{ mul 2 .dim.padding -}}px;
+  background-color: @background;
+  children: [ inputbar, listview ];
+  padding: {{ .dim.padding -}}px {{ mul 2 .dim.padding -}}px {{ mul 2 .dim.padding -}}px {{ mul 2 .dim.padding -}}px;
+  spacing: {{ mul 2 .dim.padding -}}px;
 }
 
 element {
-    background-color: @background;
-    orientation: vertical;
-    padding: {{ mul 2 .dim.padding -}}px;
-    text-color: @foreground;
+  background-color: @background;
+  orientation: vertical;
+  padding: {{ mul 2 .dim.padding -}}px;
+  text-color: @foreground;
 }
 
 element selected {
-    background-color: @background-alt;
-    border: 0 0 0 {{ .dim.border -}}px;
-    border-color: @accent;
-    text-color: @foreground;
+  background-color: @background-alt;
+  border: 0 0 0 {{ .dim.border -}}px;
+  border-color: @accent;
+  text-color: @foreground;
 }
 
 element-text {
-    background-color: inherit;
-    expand: false;
-    horizontal-align: 0;
-    text-color: inherit;
-    vertical-align: 0.5;
+  background-color: inherit;
+  expand: false;
+  horizontal-align: 0;
+  text-color: inherit;
+  vertical-align: 0.5;
 }

@@ -1,23 +1,23 @@
 #!/usr/bin/env sh
 
 if command -v zenity > /dev/null; then
-    zenity --question --default-cancel \
-        --no-wrap --text="Are you sure you want to shutdown?" \
-        --icon-name="dialog-warning"
-    if [ $? -ne 0 ]; then
-        return 1
-    fi
+  zenity --question --default-cancel \
+    --no-wrap --text="Are you sure you want to shutdown?" \
+    --icon-name="dialog-warning"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
 fi
 
 if command -v mpc > /dev/null; then
-    mpc pause > /dev/null 2>&1
+  mpc pause > /dev/null 2>&1
 fi
 
 session=$(echo $XDG_CURRENT_DESKTOP | tr "[:upper:]" "[:lower:]")
 
 if [ "$session" = "xfce" ]; then
-    xfce4-session-logout --halt
+  xfce4-session-logout --halt
 else
-    echo "Unknown session: `$session`" 1>&2
-    return 1
+  echo "Unknown session: `$session`" 1>&2
+  return 1
 fi

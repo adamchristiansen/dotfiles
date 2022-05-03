@@ -2,11 +2,11 @@
 
 wallpaper=$(wallpaper-picker $@)
 if [ $? -eq 0 ]; then
-    wallpaper-setter "$wallpaper"
-    cache="$XDG_CONFIG_HOME/wallpaper/image"
-    find "$cache" -delete > /dev/null 2>&1
-    mkdir -p "$cache"
-    cp "$wallpaper" "$cache"
+  wallpaper-setter "$wallpaper"
+  cache="$XDG_CONFIG_HOME/wallpaper/image"
+  find "$cache" -delete > /dev/null 2>&1
+  mkdir -p "$cache"
+  cp "$wallpaper" "$cache"
 else
-    exit 1
+  exit 1
 fi
