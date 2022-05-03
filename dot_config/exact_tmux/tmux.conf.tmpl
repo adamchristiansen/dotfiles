@@ -89,15 +89,15 @@ bind -N "Break pane into new window"                   !   break-pane -a -n [bro
 bind -N "Kill the current pane"                        x   kill-pane
 
 # Resize panes
-bind -N "Toggle pane zoom"           z       resize-pane -Z
-bind -N "Resize pane left by 1"      C-Left  resize-pane -L
-bind -N "Resize pane downward by 1"  C-Down  resize-pane -D
-bind -N "Resize pane upward by 1"    C-Up    resize-pane -U
-bind -N "Resize pane right by 1"     C-Right resize-pane -R
-bind -N "Resize pane left by 10"     M-Left  resize-pane -L 10
-bind -N "Resize pane downward by 10" M-Down  resize-pane -D 10
-bind -N "Resize pane upward by 10"   M-Up    resize-pane -U 10
-bind -N "Resize pane right by 10"    M-Right resize-pane -R 10
+bind -N "Toggle pane zoom"             z       resize-pane -Z
+bind -N "Resize pane left by 1"     -n C-Left  resize-pane -L
+bind -N "Resize pane downward by 1" -n C-Down  resize-pane -D
+bind -N "Resize pane upward by 1"   -n C-Up    resize-pane -U
+bind -N "Resize pane right by 1"    -n C-Right resize-pane -R
+bind -N "Resize pane left by 5"     -n M-Left  resize-pane -L 5
+bind -N "Resize pane downward by 5" -n M-Down  resize-pane -D 5
+bind -N "Resize pane upward by 5"   -n M-Up    resize-pane -U 5
+bind -N "Resize pane right by 5"    -n M-Right resize-pane -R 5
 
 # Layout
 bind -N "Switch to layout mode"                \#  switch-client -T layout
