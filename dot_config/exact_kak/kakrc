@@ -34,6 +34,7 @@ hook global InsertCompletionHide .* %{
 
 source "%val{config}/plugins.kak"
 source "%val{config}/modeline.kak"
+source "%val{config}/filetype.kak"
 
 map global user w -docstring 'write buffer' ':w<ret>'
 
