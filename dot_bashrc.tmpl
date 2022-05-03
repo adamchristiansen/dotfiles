@@ -1,13 +1,13 @@
 # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-      *) return;;
+  *i*) ;;
+    *) return;;
 esac
 
 # Load custom variables
 profiled="$HOME/.local/etc/profile.d"
 for f in $(ls "$profiled"); do
-    . "$profiled/$f"
+  . "$profiled/$f"
 done
 
 # Don't write history to a file
@@ -26,34 +26,34 @@ shopt -s checkwinsize
 
 # Set the prompt
 case "$TERM" in
-    # Color
-    xterm-color|*-256color)
-        PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-        ;;
-    # No color
-    *)
-        PS1='\u@\h:\w\$ '
-        ;;
+  # Color
+  xterm-color|*-256color)
+    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    ;;
+  # No color
+  *)
+    PS1='\u@\h:\w\$ '
+    ;;
 esac
 
 if [ -x /usr/bin/dircolors ]; then
-    if [ -r ~/.dircolors ]; then
-        eval "$(dircolors -b ~/.dircolors)"
-    else
-        eval "$(dircolors -b)"
-    fi
-    alias ls='ls --color=auto'
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+  if [ -r ~/.dircolors ]; then
+    eval "$(dircolors -b ~/.dircolors)"
+  else
+    eval "$(dircolors -b)"
+  fi
+  alias ls='ls --color=auto'
+  alias grep='grep --color=auto'
+  alias fgrep='fgrep --color=auto'
+  alias egrep='egrep --color=auto'
 fi
 
 # Enable programmable completion features
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
+  . /usr/share/bash-completion/bash_completion
   elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
+  . /etc/bash_completion
   fi
 fi
 

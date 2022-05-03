@@ -6,12 +6,12 @@ import subprocess
 import sys
 
 parser = argparse.ArgumentParser(
-    description="Pick a wallpaper using sxiv.",
-    formatter_class=argparse.RawDescriptionHelpFormatter)
+  description="Pick a wallpaper using sxiv.",
+  formatter_class=argparse.RawDescriptionHelpFormatter)
 parser.add_argument("dir",
-    metavar="DIR",
-    action="store", nargs="?",
-    help="the location of the images to search")
+  metavar="DIR",
+  action="store", nargs="?",
+  help="the location of the images to search")
 args = parser.parse_args()
 
 # The sxiv command to spawn. This returns a list of marked files.
@@ -21,34 +21,34 @@ SXIV_COMMAND = ["sxiv", "-b", "-o", "-r", "-t"]
 ENCODING = "utf-8"
 
 def directory():
-    """
-    Get the directory to search for images. This is (in order): the directory
-    argument (if supplied), $XDG_PICTURES_DIR/Wallpaper, or
-    $HOME/Pictures/Wallpaper.
-    """
-    if args.dir is not None:
-        return args.dir
-    xdg = os.environ.get("XDG_PICTURES_DIR")
-    if xdg is not None:
-        return os.path.join(xdg, "Wallpaper")
-    return os.path.join(os.environ.get("HOME"), "Pictures", "Wallpaper")
+  """
+  Get the directory to search for images. This is (in order): the directory
+  argument (if supplied), $XDG_PICTURES_DIR/Wallpaper, or
+  $HOME/Pictures/Wallpaper.
+  """
+  if args.dir is not None:
+    return args.dir
+  xdg = os.environ.get("XDG_PICTURES_DIR")
+  if xdg is not None:
+    return os.path.join(xdg, "Wallpaper")
+  return os.path.join(os.environ.get("HOME"), "Pictures", "Wallpaper")
 
 def sxiv(path):
-    """
-    Run the sxiv command on the path. Returns the first selected image, or
-    `None` if no selection was made.
-    """
-    command = SXIV_COMMAND + [path]
-    images = subprocess.run(command,
-            stdout=subprocess.PIPE).stdout.decode(ENCODING).split('\n')
-    if images:
-        image = images[0].strip()
-        if image:
-            return image
-    return None
+  """
+  Run the sxiv command on the path. Returns the first selected image, or
+  `None` if no selection was made.
+  """
+  command = SXIV_COMMAND + [path]
+  images = subprocess.run(command,
+      stdout=subprocess.PIPE).stdout.decode(ENCODING).split('\n')
+  if images:
+    image = images[0].strip()
+    if image:
+      return image
+  return None
 
 WALLPAPER = sxiv(directory())
 if WALLPAPER is None:
-    sys.exit(1)
+  sys.exit(1)
 # Print the name of the wallpaper
 print(WALLPAPER)

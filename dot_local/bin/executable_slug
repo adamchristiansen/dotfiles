@@ -19,41 +19,41 @@ FILL = '-'
 
 # Characters to be treated as spaces.
 SPACE = [
-    # Standard whitespace
-    ' ', '\t', '\r', '\r', '\n',
-    # Conjunctive characters
-    '_', '+', ',', '.', '/', ':', ';', '~',
+  # Standard whitespace
+  ' ', '\t', '\r', '\r', '\n',
+  # Conjunctive characters
+  '_', '+', ',', '.', '/', ':', ';', '~',
 ]
 
 # Characters that are allowed in the final string.
 KEEP = [
-    FILL,
-    # Numbers
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-    # Letters
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-    'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+  FILL,
+  # Numbers
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+  # Letters
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+  'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ]
 
 def slug(s):
-    """
-    Create a slug from a string.
-    """
-    s = s.casefold()
-    for c in SPACE:
-        s = s.replace(c, FILL)
-    s = ''.join(filter(lambda c: c in KEEP, s))
-    while True:
-        old_len = len(s)
-        s = s.replace(FILL * 2, FILL)
-        if len(s) == old_len:
-            break
-    return s.strip(FILL)
+  """
+  Create a slug from a string.
+  """
+  s = s.casefold()
+  for c in SPACE:
+    s = s.replace(c, FILL)
+  s = ''.join(filter(lambda c: c in KEEP, s))
+  while True:
+    old_len = len(s)
+    s = s.replace(FILL * 2, FILL)
+    if len(s) == old_len:
+      break
+  return s.strip(FILL)
 
 if len(sys.argv) > 1:
-    print(slug(FILL.join(sys.argv[1:])))
+  print(slug(FILL.join(sys.argv[1:])))
 else:
-    lines = []
-    for line in sys.stdin:
-        lines.append(line)
-    print(slug(FILL.join(lines)))
+  lines = []
+  for line in sys.stdin:
+    lines.append(line)
+  print(slug(FILL.join(lines)))
