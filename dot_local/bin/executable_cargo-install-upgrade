@@ -3,7 +3,7 @@
 # Upgrade all binaries installed using `cargo install`.
 
 packages() {
-    cargo install --list | grep -oE '^(\S+)'
+  cargo install --list | grep -oE '^(\S+)'
 }
 
 cargo install $(packages)

@@ -4,15 +4,15 @@
 
 # Send SIGUSR1 to any processes with the name $1.
 send_sigusr1() {
-    killall -SIGUSR1 "$1" > /dev/null 2>&1
+  killall -SIGUSR1 "$1" > /dev/null 2>&1
 }
 
 # If at least one instance of the program in $1 is running, then execute the
 # command in $2.
 when_running() {
-    if pgrep -x "$1" > /dev/null; then
-        $2 > /dev/null 2>&1 &
-    fi
+  if pgrep -x "$1" > /dev/null; then
+    $2 > /dev/null 2>&1 &
+  fi
 }
 
 when_running bspwm "$XDG_CONFIG_HOME/bspwm/bspwmrc"

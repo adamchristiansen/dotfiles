@@ -4,34 +4,34 @@
 
 # If bspwm is not running then this script cannot be used.
 if ! pgrep bspwm > /dev/null; then
-    echo "Not running bspwm" >&2
-    exit 1
+  echo "Not running bspwm" >&2
+  exit 1
 fi
 
 # Prints the total number of desktops.
 desktop_count() {
-    bspc query -D --names | wc -l
+  bspc query -D --names | wc -l
 }
 
 # Tests whether desktop $1 is occupied. This command exits successfully if it
 # is and with a failure if it is not.
 desktop_occupied() {
-    test ! -z "$(bspc query -T -d "^$1" | grep -io '"vacant":\s*false')"
+  test ! -z "$(bspc query -T -d "^$1" | grep -io '"vacant":\s*false')"
 }
 
 # Prints the number of the focused desktop. If this is unable to find the
 # focused desktop then nothing is printed.
 desktop_focused_number() {
-    focus_name=$(bspc query -D -d focused --names)
-    i=1
-    for name in $(bspc query -D --names); do
-        if [ "$name" = "$focus_name" ]; then
-            echo $i
-            return 0
-        fi
-        i=$((i + 1))
-    done
-    return 1
+  focus_name=$(bspc query -D -d focused --names)
+  i=1
+  for name in $(bspc query -D --names); do
+    if [ "$name" = "$focus_name" ]; then
+      echo $i
+      return 0
+    fi
+    i=$((i + 1))
+  done
+  return 1
 }
 desktop_focused_number=$(desktop_focused_number)
 
@@ -43,16 +43,16 @@ label_empty="∙"
 # Build the notification
 text=""
 for i in $(seq $(desktop_count)); do
-    s="$label_empty"
-    if [ $desktop_focused_number -eq $i ]; then
-        s="$label_focused"
-    elif desktop_occupied $i; then
-        s="$label_occupied"
-    fi
-    text="$text$s "
+  s="$label_empty"
+  if [ $desktop_focused_number -eq $i ]; then
+    s="$label_focused"
+  elif desktop_occupied $i; then
+    s="$label_occupied"
+  fi
+  text="$text$s "
 done
 
 notify-send -u low \
-    --hint=string:x-dunst-stack-tag:workspaces \
-    --icon=preferences-system-windows \
-    -a "Workspaces" "$text"
+  --hint=string:x-dunst-stack-tag:workspaces \
+  --icon=preferences-system-windows \
+  -a "Workspaces" "$text"

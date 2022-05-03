@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
 
 if command -v mpc > /dev/null; then
-    mpc pause > /dev/null 2>&1
+  mpc pause > /dev/null 2>&1
 fi
 
 session=$(echo $XDG_CURRENT_DESKTOP | tr "[:upper:]" "[:lower:]")
 
 if [ "$session" = "xfce" ]; then
-    xfce4-screensaver-command --lock
+  xfce4-screensaver-command --lock
 else
-    echo "Unknown session: `$session`" 1>&2
-    return 1
+  echo "Unknown session: `$session`" 1>&2
+  return 1
 fi

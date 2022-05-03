@@ -8,15 +8,15 @@
 
 ### Run a terminal
 super + Return
-    alacritty || LIBGL_ALWAYS_SOFTWARE=1 alacritty
+  alacritty || LIBGL_ALWAYS_SOFTWARE=1 alacritty
 
 ### Show an application launcher
 super + shift + @space
-    rofi -show drun
+  rofi -show drun
 
 ### Show a command launcher
 super + @space
-    rofi -show run
+  rofi -show run
 
 #------------------------------------------------------------------------------
 # Session
@@ -24,11 +24,11 @@ super + @space
 
 ### Show a session menu
 super + shift + s
-    "$HOME/.local/bin/session-menu"
+  "$HOME/.local/bin/session-menu"
 
 ### Lock the screen
 ctrl + alt + l
-    "$HOME/.local/bin/session-lock"
+  "$HOME/.local/bin/session-lock"
 
 #------------------------------------------------------------------------------
 # Utilities
@@ -36,25 +36,25 @@ ctrl + alt + l
 
 ### Show hotkey hints
 super + Tab; h
-    "$HOME/.local/bin/hotkey-hints"
+  "$HOME/.local/bin/hotkey-hints"
 
 ### Change the desktop wallpaper
 super + Tab; w
-    "$HOME/.local/bin/wallpaper-changer"
+  "$HOME/.local/bin/wallpaper-changer"
 
 ### Copy password, username, or TOTP to clipboard
 super + Tab; p; {p,u,t}
-    set -e; \
-    x=$("$HOME/.local/bin/bw-query" --sync {-p,-u,-t} --rofi --ask-gui); \
-    printf "$x" | "$HOME/.local/bin/clipboard" --copy --notify
+  set -e; \
+  x=$("$HOME/.local/bin/bw-query" --sync {-p,-u,-t} --rofi --ask-gui); \
+  printf "$x" | "$HOME/.local/bin/clipboard" --copy --notify
 
 ### Clear the clipboard
 super + Tab; x
-    "$HOME/.local/bin/clipboard" --clear --notify
+  "$HOME/.local/bin/clipboard" --clear --notify
 
 ### Toggle the status bar
 super + b
-    "$HOME/.config/polybar/toggle"
+  "$HOME/.config/polybar/toggle"
 
 #------------------------------------------------------------------------------
 # Notifications
@@ -62,23 +62,23 @@ super + b
 
 ### Show network information
 super + Tab; n; n
-    "$HOME/.local/bin/notify-network" --notify
+  "$HOME/.local/bin/notify-network" --notify
 
 ### Show current time
 super + Tab; n; t
-    "$HOME/.local/bin/notify-datetime" --notify
+  "$HOME/.local/bin/notify-datetime" --notify
 
 ### Show volume
 super + Tab; n; v
-    "$HOME/.local/bin/notify-volume" --notify
+  "$HOME/.local/bin/notify-volume" --notify
 
 ### Show current weather
 super + Tab; n; w
-    "$HOME/.local/bin/notify-weather" --notify
+  "$HOME/.local/bin/notify-weather" --notify
 
 ### Clear notifications
 super + Tab; space
-    dunstctl close-all
+  dunstctl close-all
 
 #------------------------------------------------------------------------------
 # Audio and Video
@@ -86,51 +86,51 @@ super + Tab; space
 
 ### Mute volume
 super + a; a
-    "$HOME/.local/bin/notify-volume" mute --notify
+  "$HOME/.local/bin/notify-volume" mute --notify
 
 ### Decrease the volume
 super + a; s
-    "$HOME/.local/bin/notify-volume" down --notify
+  "$HOME/.local/bin/notify-volume" down --notify
 
 ### Increase the volume
 super + a; d
-    "$HOME/.local/bin/notify-volume" up --notify
+  "$HOME/.local/bin/notify-volume" up --notify
 
 ### Set the volume to a value out of 10
 super + a; {1-9}
-    "$HOME/.local/bin/notify-volume" {1-9}0 --notify
+  "$HOME/.local/bin/notify-volume" {1-9}0 --notify
 
 ### Choose an album to play
 super + a; c; a
-    "$HOME/.local/bin/music-choose" albumartist album
+  "$HOME/.local/bin/music-choose" albumartist album
 
 ### Choose a song to play
 super + a; c; s
-    "$HOME/.local/bin/music-choose" albumartist album title
+  "$HOME/.local/bin/music-choose" albumartist album title
 
 ### Choose a song to play from the music queue
 super + a; c; q
-    "$HOME/.local/bin/music-choose" --queue index albumartist album title
+  "$HOME/.local/bin/music-choose" --queue index albumartist album title
 
 ### Play the previous song in the music queue
 super + a; b
-    mpc -q prev
+  mpc -q prev
 
 ### Play the next song in the music queue
 super + a; n
-    mpc -q next
+  mpc -q next
 
 ### Pause music
 super + a; p
-    mpc -q toggle
+  mpc -q toggle
 
 ### Clear the music queue
 super + a; x
-    mpc clear
+  mpc clear
 
 ### Pause video player
 super + alt + a; p
-    xdotool key --window "$(xdotool search --class mpv)" p
+  xdotool key --window "$(xdotool search --class mpv)" p
 
 #------------------------------------------------------------------------------
 # BSPWM General
@@ -138,35 +138,35 @@ super + alt + a; p
 
 ### Make sxhkd and bspwm reload its configuration files
 super + Escape
-    pkill -USR1 -x sxhkd; "$XDG_CONFIG_HOME/bspwm/bspwmrc"
+  pkill -USR1 -x sxhkd; "$XDG_CONFIG_HOME/bspwm/bspwmrc"
 
 ### Quit bspwm normally
 super + ctrl + alt + shift + Escape
-    bspc quit
+  bspc quit
 
 ### Close a window
 super + w
-    bspc node -c
+  bspc node -c
 
 ### Kill a window
 super + shift + w
-    bspc node -k
+  bspc node -k
 
 ### Alternate between the tiled and monocle layout
 super + m
-    bspc desktop -l next
+  bspc desktop -l next
 
 ### Insert a receptacle
 super + r
-    bspc node -i
+  bspc node -i
 
 ### Clear all receptacles in the current desktop
 super + shift + r
-    for win in `bspc query -N -n .leaf.!window`; do bspc node $win -k; done;
+  for win in `bspc query -N -n .leaf.!window`; do bspc node $win -k; done;
 
 ### Show desktop information
 super + d
-    "$XDG_CONFIG_HOME/bspwm/bspwm-info"
+  "$XDG_CONFIG_HOME/bspwm/bspwm-info"
 
 #------------------------------------------------------------------------------
 # BSPWM State and Flags
@@ -174,35 +174,35 @@ super + d
 
 ### Set the window state to tiled
 super + t
-    bspc node -t tiled
+  bspc node -t tiled
 
 ### Set the window state to pseudo-tiled
 super + shift + t
-    bspc node -t pseudo_tiled
+  bspc node -t pseudo_tiled
 
 ### Set the window state to floating
 super + f
-    bspc node -t floating
+  bspc node -t floating
 
 ### Set the window state to fullscreen
 super + shift + f
-    bspc node -t fullscreen
+  bspc node -t fullscreen
 
 ### Toggle the node marked flag
 super + ctrl + m
-    bspc node -g marked
+  bspc node -g marked
 
 ### Toggle the node locked flag
 super + ctrl + x
-    bspc node -g locked
+  bspc node -g locked
 
 ### Toggle the node sticky flag
 super + ctrl + y
-    bspc node -g sticky
+  bspc node -g sticky
 
 ### Toggle the node private flag
 super + ctrl + z
-    bspc node -g private
+  bspc node -g private
 
 #------------------------------------------------------------------------------
 # BSPWM Focus, Swap, and Move
@@ -210,34 +210,34 @@ super + ctrl + z
 
 ### Focus a node in a direction
 super + {h,j,k,l}
-    bspc node -f {west,south,north,east}
+  bspc node -f {west,south,north,east}
 
 ### Move a node in a direction
 super + shift + {h,j,k,l}
-    args="{west -16 0,south 0 16,north 0 -16,east 16 0}"; \
-    direction=$(echo "$args" | awk '\{print $1\}'); \
-    move=$(echo "$args" | awk '\{printf "%d %d\n", $2, $3\}'); \
-    if bspc query -N focused.floating > /dev/null; then \
-        bspc node -v $move; \
-    else \
-        bspc node -s $direction; \
-    fi;
+  args="{west -16 0,south 0 16,north 0 -16,east 16 0}"; \
+  direction=$(echo "$args" | awk '\{print $1\}'); \
+  move=$(echo "$args" | awk '\{printf "%d %d\n", $2, $3\}'); \
+  if bspc query -N focused.floating > /dev/null; then \
+    bspc node -v $move; \
+  else \
+    bspc node -s $direction; \
+  fi;
 
 ### Focus the next window
 super + c
-    bspc node -f next.local.!hidden.window
+  bspc node -f next.local.!hidden.window
 
 ### Focus the previous window
 super + shift + c
-    bspc node -f prev.local.!hidden.window
+  bspc node -f prev.local.!hidden.window
 
 ### Focus a desktop
 super + {1-9,0}
-    bspc desktop -f '^{1-9,10}'
+  bspc desktop -f '^{1-9,10}'
 
 ### Send the focused node to a desktop
 super + shift + {1-9,0}
-    bspc node -d '^{1-9,10}'
+  bspc node -d '^{1-9,10}'
 
 #------------------------------------------------------------------------------
 # BSPWM Layout
@@ -245,31 +245,31 @@ super + shift + {1-9,0}
 
 ### Balance windows by area
 super + Tab; l; b
-    bspc node @/ -B
+  bspc node @/ -B
 
 ### Circulate windows forward
 super + Tab; l; c
-    bspc node @/ -C forward
+  bspc node @/ -C forward
 
 ### Circulate windows backward
 super + Tab; l; shift + c
-    bspc node @/ -C backward
+  bspc node @/ -C backward
 
 ### Flip windows horizontally
 super + Tab; l; f; h
-    bspc node @/ -F horizontal
+  bspc node @/ -F horizontal
 
 ### Flip windows verticallwy
 super + Tab; l; f; v
-    bspc node @/ -F vertical
+  bspc node @/ -F vertical
 
 ### Rotate windows clockwise
 super + Tab; l; r
-    bspc node @/ -R 90
+  bspc node @/ -R 90
 
 ### Rotate windows anticlockwise
 super + Tab; l; shift + r
-    bspc node @/ -R -90
+  bspc node @/ -R -90
 
 #------------------------------------------------------------------------------
 # BSPWM Resize
@@ -277,11 +277,11 @@ super + Tab; l; shift + r
 
 ### Expand a window by moving a side outward
 super + alt + {h,j,k,l}
-    bspc node -z {left -16 0,bottom 0 16,top 0 -16,right 16 0}
+  bspc node -z {left -16 0,bottom 0 16,top 0 -16,right 16 0}
 
 ### Contract a window by moving a side inward
 super + alt + shift + {h,j,k,l}
-    bspc node -z {right -16 0,top 0 16,bottom 0 -16,left 16 0}
+  bspc node -z {right -16 0,top 0 16,bottom 0 -16,left 16 0}
 
 #------------------------------------------------------------------------------
 # BSPWM Preselect
@@ -289,12 +289,12 @@ super + alt + shift + {h,j,k,l}
 
 ### Preselect in a direction
 super + ctrl + {h,j,k,l}
-    bspc node -p {west,south,north,east}
+  bspc node -p {west,south,north,east}
 
 ### Change the preselection ratio
 super + ctrl + {1-9}
-    bspc node -o 0.{1-9}
+  bspc node -o 0.{1-9}
 
 ### Cancel a preselection
 super + ctrl + Escape
-    bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+  bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel

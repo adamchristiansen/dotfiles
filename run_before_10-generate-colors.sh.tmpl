@@ -2,14 +2,14 @@
 
 python=""
 if command -v python3 > /dev/null; then
-    python=python3
+  python=python3
 elif command -v python2 > /dev/null; then
-    python=python2
+  python=python2
 elif command -v python > /dev/null; then
-    python=python
+  python=python
 else
-    echo "Could not find a python in PATH" >&2
-    exit 1
+  echo "Could not find a python in PATH" >&2
+  exit 1
 fi
 
 colorscheme={{ .colorscheme | quote }}

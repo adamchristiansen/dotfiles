@@ -10,9 +10,9 @@ import sys
 from dotfiles import menu
 
 if __name__ == "__main__":
-    opts = ["Lock", "Logout", "Reboot", "Shutdown", "Suspend"]
-    i = menu(opts)
-    if i is None:
-        # Nothing was selected
-        sys.exit()
-    subprocess.run(f"session-{opts[i].lower()}")
+  opts = ["Lock", "Logout", "Reboot", "Shutdown", "Suspend"]
+  i = menu(opts)
+  if i is None:
+    # Nothing was selected
+    sys.exit()
+  subprocess.run(f"session-{opts[i].lower()}")

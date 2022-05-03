@@ -11,21 +11,21 @@ The output of a command.
 Run = collections.namedtuple("Run", ["exitcode", "stdout", "stderr"])
 
 def run(cmd):
-    """
-    Run a command.
+  """
+  Run a command.
 
-    # Arguments
+  # Arguments
 
-    - cmd (list<str>): The command to run.
+  - cmd (list<str>): The command to run.
 
-    # Returns
+  # Returns
 
-    (Run): The command output.
-    """
-    ENCODING = "utf-8"
-    p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return Run(
-        p.returncode,
-        stdout = (p.stdout if p.stdout is not None else b"").decode(ENCODING).strip(),
-        stderr = (p.stderr if p.stderr is not None else b"").decode(ENCODING).strip(),
-    )
+  (Run): The command output.
+  """
+  ENCODING = "utf-8"
+  p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  return Run(
+    p.returncode,
+    stdout = (p.stdout if p.stdout is not None else b"").decode(ENCODING).strip(),
+    stderr = (p.stderr if p.stderr is not None else b"").decode(ENCODING).strip(),
+  )

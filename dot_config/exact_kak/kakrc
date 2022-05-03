@@ -3,34 +3,34 @@ set-option global indentwidth 4
 set-option global scrolloff 3,0
 set-option global aligntab false
 set-option global ui_options \
-    terminal_set_title=false \
-    terminal_assistant=none \
-    terminal_enable_mouse=false \
-    terminal_padding_char=
+  terminal_set_title=false \
+  terminal_assistant=none \
+  terminal_enable_mouse=false \
+  terminal_padding_char=
 set-option global startup_info_version 99999999 # Disable startup message
 
 colorscheme uuu
 hook global BufCreate .* %{
-    add-highlighter buffer/ number-lines \
-        -relative -hlcursor -separator '  ' -min-digits 4
-    add-highlighter buffer/ show-matching
-    add-highlighter buffer/ show-whitespaces \
-        -lf ' ' -spc ' ' -nbsp '~' -tab '»' -tabpad '·'
-    add-highlighter buffer/trailing-whitespaces regex "(\h+)$" 1:Error
+  add-highlighter buffer/ number-lines \
+    -relative -hlcursor -separator '  ' -min-digits 4
+  add-highlighter buffer/ show-matching
+  add-highlighter buffer/ show-whitespaces \
+    -lf ' ' -spc ' ' -nbsp '~' -tab '»' -tabpad '·'
+  add-highlighter buffer/trailing-whitespaces regex "(\h+)$" 1:Error
 }
 
 hook global BufCreate .* %{
-    editorconfig-load
-    autoconfigtab
+  editorconfig-load
+  autoconfigtab
 }
 
 hook global InsertCompletionShow .* %{
-    map window insert <tab> <c-n>
-    map window insert <s-tab> <c-p>
+  map window insert <tab> <c-n>
+  map window insert <s-tab> <c-p>
 }
 hook global InsertCompletionHide .* %{
-    unmap window insert <tab> <c-n>
-    unmap window insert <s-tab> <c-p>
+  unmap window insert <tab> <c-n>
+  unmap window insert <s-tab> <c-p>
 }
 
 source "%val{config}/plugins.kak"

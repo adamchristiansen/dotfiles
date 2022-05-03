@@ -2,9 +2,9 @@
 sourceprofile ~/.profile
 set -l profiled ~/.local/etc/profile.d
 if [ -d $profiled ]
-    for f in (ls $profiled)
-        sourceprofile $profiled/$f
-    end
+  for f in (ls $profiled)
+    sourceprofile $profiled/$f
+  end
 end
 set -e profiled
 
