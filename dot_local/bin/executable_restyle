@@ -1,0 +1,471 @@
+#!/usr/bin/env python3
+
+from collections import defaultdict, namedtuple
+import configparser
+from dotfiles import run
+from functools import cached_property
+import os.path
+import sys
+
+class EditorConfig:
+    """
+    Get the EditorConfig settings for a file.
+    """
+
+    def __init__(self, filepath):
+        """
+        Create EditorConfig settings for a file path.
+        """
+        if filepath is None:
+            self._data = {}
+        else:
+            r = run(['editorconfig', os.path.abspath(filepath)])
+            if r.exitcode != 0:
+                self._data = {}
+            else:
+                parser = configparser.ConfigParser(delimiters='=')
+                # A section header is included so that the editorconfig output
+                # can be parsed as an INI
+                parser.read_string('[DEFAULT]\n' + r.stdout)
+                self._data = dict(parser['DEFAULT'])
+
+    @staticmethod
+    def _bool(s):
+        return True if s.lower() == 'true' else False
+
+    def _get(self, key, data_type=str):
+        if self._data is not None and key in self._data:
+            return data_type(self._data[key])
+        return None
+
+    @cached_property
+    def charset(self):
+        """
+        A string with the character set name. `None` if it was not specified or
+        the EditorConfig was not found.
+        """
+        return self._get('charset')
+
+    @cached_property
+    def end_of_line(self):
+        """
+        A string with the end of line type name. `None` if it was not specified
+        or the EditorConfig was not found.
+        """
+        return self._get('end_of_line')
+
+    @cached_property
+    def indent_size(self):
+        """
+        An integer with the indent size. `None` if it was not specified or the
+        EditorConfig was not found.
+        """
+        return self._get('indent_size', int)
+
+    @cached_property
+    def indent_style(self):
+        """
+        A string with the indent style name. `None` if it was not specified or
+        the EditorConfig was not found.
+        """
+        return self._get('indent_style')
+
+    @cached_property
+    def insert_final_newline(self):
+        """
+        A boolean indicating that a final newline should be inserted. `None` if
+        it was not specified or the EditorConfig was not found.
+        """
+        return self._get('insert_final_newline', EditorConfig._bool)
+
+    @cached_property
+    def trim_trailing_whitespace(self):
+        """
+        A boolean indicating that trailing whitespace on each line should be
+        stripped. `None` if it was not specified or the EditorConfig was not
+        found.
+        """
+        return self._get('trim_trailing_whitespace', EditorConfig._bool)
+
+    @cached_property
+    def tab_width(self):
+        """
+        An integer with the tab width. `None` if it was not specified or the
+        EditorConfig was not found.
+        """
+        return self._get('tab_width', int)
+
+class Indent:
+    """
+    Represents an indent of a line.
+    """
+    def __init__(self, spaces, tabs):
+        """
+        Create an indent from the number of leading spaces and tabs.
+        """
+        self.spaces = spaces
+        self.tabs = tabs
+
+    def __bool__(self):
+        return self.spaces and self.tabs
+
+class IndentStyle:
+    """
+    The style of an indent. These match the names used by an EditorConfig.
+    """
+    SPACE = 'space'
+    TAB = 'tab'
+
+class EndOfLine:
+    """
+    The end of line styles. These match the names used by an EditorConfig.
+    """
+    CR = 'cr'
+    LF = 'lf'
+    CRLF = 'crlf'
+
+class RestyleError(Exception):
+    """
+    The type of all restyling specific errors.
+    """
+    pass
+
+class Restyle:
+    """
+    Restyles a file.
+    """
+
+    def __init__(self, filepath,
+            charset=None,
+            end_of_line=None,
+            indent_size=None,
+            old_indent_size=None,
+            min_indent_size=None,
+            max_indent_size=None,
+            indent_style=None,
+            insert_final_newline=None,
+            tab_width=None,
+            trim_trailing_whitespace=None):
+        """
+        Create a new restyler for a file.
+
+        - filepath (str): path to the file to restyle.
+        - charset (str|None): file character set.
+        - end_of_line (EndOfLine|None): end of line sequence to use.
+        - indent_size (int|None): indent size in spaces.
+        - old_indent_size (int|None): old indent size in spaces.
+        - min_indent_size (int|None): minimum indent size in spaces.
+        - max_indent_size (int|None): maximum indent size in spaces.
+        - indent_style (IndentStyle|None): the indent style to use.
+        - insert_final_newline (bool|None): whether to insert a final newline.
+        - tab_width (int|None): the width in spaces of a tab character.
+        - trim_trailing_whitespace (bool|None): trim trailing whitespace on each line.
+        """
+        self._text = None
+        self._lines = None
+        self._indents = []
+        self._filepath = filepath
+        self._editorconfig = EditorConfig(filepath)
+        self._charset = charset
+        self._end_of_line = end_of_line
+        self._indent_size = indent_size
+        self._old_indent_size = old_indent_size
+        self._min_indent_size = min_indent_size
+        self._max_indent_size = max_indent_size
+        self._indent_style = indent_style
+        self._insert_final_newline = insert_final_newline
+        self._tab_width = tab_width
+        self._trim_trailing_whitespace = trim_trailing_whitespace
+        # Read the file
+        with open(filepath, 'rb') as f:
+            text = f.read().decode(self.charset)
+        self._text = text
+        self._lines = text.splitlines(True)
+        # Compute indents
+        for line in self._lines:
+            line = line.rstrip()
+            n = len(line) - len(line.lstrip(' \t'))
+            self._indents.append(Indent(line[:n].count(' '), line[:n].count('\t')))
+
+    @property
+    def original(self):
+        """The original file text."""
+        return self._text
+
+    @cached_property
+    def original_encode(self):
+        """The original file text encoded in the file character set."""
+        return self.original.encode(self.charset)
+
+    @property
+    def filepath(self):
+        """The path to the file."""
+        return self._filepath
+
+    @cached_property
+    def charset(self):
+        """The file character set."""
+        if self._charset is not None:
+            return self._charset
+        if self._editorconfig.charset is not None:
+            return self._editorconfig.charset
+        return 'utf-8'
+
+    @cached_property
+    def end_of_line(self):
+        """The end of line sequence type."""
+        if self._end_of_line is not None:
+            return self._end_of_line
+        if self._editorconfig.end_of_line is not None:
+            return self._editorconfig.end_of_line
+        return sorted([
+            (len(re.findall(r'\r(?!\n)', self.original)), EndOfLine.CR),
+            (len(re.findall(r'(?<!\r)\n', self.original)), EndOfLine.LF),
+            (len(re.findall(r'\r\n', self.original)), EndOfLine.CRLF),
+        ], reverse=True)[0][1]
+
+    @cached_property
+    def end_of_line_sequence(self):
+        """The end of line sequence to insert."""
+        if self.end_of_line == EndOfLine.CR:
+            return '\r'
+        elif self.end_of_line == EndOfLine.LF:
+            return '\n'
+        elif self.end_of_line == EndOfLine.CRLF:
+            return '\r\n'
+        else:
+            raise RestyleError(f"invalid end of line: {self.end_of_line}")
+
+    @cached_property
+    def indent_size(self):
+        """The indent size to use."""
+        if self._indent_size is not None:
+            return self._indent_size
+        if self._editorconfig.indent_size is not None:
+            return self._editorconfig.indent_size
+        raise RestyleError('Could not determine indent size')
+
+    @cached_property
+    def indent_space_sequence(self):
+        """The indent sequence to use to replace spaces."""
+        if self.indent_style == IndentStyle.SPACE:
+            return ' ' * self.indent_size
+        elif self.indent_style == IndentStyle.TAB:
+            return '\t'
+        else:
+            raise RestyleError(f"invalid indent style: {self.indent_style}")
+
+    @cached_property
+    def indent_tab_sequence(self):
+        """The indent sequence to use to replace tabs."""
+        if self.indent_style == IndentStyle.SPACE:
+            return ' ' * self.tab_width
+        elif self.indent_style == IndentStyle.TAB:
+            return '\t'
+        else:
+            raise RestyleError(f"invalid indent style: {self.indent_style}")
+
+    @cached_property
+    def old_indent_size(self):
+        """The previous indent size."""
+        if self._old_indent_size is not None:
+            return self._old_indent_size
+        # Find all of the indent changes and count their frequencies.
+        guess = defaultdict(lambda: 0)
+        prev = Indent(0, 0)
+        for indent in self._indents:
+            size = abs(indent.spaces - prev.spaces)
+            if size:
+                guess[size] += 1
+            prev = indent
+        if guess:
+            # Find the most frequent indent size within the allowed bounds. If
+            # there are ties then the smallest size is selected.
+            Entry = namedtuple('Entry', ['size', 'count'])
+            es = map(lambda kv: Entry(*kv), guess.items())
+            es = sorted(es, key=lambda e: e.count, reverse=True)
+            most = es[0].count
+            ms = filter(lambda e: self.min_indent_size <= e.size <= self.max_indent_size and e.count == most, es)
+            ss = map(lambda e: e.size, ms)
+            ss = sorted(ss)
+            if ss:
+                return ss[0]
+        raise RestyleError('could not determine old_indent_size')
+
+    @cached_property
+    def min_indent_size(self):
+        """The minimum allowed indent size."""
+        if self._min_indent_size is not None:
+            return self._min_indent_size
+        return 2
+
+    @cached_property
+    def max_indent_size(self):
+        """The maximum allowed indent size."""
+        if self._max_indent_size is not None:
+            return self._max_indent_size
+        return 8
+
+    @cached_property
+    def indent_style(self):
+        """The indent style to use."""
+        if self._indent_style is not None:
+            return self._indent_style
+        if self._editorconfig.indent_style is not None:
+            return self._editorconfig.indent_style
+        # Get from heuristic
+        space_count = 0
+        tab_count = 0
+        for indent in self._indents:
+            space_count += indent.spaces // self.old_indent_size
+            tab_count += indent.tabs
+        return IndentStyle.SPACE if space_count >= tab_count else IndentStyle.TAB
+
+    @cached_property
+    def insert_final_newline(self):
+        """Whether to insert a final newline."""
+        if self._insert_final_newline is not None:
+            return self._insert_final_newline
+        if self._editorconfig.insert_final_newline is not None:
+            return self._editorconfig.insert_final_newline
+        return True
+
+    @cached_property
+    def tab_width(self):
+        """The width of a tab character."""
+        if self._tab_width is not None:
+            return self._tab_width
+        if self._editorconfig.tab_width is not None:
+            return self._editorconfig.tab_width
+        try:
+            return self.indent_size
+        except RestyleError:
+            raise RestyleError('could not determine tab width')
+
+    @cached_property
+    def trim_trailing_whitespace(self):
+        """Whether trailing whitespaec on each line should be trimmed."""
+        if self._trim_trailing_whitespace is not None:
+            return self._trim_trailing_whitespace
+        if self._editorconfig.trim_trailing_whitespace is not None:
+            return self._editorconfig.trim_trailing_whitespace
+        return True
+
+    @cached_property
+    def restyle(self):
+        """The restyled file text."""
+        def do_line(line, indent):
+            n = indent.spaces + indent.tabs
+            head = line[:n] \
+                .replace(' ' * self.old_indent_size, self.indent_space_sequence) \
+                .replace('\t', self.indent_tab_sequence)
+            rest = line[n:].rstrip('\r\n')
+            if self.trim_trailing_whitespace:
+                rest = rest.rstrip()
+            return head + rest
+        lines = map(lambda z: do_line(*z), zip(self._lines, self._indents))
+        new_text = self.end_of_line_sequence.join(lines)
+        if self.insert_final_newline:
+            new_text = new_text + self.end_of_line_sequence
+        return new_text
+
+    @cached_property
+    def restyle_encode(self):
+        """The restyled file text encoded in the file character set."""
+        return self.restyle.encode(self.charset)
+
+def main():
+    import argparse
+
+    def boolean(s):
+        if s.lower().strip() in ['t', 'true', 'y', 'yes', '1']:
+            return True
+        if s.lower().strip() in ['f', 'false', 'n', 'no', '0']:
+            return False
+        raise ValueError('argument is not a boolean')
+
+    def style(s):
+        if s.lower().strip() in ['s', 'sp', 'spa', 'spac', 'space', 'spaces']:
+            return IndentStyle.SPACE
+        if s.lower().strip() in ['t', 'ta', 'tab', 'tabs']:
+            return IndentStyle.TAB
+        raise ValueError('argument is not an indent style')
+
+    parser = argparse.ArgumentParser(
+        description='Restyle a file according to EditorConfig and user settings')
+    parser.add_argument('infile', help='the input file path')
+    parser.add_argument('outfile', nargs='?', help='the output file path')
+    parser.add_argument('--in-place', '-I',
+        type=boolean, default=None,
+        help='overwrite the original file')
+    parser.add_argument('--backup', '-b',
+        type=str, default=None,
+        help='file path to backup the original file (--in-place is implied)')
+    parser.add_argument('--charset', '-c',
+        type=str, default=None,
+        help='override the file character set')
+    parser.add_argument('--end-of-line', '-e',
+        type=str, choices=['cr', 'lf', 'crlf'], default=None,
+        help='override the end of line sequence')
+    parser.add_argument('--indent-size', '-i',
+        type=int, default=None,
+        help='override the indent size')
+    parser.add_argument('--old-indent-size', '-o',
+        type=int, default=None,
+        help='override the old indent size')
+    parser.add_argument('--min-indent-size', '-m',
+        type=int, default=None,
+        help='override the minimum indent size')
+    parser.add_argument('--max-indent-size', '-M',
+        type=int, default=None,
+        help='override the maximum indent size')
+    parser.add_argument('--indent-style', '-s',
+        type=style, default=None,
+        help='override the indent style')
+    parser.add_argument('--insert-final-newline', '-f',
+        type=boolean, default=None,
+        help='override insert final newline')
+    parser.add_argument('--tab-width', '-t',
+        type=int, default=None,
+        help='override tab width')
+    parser.add_argument('--trim-trailing-whitespace', '-T',
+        type=boolean, default=None,
+        help='override trim trailing whitespace')
+    args = parser.parse_args()
+
+    in_place = bool(args.in_place or args.backup)
+    output = bool(args.outfile)
+    if in_place and output:
+        raise RestyleError('cannot perform in-place restyle when an output file is specified')
+
+    r = Restyle(args.infile,
+        charset=args.charset,
+        end_of_line=args.end_of_line,
+        indent_size=args.indent_size,
+        old_indent_size=args.old_indent_size,
+        min_indent_size=args.min_indent_size,
+        max_indent_size=args.max_indent_size,
+        indent_style=args.indent_style,
+        insert_final_newline=args.insert_final_newline,
+        tab_width=args.tab_width,
+        trim_trailing_whitespace=args.trim_trailing_whitespace
+    )
+
+    if in_place:
+        if args.backup:
+            with open(args.backup, 'wb') as f:
+                f.write(r.original_encode)
+        with open(args.infile, 'wb') as f:
+            f.write(r.restyle_encode)
+    elif output:
+        with open(args.outfile, 'wb') as f:
+            f.write(r.restyle_encode)
+    else:
+        sys.stdout.buffer.write(r.restyle_encode)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except RestyleError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
