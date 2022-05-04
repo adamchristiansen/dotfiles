@@ -2,8 +2,7 @@
 
 # Upgrade all binaries installed using `cargo install`.
 
-packages() {
-  cargo install --list | grep -oE '^(\S+)'
-}
-
-cargo install $(packages)
+packages="$(cargo install --list | grep -oE '^(\S+)')"
+if [ ! -z "$packages" ]; then
+  cargo install $packages
+fi
