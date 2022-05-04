@@ -29,10 +29,10 @@ bind C-a send-prefix
 # Basics
 bind -N "Enter command prompt"      :   command-prompt
 bind -N "Show pane indexes"         q   display-panes
-bind -N "Clear screen"              C   send-keys C-l \; run-shell "sleep 0.1" \; clear-history
-bind -N "Detach current client"     D   detach-client
+bind -N "Clear screen"              M-c send-keys C-l \; run-shell "sleep 0.1" \; clear-history
+bind -N "Detach current client"     d   detach-client
 bind -N "Reload configuration file" M-r source-file ~/.config/tmux/tmux.conf \; display-message "tmux.conf reloaded"
-bind -N "Toggle status bar"         B   set -g status
+bind -N "Toggle status bar"         b   set -g status
 bind -N "Rename current window"     ,   command-prompt -p "Rename window:" "rename-window '%%'"
 bind -N "List keybindings"          ?   list-keys -N
 
@@ -60,7 +60,7 @@ bind -N "Select window 10"            0     select-window -t 10
 
 # Window control
 bind -N "Create new window"                   c   new-window -a -n "[new]"
-bind -N "Create new window with current path" M-c new-window -a -n "[new]" -c "#{pane_current_path}"
+bind -N "Create new window with current path" C   new-window -a -n "[new]" -c "#{pane_current_path}"
 bind -N "Swap with previous window"           M-h swap-window -t -1 \; select-window -t -1
 bind -N "Swap with next window"               M-l swap-window -t +1 \; select-window -t +1
 bind -N "Kill the current window"             X   kill-window
@@ -74,16 +74,16 @@ bind -N "Select pane to the right" -n C-l select-pane -R
 # Pane control
 bind -N "Mark the current pane"                        m   select-pane -m
 bind -N "Unmark the current pane"                      M   select-pane -M
-bind -N "Split window vertically"                      |   split-window -h
+bind -N "Split window vertically"                      \\  split-window -h
+bind -N "Split window vertically with current path"    |   split-window -h -c "#{pane_current_path}"
 bind -N "Split window horizontally"                    -   split-window -v
-bind -N "Split window vertically with current path"    M-| split-window -h -c "#{pane_current_path}"
-bind -N "Split window horizontally with current path"  M-- split-window -v -c "#{pane_current_path}"
+bind -N "Split window horizontally with current path"  _   split-window -v -c "#{pane_current_path}"
 bind -N "Rotate panes forward"                         r   rotate-window -DZ
 bind -N "Rotate panes reverse"                         R   rotate-window -UZ
-bind -N "Swap with pane to left"                       H swap-pane -d -t "{left-of}"
-bind -N "Swap with pane below"                         J swap-pane -d -t "{down-of}"
-bind -N "Swap with pane above"                         K swap-pane -d -t "{up-of}"
-bind -N "Swap with pane to right"                      L swap-pane -d -t "{right-of}"
+bind -N "Swap with pane to left"                       H   swap-pane -d -t "{left-of}"
+bind -N "Swap with pane below"                         J   swap-pane -d -t "{down-of}"
+bind -N "Swap with pane above"                         K   swap-pane -d -t "{up-of}"
+bind -N "Swap with pane to right"                      L   swap-pane -d -t "{right-of}"
 bind -N "Swap with marked pane"                        M-s swap-pane -d
 bind -N "Break pane into new window"                   !   break-pane -a -n [broken]
 bind -N "Kill the current pane"                        x   kill-pane
