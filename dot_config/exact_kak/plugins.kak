@@ -13,7 +13,7 @@ evaluate-commands %sh{
 }
 plug "andreyorst/plug.kak" noload
 
-plug "AdamChristiansen/kakclip" config %{
+plug "adamchristiansen/kakclip" config %{
   kakclip-enable
 }
 
