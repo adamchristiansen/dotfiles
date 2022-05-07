@@ -37,8 +37,6 @@ source "%val{config}/plugins.kak"
 source "%val{config}/modeline.kak"
 source "%val{config}/filetype.kak"
 
-map global user w -docstring 'write buffer' ':w<ret>'
-
 map global user c -docstring 'comment line' ':comment-line<ret>'
 map global user C -docstring 'comment block' ':comment-block<ret>'
 
