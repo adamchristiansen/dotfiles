@@ -1,0 +1,31 @@
+# Basic Elvish settings
+set notify-bg-job-success = $false
+set value-out-indicator = (echo (styled '▶ ' blue bold))
+
+# Environment variables
+use profile
+profile:source ~/.profile
+profile:source-dir ~/.local/etc/profile.d
+
+# Abbreviations
+use abbr
+abbr:source ~/.abbreviations
+set edit:small-word-abbr[clear] = 'edit:clear'
+set edit:small-word-abbr['2>n'] = ' 2> /dev/null'
+set edit:small-word-abbr['>n'] = ' > /dev/null'
+set edit:small-word-abbr['a>n'] = ' > /dev/null 2>&1'
+
+# Aliases
+use alias
+alias:source ~/.aliases
+
+# Prompt theme
+use vertical
+
+# Load completions
+if (has-external carapace) {
+  eval (carapace _carapace elvish | slurp)
+}
+
+# Set the umask for the session
+{{ template "umask" . -}}
