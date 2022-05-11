@@ -28,4 +28,9 @@ if (has-external carapace) {
 }
 
 # Set the umask for the session
-{{ template "umask" . -}}
+try {
+  use unix
+  set unix:umask = {{ .umask }}
+} catch {
+  # Do nothing
+}
