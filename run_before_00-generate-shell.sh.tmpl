@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+# Generate the full path to the shell specified in chezmoidata.yaml.
+
+shell_file="{{ .chezmoi.sourceDir }}/.chezmoitemplates/shell"
+which "{{ .shell }}" | tr -d '\n' > "$shell_file"

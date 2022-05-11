@@ -9,4 +9,6 @@ font:
   name: Iosevka
   size: 11
 
+shell: elvish
+
 umask: "0022"
