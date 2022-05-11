@@ -4,6 +4,9 @@
 set -g default-terminal "screen-256color"
 set -ga terminal-overrides ",*256col*:Tc" # True color
 
+# Set the default shell
+set -g default-shell "{{ template "shell" . }}"
+
 # Start windows and panes at 1, not 0
 set -g base-index 1
 set -g pane-base-index 1
