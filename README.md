@@ -35,7 +35,7 @@ See the [color README](_color/README.md) for more information on using colors.
 
 ## Profile
 
-To maintain compatibility with non-POSIX shells like fish, files such as
+To maintain compatibility with non-POSIX shells, such as Elvish, files like
 `.profile` and the contents of `.local/etc/profile.d/*` must adhere to the
 following rules:
 
@@ -49,5 +49,4 @@ following rules:
 - Simple variable interpolation like `$VAR` is allowed
   - No other interpolations are allowed (like `${VAR}` and `${VAR:...}`)
 
-These rules are strict but useful, since the easiest way to load this file in
-shells like fish is to manually process it.
+These rules are strict but useful, as they can easily be parsed by any shell.
