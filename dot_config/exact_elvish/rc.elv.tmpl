@@ -7,6 +7,11 @@ use profile
 profile:source ~/.profile
 profile:source-dir ~/.local/etc/profile.d
 
+# Load completions
+if (has-external carapace) {
+  eval (carapace _carapace elvish | slurp)
+}
+
 # Abbreviations
 use abbr
 abbr:source ~/.abbreviations
@@ -22,9 +27,9 @@ alias:source ~/.aliases
 # Prompt theme
 use vertical
 
-# Load completions
-if (has-external carapace) {
-  eval (carapace _carapace elvish | slurp)
+# Load zoxide
+if (has-external zoxide) {
+  eval (zoxide init elvish | slurp)
 }
 
 # Set the umask for the session
