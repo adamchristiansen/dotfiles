@@ -4,7 +4,7 @@ root: .
 startup_window: editor
 
 windows:
-  - editor: eval "$EDITOR"
+  - editor: {{ .editor }}
   - term:
       layout: even-horizontal
       panes:
