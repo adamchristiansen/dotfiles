@@ -1,22 +1,13 @@
-# All of the aliases in this file must be of the form:
-#
-# - alias gs='git status'
-# - alias gs="git status"
-# - alias g=git # A single 'word' with no spaces
-# - No environment variables
-#
-# This allows aliases to be parsed by different shells.
-
 alias a=tmux-default
 alias cdp='cd ..'
 alias cdpp='cd ../..'
 alias cdppp='cd ../../..'
 alias cdpppp='cd ../../../..'
-alias e={{- .editor }}
+alias e='{{- .editor -}}'
 alias f=ranger
 alias j=just
 alias m=make
-alias rq='rg --no-ignore --hidden --follow --glob "!.git/*"'
+alias rq="rg --no-ignore --hidden --follow --glob '!.git/*'"
 alias l=exa
 alias la='exa --git -a'
 alias ll='exa --git -al'

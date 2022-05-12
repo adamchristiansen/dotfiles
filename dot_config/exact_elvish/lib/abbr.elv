@@ -5,16 +5,6 @@ fn new { |name body|
   set edit:small-word-abbr[$name] = $body
 }
 
-# Parse abbreviations in a file and add them. The file may contain the
-# following:
-#
-# - Lines that are ignored:
-#   - Lines that consist of only whitespace
-#   - Lines where the first non-whitespace character is #
-# - Lines containing an alias of the form:
-#   - alias gs='git status'
-#   - alias gs="git status"
-#   - alias g=git # A single 'word' with no spaces
 fn source { |filepath|
   var parsed = []
   var @lines = (cat $filepath | to-lines)
@@ -36,13 +26,15 @@ fn source { |filepath|
     }
     var name = $match[0][groups][1][text]
     var body = $match[0][groups][2][text]
+    # Expand $(...) -> (...)
+    set body = (re:replace '\$\(' '(' $body)
     new $name $body
   }
 }
 
 fn list {
-  keys $edit:abbr | order | each { |name|
-    var body = $edit:abbr[$name]
-    echo (styled $name green bold)(styled ' -> ' cyan)$body
+  keys $edit:small-word-abbr | order | each { |name|
+    var body = $edit:small-word-abbr[$name]
+    echo (styled $name green)(styled ' -> ' cyan)$body
   }
 }

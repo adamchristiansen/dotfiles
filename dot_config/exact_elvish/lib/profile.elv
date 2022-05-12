@@ -2,18 +2,6 @@ use path
 use re
 use util
 
-# Parse variables in a profile file and add them to the environment. The file
-# may contain the following:
-#
-# - Lines that are ignored:
-#   - Lines that consist of only whitespace
-#   - Lines where the first non-whitespace character is #
-# - Lines containing a variable definition of the form:
-#   - (export)? variable='some value with spaces'
-#   - (export)? variable="some value with $INTERPOLATED variables"
-#   - (export)? variable=some-value
-# - Variables in double quoted strings are interpolated while variables in
-#   single quoted strings are not.
 fn source { |filepath|
   # These are variables that are declared locally within the profile and are
   # not to be exported

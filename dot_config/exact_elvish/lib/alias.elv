@@ -10,15 +10,6 @@ fn new { |name body|
   set aliases[$name] = [&fn=$fn~ &body=$body]
 }
 
-# Parse aliases in a file and add them. The file may contain the following:
-#
-# - Lines that are ignored:
-#   - Lines that consist of only whitespace
-#   - Lines where the first non-whitespace character is #
-# - Lines containing an alias of the form:
-#   - alias gs='git status'
-#   - alias gs="git status"
-#   - alias g=git # A single 'word' with no spaces
 fn source { |filepath|
   var parsed = []
   var @lines = (cat $filepath | to-lines)
@@ -40,6 +31,8 @@ fn source { |filepath|
     }
     var name = $match[0][groups][1][text]
     var body = $match[0][groups][2][text]
+    # Expand $(...) -> (...)
+    set body = (re:replace '\$\(' '(' $body)
     new $name $body
   }
 }
@@ -47,6 +40,6 @@ fn source { |filepath|
 fn list {
   keys $aliases | order | each { |name|
     var body = $aliases[$name][body]
-    echo (styled $name green bold)(styled ' -> ' cyan)$body
+    echo (styled $name green)(styled ' -> ' cyan)$body
   }
 }

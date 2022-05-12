@@ -1,16 +1,6 @@
-# All of the abbreviations in this file must be of the form:
-#
-# - alias gs='git status'
-# - alias gs="git status"
-# - alias g=git # A single 'word' with no spaces
-# - No environment variables
-#
-# This allows abbreviations to be parsed by different shells, and they fall
-# back to aliases in shells that do not have abbreviation support.
-
 alias cza='chezmoi apply'
 alias czaf='chezmoi apply --force'
-alias czcd='cd (chezmoi source-path)'
+alias czcd='cd $(chezmoi source-path)'
 alias cze='chezmoi edit'
 alias czga='chezmoi git -- add -A'
 alias czgc='chezmoi git -- commit'
@@ -19,11 +9,13 @@ alias czgpl='chezmoi git -- pull'
 alias czgs='chezmoi git -- status --short'
 alias czgsu='chezmoi git -- status --short -u'
 alias czs='chezmoi status'
-alias czx='chezmoi execute-template "<"'
-alias ga='git add -A .'
+alias ga='git add .'
+alias gaa='git add -A .'
+alias gau='git add -u'
 alias gb='git branch'
 alias gc='git commit'
-alias gcm='git commit -m'
+alias gca='git commit --amend'
+alias gcan='git commit --amend --no-edit'
 alias gch='git checkout'
 alias gcl='git clean -fdXn'
 alias gd='git diff'
@@ -34,13 +26,18 @@ alias gpl='git pull'
 alias gplf='git pull --no-rebase --ff-only'
 alias gplm='git pull --no-rebase --ff'
 alias gplr='git pull --rebase'
-alias gr='git reset'
+alias grb='git rebase -i $(git merge-base $(git rev-parse --abbrev-ref HEAD) main)'
+alias gri='git rebase -i HEAD~'
+alias grh='git reset HEAD'
+alias gst='git stash'
+alias gsta='git stash apply'
+alias gstd='git stash drop'
+alias gstp='git stash pop'
 alias gs='git status --short'
 alias gsu='git status --short -u'
-alias gundo='git reset HEAD'
 alias mux=tmuxinator
-alias muxc='tmuxinator start code -n (slugp)'
-alias muxd='tmuxinator start default -n (slugp)'
+alias muxc='tmuxinator start code -n $(slugp)'
+alias muxd='tmuxinator start default -n $(slugp)'
 alias ta='tmux attach-session -t'
 alias tl='tmux list-sessions'
 alias tn='tmux new -s'
