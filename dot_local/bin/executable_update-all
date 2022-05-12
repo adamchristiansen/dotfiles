@@ -187,18 +187,6 @@ PACKAGE_MANAGERS = [
     yes_flag=None
   ),
   PackageManager(
-    name="fisher",
-    required_commands=["fish"],
-    required_conditions=[
-      ["fish", "-P", "-c", "type -q fisher"]
-    ],
-    command_update=["fish", "-P", "-c", "fisher update"],
-    command_upgrade=None,
-    command_clean=None,
-    can_use_sudo=False,
-    yes_flag=None
-  ),
-  PackageManager(
     name="pip",
     required_commands=["pipupgrade"],
     required_conditions=[],
