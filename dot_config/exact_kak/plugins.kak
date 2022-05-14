@@ -56,3 +56,5 @@ plug "andreyorst/kaktree" defer kaktree %{
 }
 
 plug "andreyorst/smarttab.kak"
+
+plug "https://gitlab.com/Screwtapello/kakoune-inc-dec"
