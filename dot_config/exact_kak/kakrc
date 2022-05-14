@@ -45,3 +45,6 @@ map global user P -docstring 'paste from clipboard before' ':kakclip-paste-befor
 map global user R -docstring 'replace from clipboard' ':kakclip-replace<ret>'
 map global user y -docstring 'yank selection to clipboard' ':kakclip-yank-selection<ret>'
 map global user Y -docstring 'yank entire buffer to clipboard' ':kakclip-yank-buffer<ret>'
+
+map global user i -docstring 'increment numbers' ':inc-dec-modify-numbers + %val{count}<ret>'
+map global user I -docstring 'decrement numbers' ':inc-dec-modify-numbers - %val{count}<ret>'
