@@ -6,10 +6,10 @@
 # startup. The WM should run the `.config/wallpaper/lauch` script. A wallpaper
 # is set based on the following rules.
 #
-# 1.  If `$XDG_CONFIG_HOME/wallpaper/image/` contains an image, it will be
-#     used. Note that this directory can contain any number of `jpg` or `png`
-#     images, but only the first one returned by `ls` will be used. The file
-#     can be named anything.
+# 1.  If `$XDG_STATE_HOME/wallpaper/` contains an image, it will be used. Note
+#     that this directory can contain any number of `jpg` or `png` images, but
+#     only the first one returned by `ls` will be used. The file can be named
+#     anything.
 # 2.  If a wallpaper image is found but there is an error setting it, proceed
 #     to the next step.
 # 3.  If no wallpaper image is found, then the `_color_wall_hex` template value
@@ -25,10 +25,9 @@
 # 3. `$HOME/Pictures/Wallpaper`
 #
 # and the directory is recursively searched.
-# .config/picom
 
 # Try to set the wallpaper, otherwise use a fallback color
-wallpaper_dir="$XDG_CONFIG_HOME/wallpaper/image"
+wallpaper_dir="$XDG_STATE_HOME/wallpaper"
 wallpaper_file=$(ls "$wallpaper_dir" | head -n 1)
 wallpaper="$wallpaper_dir/$wallpaper_file"
 
