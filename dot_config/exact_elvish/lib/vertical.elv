@@ -150,7 +150,7 @@ fn git-info {
 
   var status
   try {
-    set info[branch] = (e:git rev-parse --abbrev-ref HEAD 2> /dev/null)
+    set info[branch] = (e:git symbolic-ref --short HEAD 2> /dev/null)
     set info[stashed] = (util:not-empty (git stash list 2> /dev/null | slurp))
     set @status = (e:git status --porcelain -b 2> /dev/null)
   } catch {
