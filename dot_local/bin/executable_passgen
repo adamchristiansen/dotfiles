@@ -1,7 +1,11 @@
 #!/usr/bin/env sh
 
-# A wrapper around the Bitwarden password generation subcommand that uses
-# stronger defaults. Any arguments that `bw generate` accepts can be passed to
-# this script to override the defaults.
+# Use the Bitwarden CLIpassword generation to create a random password in the
+# format:
+#
+# XXXX-XXXX-XXXX-XXXX-XXXX-XXXX
+#
+# where each X is a letter or digit.
 
-bw generate -uln --length 20 --words 5 --separator "-" "$@"
+p="$(bw generate -uln --length 24)"
+echo "$p" | sed 's/\(.\{4\}\)/\1-/g' | sed 's/\(-\)$//g'
