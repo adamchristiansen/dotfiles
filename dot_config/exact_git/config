@@ -3,6 +3,7 @@ path = user
 
 [core]
 excludesfile = ~/.config/git/ignore
+ignorecase = false
 
 [init]
 defaultBranch = main
