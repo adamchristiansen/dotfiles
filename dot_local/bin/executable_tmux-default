@@ -2,4 +2,5 @@
 
 # Attach to or create a default tmux tmux session.
 
+cd
 tmux attach-session -t default || tmux new-session -s default
