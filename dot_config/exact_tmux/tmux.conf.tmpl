@@ -43,13 +43,13 @@ bind -N "List keybindings"          ?   list-keys -N
 bind -N "Switch to next session"       j       switch-client -n
 bind -N "Switch to previous session"   k       switch-client -p
 bind -N "Switch to last session"       M-Space switch-client -l
-bind -N "Select session interactively" s       choose-tree -Zs
+bind -N "Select session interactively" S       choose-tree -Zs
 
 # Window navigation
 bind -N "Select previous window"      h     select-window -t -1
 bind -N "Select next window"          l     select-window -t +1
 bind -N "Select last window"          Space select-window -l
-bind -N "Select window interactively" w     choose-tree -Zs
+bind -N "Select window interactively" W     choose-tree -Zw
 bind -N "Select window 1"             1     select-window -t 1
 bind -N "Select window 2"             2     select-window -t 2
 bind -N "Select window 3"             3     select-window -t 3
@@ -91,6 +91,9 @@ bind -N "Swap with marked pane"                        M-s swap-pane -d
 bind -N "Break pane into new window"                   !   break-pane -a -n [broken]
 bind -N "Kill the current pane"                        x   kill-pane
 
+# Pane synchronization
+bind -N "Synchronize panes" s setw synchronize-panes
+
 # Resize panes
 bind -N "Toggle pane zoom"             z       resize-pane -Z
 bind -N "Resize pane left by 1"     -n C-Left  resize-pane -L
@@ -121,7 +124,7 @@ set -g status-style fg="#{{ $color.base03.hex.rgb }}",bg=default
 set -g status-justify absolute-centre
 set -g status-position bottom
 set -g status-left ""
-set -g status-right "#{?client_prefix,#[fg=#{{ $color.base09.hex.rgb }}]● ,}#[fg=#{{ $color.base03.hex.rgb }}]歷#S"
+set -g status-right "#{?client_prefix,#[fg=#{{ $color.base09.hex.rgb }}]● ,}#{?pane_synchronized,#[fg=#{{ $color.base09.hex.rgb }}] ,}#[fg=#{{ $color.base03.hex.rgb }}]歷#S"
 set -g window-status-format "#[fg=#{{ $color.base03.hex.rgb }}] #W#{?window_zoomed_flag, ,} "
 set -g window-status-current-format "#[fg=#{{ $color.base09.hex.rgb }}] #W#{?window_zoomed_flag, ,} "
 set -g window-status-current-style none
