@@ -1,5 +1,5 @@
-set-option global tabstop 4
-set-option global indentwidth 4
+set-option global tabstop 2
+set-option global indentwidth 2
 set-option global scrolloff 5,5
 set-option global aligntab false
 set-option global ui_options \
@@ -15,7 +15,7 @@ hook global BufCreate .* %{
     -relative -hlcursor -separator '  ' -min-digits 4
   add-highlighter buffer/ show-matching
   add-highlighter buffer/ show-whitespaces \
-    -lf ' ' -spc ' ' -nbsp '~' -tab '»' -tabpad '·'
+    -lf ' ' -spc ' ' -nbsp '~' -tab '›' -tabpad '·'
   add-highlighter buffer/trailing-whitespaces regex "(\h+)$" 1:Error
 }
 
@@ -35,7 +35,6 @@ hook global InsertCompletionHide .* %{
 
 source "%val{config}/plugins.kak"
 source "%val{config}/modeline.kak"
-source "%val{config}/filetype.kak"
 
 map global user c -docstring 'comment line' ':comment-line<ret>'
 map global user C -docstring 'comment block' ':comment-block<ret>'
