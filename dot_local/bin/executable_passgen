@@ -3,9 +3,9 @@
 # Use the Bitwarden CLIpassword generation to create a random password in the
 # format:
 #
-# XXXX-XXXX-XXXX-XXXX-XXXX-XXXX
+# XXXXXX-XXXXXX-XXXXXX-XXXXXX
 #
 # where each X is a letter or digit.
 
 p="$(bw generate -uln --length 24)"
-echo "$p" | sed 's/\(.\{4\}\)/\1-/g' | sed 's/\(-\)$//g'
+echo "$p" | sed 's/\(.\{6\}\)/\1-/g' | sed 's/\(-\)$//g'
