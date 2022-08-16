@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 now = datetime.datetime.now()
 
-time = now.strftime("%-I:%M %p")
+time = now.strftime("%H:%M")
 date = now.strftime("%Y %B %d")
 
 if args.notify:
