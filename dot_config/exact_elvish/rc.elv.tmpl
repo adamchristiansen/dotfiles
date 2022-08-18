@@ -27,6 +27,10 @@ alias:source ~/.config/aliases
 # Prompt theme
 use vertical
 
+# Start SSH agent
+use ssh-agent
+ssh-agent:init
+
 # Load zoxide
 if (has-external zoxide) {
   eval (zoxide init elvish | slurp)
