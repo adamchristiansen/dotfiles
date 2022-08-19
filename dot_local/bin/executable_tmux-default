@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 
-# Attach to or create a default tmux tmux session.
+# Attach to or create a default tmux session.
 
-cd
-tmux attach-session -t default || tmux new-session -s default
+if type "tmuxinator" > /dev/null 2>&1; then
+  tmuxinator start default
+else
+  cd
+  tmux attach-session -t default || tmux new-session -s default
+fi

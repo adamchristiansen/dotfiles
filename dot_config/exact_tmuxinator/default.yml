@@ -1,5 +1,5 @@
 name: default
-root: .
+root: ~
 
 startup_window: term
 
@@ -9,4 +9,17 @@ windows:
       panes:
         - # Terminal
         - # Terminal
-  - files: ranger
+  - music:
+      panes: ncmpcpp
+      root: ~/Music/sync
+  - dots:
+      layout: even-horizontal
+      panes:
+        - # Terminal
+        - # Terminal
+      root: ~/.local/share/chezmoi
+  - update:
+      layout: even-horizontal
+      panes:
+        - # Terminal
+        - # Terminal
