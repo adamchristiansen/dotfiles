@@ -4,62 +4,64 @@
 #!/usr/bin/env sh
 
 # Install xbps packages
-sudo xbps-install -Su \
-  alacritty \
-  alsa-utils \
-  atool \
-  bspwm \
-  curl \
-  dunst \
-  editorconfig \
-  exa \
-  gcc \
-  git \
-  gnome-keyring \
-  hsetroot \
-  i3lock-color \
-  ImageMagick \
-  just \
-  kakoune \
-  lightdm \
-  lightdm-gtk3-greeter \
-  make \
-  mpc \
-  mpd \
-  mpv \
-  ncmpcpp \
-  nerd-fonts \
-  numix-themes \
-  papirus-icon-theme \
-  pdf.js \
-  picom \
-  polybar \
-  python3 \
-  qutebrowser \
-  ranger \
-  redshift \
-  ripgrep \
-  rofi \
-  ruby-tmuxinator \
-  screen \
-  scrot \
-  seahorse \
-  sxhkd \
-  sxiv \
-  tmux \
-  w3m-img \
-  wicd \
-  wicd-gtk \
-  wmname \
-  xclip \
-  xdotool \
-  xfce4 \
-  xprop \
-  xset \
-  xsetroot \
-  zathura \
-  zathura-pdf-mupdf \
+packages="
+  alacritty
+  alsa-utils
+  atool
+  bspwm
+  curl
+  dunst
+  editorconfig
+  exa
+  gcc
+  git
+  gnome-keyring
+  hsetroot
+  ImageMagick
+  i3lock-color
+  kakoune
+  lightdm
+  lightdm-gtk3-greeter
+  make
+  mpc
+  mpd
+  mpv
+  ncmpcpp
+  nerd-fonts
+  numix-themes
+  papirus-icon-theme
+  pdf.js
+  picom
+  polybar
+  python3
+  qutebrowser
+  ranger
+  redshift
+  ripgrep
+  rofi
+  ruby-tmuxinator
+  screen
+  scrot
+  seahorse
+  sxhkd
+  sxiv
+  tmux
+  w3m-img
+  wicd
+  wicd-gtk
+  wmname
+  xclip
+  xdotool
+  xfce4
+  xprop
+  xset
+  xsetroot
+  zathura
+  zathura-pdf-mupdf
   zenity
+"
+
+sudo xbps-install -Su $packages
 
 {{- end -}}
 {{- end -}}
