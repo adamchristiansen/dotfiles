@@ -36,7 +36,14 @@ fn read-environment {
 
 # Initialize an SSH agent. If an SSH agent is already running, then the
 # environment will be set up to use it.
-fn init {
+#
+# When `force` is `$true`, a new SSH agent will always be created, even if the
+# environment shows that one is configured.
+fn init { |&force=$false|
+  # Do not do anything when there is already an SSH agent configured.
+  if (and (has-env SSH_AGENT_PID) (has-env SSH_AUTH_SOCK) (not $force)) {
+    return
+  }
   var env = (read-environment)
   set E:SSH_AGENT_PID = $env[pid]
   set E:SSH_AUTH_SOCK = $env[sock]
