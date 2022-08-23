@@ -1,11 +1,96 @@
-#!/usr/bin/env sh
+#!/usr/bin/env python3
 
-# Use the Bitwarden CLIpassword generation to create a random password in the
-# format:
-#
-# XXXXXX-XXXXXX-XXXXXX-XXXXXX
-#
-# where each X is a letter or digit.
+import argparse
+from itertools import zip_longest
+import os
+import re
 
-p="$(bw generate -uln --length 24)"
-echo "$p" | sed 's/\(.\{6\}\)/\1-/g' | sed 's/\(-\)$//g'
+def make_charset_lookup(chars):
+  """
+  Create a specification for a character set from a string of characters
+  representing the set.
+  """
+  return lambda index: chars[abs(index) % len(chars)]
+
+LOWER  = "abcdefghijkmnopqrstuvwxyz" # Unambiguous, no l
+UPPER  = "ABCDEFGHJKLMNPQRSTUVWXYZ"  # Unambiguous, no I or O
+NUMBER = "23456789"                  # Unambiguous, no 0 or 1
+SYMBOL = "!#$%&*@^"
+
+CHARSETS = {
+  'L': make_charset_lookup(LOWER),
+  'U': make_charset_lookup(UPPER),
+  'N': make_charset_lookup(NUMBER),
+  'S': make_charset_lookup(SYMBOL),
+  'W': make_charset_lookup(LOWER + UPPER + NUMBER),
+  'A': make_charset_lookup(LOWER + UPPER + NUMBER + SYMBOL),
+}
+
+def type_size(arg):
+  """
+  Verify the type of the size argument.
+
+  # Returns
+
+  (int, (int|None)): The first item is the total length of the password. This
+  is guaranteed to be positive. The second item is the chunk size (if any),
+  also guaranteed to be positive if not None.
+  """
+  size = None
+  if m := re.match(r"^(\d+)x(\d+)$", arg):
+    print(m.group(1))
+    size = (int(m.group(1)), int(m.group(2)))
+  if m := re.match(r"^(\d+)$", arg):
+    size = (int(m.group(1)), None)
+  if size is None or size[0] == 0 or (size[1] is not None and size[1] == 0):
+    raise ValueError("invalid size")
+  return size
+
+def randints(n, m=4):
+  """
+  Generate n cryptographically random non-negative integers each containing m
+  bytes.
+  """
+  bs = os.urandom(n * m)
+  return [int.from_bytes(x, 'big') for x in zip_longest(*[iter(bs)] * m)]
+
+def make_pattern(size, charset):
+  """
+  Make a pattern to be filled with random data.
+  """
+  length, chunk = size
+  if chunk is None:
+    return charset * length
+  chunks, extra = length // chunk, length % chunk
+  s = [charset * chunk for _ in range(chunks)]
+  if extra:
+    s.append(charset * extra)
+  return "-".join(s)
+
+def fill(pattern):
+  """
+  Fill in a pattern.
+  """
+  return "".join([
+    CHARSETS[c](i) if c in CHARSETS else c
+    for c, i in zip(pattern, randints(len(pattern)))
+  ])
+
+def main():
+  p = argparse.ArgumentParser(
+    description="Generate a random password.")
+  p.add_argument("size",
+    nargs="?",
+    default=(24, 6),
+    type=type_size,
+    help="Set a custom size.")
+  p.add_argument("-c", "--charset",
+    choices=CHARSETS.keys(),
+    default="W",
+    help="Set the character set.")
+  args = p.parse_args()
+
+  print(fill(make_pattern(args.size, args.charset)))
+
+if __name__ == "__main__":
+  main()
