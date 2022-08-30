@@ -4,10 +4,18 @@ case $- in
     *) return;;
 esac
 
-# Load custom variables
-profiled="$HOME/.local/etc/profile.d"
-for f in $(ls "$profiled"); do
-  . "$profiled/$f"
+# Source and export environment variables
+enviro() {
+  set -o allexport
+  source "$1"
+  set +o allexport
+}
+
+# Load variables
+enviro "$HOME/.config/enviro"
+envirod="$HOME/.local/etc/enviro.d"
+for f in $(ls "$envirod"); do
+  enviro "$envirod/$f"
 done
 
 # Don't write history to a file

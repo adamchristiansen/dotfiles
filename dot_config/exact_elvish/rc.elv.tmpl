@@ -3,9 +3,9 @@ set notify-bg-job-success = $false
 set value-out-indicator = (echo (styled '▶ ' blue bold))
 
 # Environment variables
-use profile
-profile:source ~/.profile
-profile:source-dir ~/.local/etc/profile.d
+use enviro
+enviro:source ~/.config/enviro
+enviro:source-dir ~/.local/etc/enviro.d
 
 # Load completions
 if (has-external carapace) {
