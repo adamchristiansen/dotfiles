@@ -1,6 +1,5 @@
 _*
-**/*.keep
-**/*.md
+**/README.md
 LICENSE
 install.sh
 
