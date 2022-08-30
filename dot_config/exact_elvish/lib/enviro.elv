@@ -3,11 +3,10 @@ use re
 use util
 
 fn source { |filepath|
-  # These are variables that are declared locally within the profile and are
-  # not to be exported
+  # These are variables that are declared locally and are not to be exported
   var variables = [&]
 
-  # These are variables that should be exported into the environment ($E:xxx).
+  # These are variables that should be exported into the environment ($E:xxx)
   var exports = [&]
 
   var @lines = (cat $filepath | to-lines)
@@ -30,7 +29,7 @@ fn source { |filepath|
       set expand = $true
     }
     if (util:empty $match) {
-      fail 'Profile syntax error: '$line
+      fail 'enviro syntax error: '$line
     }
     var export = (util:not-empty $match[0][groups][1][text])
     var name = $match[0][groups][2][text]
