@@ -1,0 +1,11 @@
+# This file is executed by bash when a login shell exits.
+
+if [ "$SHLVL" = 1 ]; then
+  if command -v clear_console > /dev/null 2>&1; then
+    clear_console -q
+  elif [ -x /usr/bin/clear_console ]; then
+    /usr/bin/clear_console -q
+  elif [ -x /bin/clear_console ]; then
+    /bin/clear_console -q
+  fi
+fi
