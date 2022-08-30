@@ -7,6 +7,9 @@ set -ga terminal-overrides ",*256col*:Tc" # True color
 # Set the default shell
 set -g default-shell "{{ template "shell" . }}"
 
+# Use vi mode instead of emacs
+set -g mode-keys vi
+
 # Start windows and panes at 1, not 0
 set -g base-index 1
 set -g pane-base-index 1
@@ -115,9 +118,10 @@ bind -N "Use tiled layout"           -T layout t   select-layout tiled
 bind -N "Use next layout"            -T layout n   next-layout
 
 # VI mode
-bind -N "Enter copy mode"                   v copy-mode
-bind -N "Search for text"                   / copy-mode \; send-keys ?
-bind -N "Copy to clipboard" -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "clipboard --copy"
+bind -N "Enter copy mode"                v copy-mode
+bind -N "Search for text"                / copy-mode \; send-keys ?
+bind -N "Begin selection"   -T copy-mode v send-keys -X begin-selection
+bind -N "Copy to clipboard" -T copy-mode y send-keys -X copy-pipe-and-cancel "clipboard --copy"
 
 # Status bar
 set -g status-style fg="#{{ $color.base03.hex.rgb }}",bg=default
