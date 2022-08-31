@@ -1,11 +1,11 @@
-{{- $color := include ".color.json" | mustFromJson -}}
+{{- $color := include ".gen.color.json" | mustFromJson -}}
 
 # Make colors work properly
 set -g default-terminal "screen-256color"
 set -ga terminal-overrides ",*256col*:Tc" # True color
 
 # Set the default shell
-set -g default-shell "{{ include ".shell" }}"
+set -g default-shell "{{ include ".gen.shell" }}"
 
 # Use vi mode instead of emacs
 set -g mode-keys vi

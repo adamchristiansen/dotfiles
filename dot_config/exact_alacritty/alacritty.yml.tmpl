@@ -1,4 +1,4 @@
-{{- $color := include ".color.json" | mustFromJson -}}
+{{- $color := include ".gen.color.json" | mustFromJson -}}
 
 # Configuration for Alacritty, the GPU enhanced terminal emulator.
 
@@ -378,7 +378,7 @@ live_config_reload: true
 #  args:
 #    - --login
 shell:
-  program: {{ include ".shell" }}
+  program: {{ include ".gen.shell" }}
 
 # Windows 10 ConPTY backend (Windows only)
 #

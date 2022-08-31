@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-
-# Generate the full path to the shell.
-which "{{ .shell }}" | tr -d '\n' > "{{ .chezmoi.sourceDir }}/.shell"
