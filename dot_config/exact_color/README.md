@@ -88,12 +88,12 @@ where
 
 ## Color Variables
 
-When `chezmoi` runs, it generates a file in this directory called `color.json`,
-which has the full color scheme definition. To access these values from a
-`chezmoi` template, include the following line in the template file
+When `chezmoi` runs, it generates a file called `.color.json`, which has the
+full color scheme definition. To access these values from a `chezmoi` template,
+include the following line in the template file:
 
 ```
-{{- $color := include "_color/color.json" | mustFromJson -}}
+{{- $color := include ".color.json" | mustFromJson -}}
 ```
 
 This gives access to the following:
