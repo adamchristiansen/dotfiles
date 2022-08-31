@@ -1,5 +1,3 @@
-# Generated colors
-/.color.json
-
 # Generated data
-/.chezmoitemplates/shell
+/.color.json
+/.shell

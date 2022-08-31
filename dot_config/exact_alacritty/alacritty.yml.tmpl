@@ -378,7 +378,7 @@ live_config_reload: true
 #  args:
 #    - --login
 shell:
-  program: {{ template "shell" . }}
+  program: {{ include ".shell" }}
 
 # Windows 10 ConPTY backend (Windows only)
 #
