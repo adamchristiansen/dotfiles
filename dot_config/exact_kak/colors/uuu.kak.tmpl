@@ -1,4 +1,4 @@
-{{- $color := include ".color.json" | mustFromJson -}}
+{{- $color := include ".gen.color.json" | mustFromJson -}}
 
 # Base16 colors
 declare-option -hidden str base00 "rgb:{{ $color.base00.hex.rgb }}"

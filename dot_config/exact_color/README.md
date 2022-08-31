@@ -93,7 +93,7 @@ full color scheme definition. To access these values from a `chezmoi` template,
 include the following line in the template file:
 
 ```
-{{- $color := include ".color.json" | mustFromJson -}}
+{{- $color := include ".gen.color.json" | mustFromJson -}}
 ```
 
 This gives access to the following:

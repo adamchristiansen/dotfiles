@@ -13,6 +13,6 @@ else
 fi
 
 script="{{ .chezmoi.sourceDir }}/dot_config/exact_color/color.py"
-color_file="{{ .chezmoi.sourceDir }}/.color.json"
+color_file="{{ .chezmoi.sourceDir }}/.gen.color.json"
 
 "$python" "$script" "{{ .colorscheme }}" > "$color_file"
