@@ -1,6 +1,0 @@
-{{- /*
-This is a umask invocation that can be run by any shell. It should be kept
-as simple as possible.
-*/ -}}
-# Set the appropriate umask for the session
-umask {{ .umask }}
