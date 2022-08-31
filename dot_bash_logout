@@ -1,5 +1,6 @@
 # This file is executed by bash when a login shell exits.
 
+# Clear the console for privacy
 if [ "$SHLVL" = 1 ]; then
   if command -v clear_console > /dev/null 2>&1; then
     clear_console -q
@@ -7,5 +8,11 @@ if [ "$SHLVL" = 1 ]; then
     /usr/bin/clear_console -q
   elif [ -x /bin/clear_console ]; then
     /bin/clear_console -q
+  elif command -v clear > /dev/null 2>&1; then
+    clear
+  elif [ -x /usr/bin/clear ]; then
+    /usr/bin/clear
+  elif [ -x /bin/clear ]; then
+    /bin/clear
   fi
 fi
