@@ -1,7 +1,7 @@
 _*
-**/README.md
-LICENSE
 install.sh
+LICENSE
+**/README.md
 
 {{ if ne .chezmoi.os "darwin" }}
 .config/iterm2

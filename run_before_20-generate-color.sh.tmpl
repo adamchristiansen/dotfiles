@@ -12,9 +12,7 @@ else
   exit 1
 fi
 
-colorscheme={{ .colorscheme | quote }}
-color_dir="{{ .chezmoi.sourceDir }}/_color"
-script="$color_dir/color.py"
-color_file="$color_dir/color.json"
+script="{{ .chezmoi.sourceDir }}/dot_config/exact_color/color.py"
+color_file="{{ .chezmoi.sourceDir }}/.color.json"
 
-"$python" "$script" "$colorscheme" > "$color_file"
+"$python" "$script" "{{ .colorscheme }}" > "$color_file"
