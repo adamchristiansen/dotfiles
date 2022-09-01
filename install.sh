@@ -2,10 +2,13 @@
 
 # A quick script to install the latest version of chezmoi if it is not
 # found in the PATH.
+#
+# When -f is given as the only argument to this script, a download of the
+# latest version is forced. This can be used as a basic way of getting updates.
 
 install_dir="$HOME/.local/bin"
 
-if command -v chezmoi > /dev/null; then
+if [ "$1" != "-f" ] && command -v chezmoi > /dev/null; then
   echo "Already installed"
   exit 0
 fi
