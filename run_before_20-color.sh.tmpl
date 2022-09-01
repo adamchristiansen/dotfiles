@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# Generate the color theme to use in templates.
+
 python=""
 if command -v python3 > /dev/null; then
   python=python3
@@ -13,6 +15,7 @@ else
 fi
 
 script="{{ .chezmoi.sourceDir }}/dot_config/exact_color/color.py"
-color_file="{{ .chezmoi.sourceDir }}/.gen.color.json"
+color_file="{{ .chezmoi.sourceDir }}/.gen/color.json"
 
+mkdir -p "{{ .chezmoi.sourceDir }}/.gen"
 "$python" "$script" "{{ .colorscheme }}" > "$color_file"
