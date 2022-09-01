@@ -19,7 +19,7 @@ cannot be easily scripted, etc).
 If a `chezmoi` template needs access to colors, then include
 
 ```
-{{- $color := include ".gen.color.json" | mustFromJson -}}
+{{- $color := include ".gen/color.json" | mustFromJson -}}
 ```
 
 at the top of the template. Colors can then be accessed through the `$color`
