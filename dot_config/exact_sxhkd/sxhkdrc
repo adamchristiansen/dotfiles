@@ -38,6 +38,10 @@ ctrl + alt + l
 super + Tab; h
   "$HOME/.local/bin/hotkey-hints"
 
+### Show sniplets
+super + Tab; s
+  "$HOME/.local/bin/sniplets" | "$HOME/.local/bin/clipboard" --copy --notify
+
 ### Change the desktop wallpaper
 super + Tab; w
   "$HOME/.local/bin/wallpaper-changer"
