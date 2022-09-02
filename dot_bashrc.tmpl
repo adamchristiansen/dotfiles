@@ -1,22 +1,14 @@
-# If not running interactively, don't do anything
-case $- in
-  *i*) ;;
-    *) return;;
-esac
-
 # Source and export environment variables
-enviro() {
-  set -o allexport
-  source "$1"
-  set +o allexport
-}
-
-# Load variables
-enviro "$HOME/.config/enviro"
+source "$HOME/.config/enviro"
 envirod="$HOME/.local/etc/enviro.d"
 for f in $(ls "$envirod"); do
-  enviro "$envirod/$f"
+  source "$envirod/$f"
 done
+
+umask {{ .umask }}
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
 # Don't write history to a file
 HISTFILE=""
@@ -64,5 +56,3 @@ if ! shopt -oq posix; then
   . /etc/bash_completion
   fi
 fi
-
-umask {{ .umask }}
