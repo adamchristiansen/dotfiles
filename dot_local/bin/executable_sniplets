@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+
+import os
+
+if "XDG_CONFIG_HOME" in os.environ:
+  DEFAULT_SNIPLETS = os.path.join(os.environ["XDG_CONFIG_HOME"], "sniplets")
+else:
+  DEFAULT_SNIPLETS = os.path.join(os.environ["HOME"], ".config/sniplets")
+
+class SnipletsDb:
+  """
+  Process sniplets into a database.
+  """
+
+  def __init__(self, snip_paths=None):
+    """
+    Load a database from the specified paths. If no paths are specified, the
+    DEFAULT_SNIPLETS is used.
+    """
+    if not snip_paths:
+      snip_paths = [DEFAULT_SNIPLETS]
+    self._db = {}
+    for snip_path in snip_paths:
+      with open(snip_path) as f:
+        for line in f:
+          line = line.strip()
+          if not line or line.startswith("#"):
+            continue
+          parts = tuple(filter(lambda x: x, line.split(" ")))
+          key = tuple(sorted(parts[:-1]))
+          value = parts[-1]
+          self._db[key] = value
+
+  def keys(self):
+    """
+    Get all of the keys in the database sorted in ascended order.
+    """
+    return sorted(self._db.keys())
+
+  def __getitem__(self, key):
+    """
+    Look up an item in the database by key.
+    """
+    return self._db[key]
+
+  def lines(self, keys):
+    """
+    Get the lines to print in a fuzzy finder, sorted in ascending order.
+    """
+    # Insert tabs in between to shift the text off the side of the fuzzy finder
+    fmt = "{{}}{}{{}}".format(45 * "\t")
+    return list(map(lambda k: fmt.format(self._db[k], " ".join(k)), keys))
+
+if __name__ == "__main__":
+  import argparse
+  import sys
+
+  from dotfiles import menu
+
+  parser = argparse.ArgumentParser(
+    description="Search for text sniplets")
+  parser.add_argument("snip_paths", nargs="?", default=[],
+    help="The database files to use")
+  args = parser.parse_args()
+
+  db = SnipletsDb(args.snip_paths)
+  keys = db.keys()
+  lines = db.lines(keys)
+  sel_index = menu(lines)
+  if sel_index is None:
+    # Nothing was selected
+    sys.exit(1)
+  print(db[keys[sel_index]], end="")
