@@ -7,18 +7,13 @@ done
 
 umask {{ .umask }}
 
-# If not running interactively, don't do anything
+# If not running interactively, don't do anything more
 [[ $- != *i* ]] && return
 
-# Don't write history to a file
+# Disable persistent command history
 HISTFILE=""
-
-# Ignore duplicates and lines starting with a space
-HISTCONTROL=ignoreboth
-HISTFILESIZE=2000
+HISTCONTROL=ignoreboth # Ignore duplicates and lines starting with a space
 HISTSIZE=1000
-# Append to the history file, don't overwrite it
-shopt -s histappend
 
 # Check the window size after each command and, if necessary, update the values
 # of LINES and COLUMNS.
@@ -36,23 +31,15 @@ case "$TERM" in
     ;;
 esac
 
-if [ -x /usr/bin/dircolors ]; then
-  if [ -r ~/.dircolors ]; then
-    eval "$(dircolors -b ~/.dircolors)"
-  else
-    eval "$(dircolors -b)"
-  fi
-  alias ls='ls --color=auto'
-  alias grep='grep --color=auto'
-  alias fgrep='fgrep --color=auto'
-  alias egrep='egrep --color=auto'
-fi
+# Aliases
+source "$HOME/.config/abbreviations"
+source "$HOME/.config/aliases"
 
 # Enable programmable completion features
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
-  . /usr/share/bash-completion/bash_completion
+    source /usr/share/bash-completion/bash_completion
   elif [ -f /etc/bash_completion ]; then
-  . /etc/bash_completion
+    source /etc/bash_completion
   fi
 fi
