@@ -1,55 +1,59 @@
 #!/usr/bin/env python3
 
 import os
+import pathlib
 
 if "XDG_CONFIG_HOME" in os.environ:
-  DEFAULT_SNIPLETS = os.path.join(os.environ["XDG_CONFIG_HOME"], "sniplets")
+  DEFAULT_SNIPDIR = os.path.join(os.environ["XDG_CONFIG_HOME"], "sniplets")
 else:
-  DEFAULT_SNIPLETS = os.path.join(os.environ["HOME"], ".config/sniplets")
+  DEFAULT_SNIPDIR = os.path.join(os.environ["HOME"], ".config/sniplets")
+
+def snipfiles(dir):
+  """
+  Get the absolute paths of all .snip files in a directory.
+  """
+  f = lambda f: str(f.absolute())
+  return sorted(map(f, pathlib.Path(dir).glob("*.snip")))
 
 class SnipletsDb:
   """
   Process sniplets into a database.
   """
 
-  def __init__(self, snip_paths=None):
+  def __init__(self, snipdir=None):
     """
-    Load a database from the specified paths. If no paths are specified, the
-    DEFAULT_SNIPLETS is used.
+    Load a database from the specified snip directory. If no directory is
+    specified, the DEFAULT_SNIPDIR is used. The database is sorted by key.
     """
-    if not snip_paths:
-      snip_paths = [DEFAULT_SNIPLETS]
-    self._db = {}
-    for snip_path in snip_paths:
-      with open(snip_path) as f:
+    if not snipdir:
+      snipdir = DEFAULT_SNIPDIR
+    self._db = []
+    for snipfile in snipfiles(snipdir):
+      with open(snipfile) as f:
         for line in f:
           line = line.strip()
           if not line or line.startswith("#"):
             continue
           parts = tuple(filter(lambda x: x, line.split(" ")))
-          key = tuple(sorted(parts[:-1]))
+          key = tuple(parts[:-1])
           value = parts[-1]
-          self._db[key] = value
+          self._db.append((key, value))
+    self._db.sort()
 
-  def keys(self):
+  def __getitem__(self, index):
     """
-    Get all of the keys in the database sorted in ascended order.
+    Look up a value in the database by index.
     """
-    return sorted(self._db.keys())
+    return self._db[index][1]
 
-  def __getitem__(self, key):
+  def fuzzy_lines(self):
     """
-    Look up an item in the database by key.
+    Get the lines to print in a fuzzy finder.
     """
-    return self._db[key]
-
-  def lines(self, keys):
-    """
-    Get the lines to print in a fuzzy finder, sorted in ascending order.
-    """
-    # Insert tabs in between to shift the text off the side of the fuzzy finder
-    fmt = "{{}}{}{{}}".format(45 * "\t")
-    return list(map(lambda k: fmt.format(self._db[k], " ".join(k)), keys))
+    width = max(map(lambda x: len(x[1]), self._db))
+    fmt = "{{:{}}}{{}}".format(width + 1)
+    f = lambda kv: fmt.format(kv[1], " ".join(kv[0]))
+    return list(map(f, self._db))
 
 if __name__ == "__main__":
   import argparse
@@ -59,15 +63,14 @@ if __name__ == "__main__":
 
   parser = argparse.ArgumentParser(
     description="Search for text sniplets")
-  parser.add_argument("snip_paths", nargs="?", default=[],
-    help="The database files to use")
+  parser.add_argument("snipdir", nargs="?", default=None,
+    help="The directory containing the sniplets")
   args = parser.parse_args()
 
-  db = SnipletsDb(args.snip_paths)
-  keys = db.keys()
-  lines = db.lines(keys)
+  db = SnipletsDb(args.snipdir)
+  lines = db.fuzzy_lines()
   sel_index = menu(lines)
   if sel_index is None:
     # Nothing was selected
     sys.exit(1)
-  print(db[keys[sel_index]], end="")
+  print(db[sel_index], end="")
