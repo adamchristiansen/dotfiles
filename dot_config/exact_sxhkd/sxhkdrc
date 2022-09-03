@@ -40,7 +40,9 @@ super + Tab; h
 
 ### Show sniplets
 super + Tab; s
-  "$HOME/.local/bin/sniplets" | "$HOME/.local/bin/clipboard" --copy --notify
+  set -e; \
+  x=$("$HOME/.local/bin/sniplets"); \
+  printf "$x" | "$HOME/.local/bin/clipboard" --copy --notify
 
 ### Change the desktop wallpaper
 super + Tab; w
@@ -142,7 +144,8 @@ super + alt + a; p
 
 ### Make sxhkd and bspwm reload its configuration files
 super + Escape
-  pkill -USR1 -x sxhkd; "$XDG_CONFIG_HOME/bspwm/bspwmrc"
+  pkill -USR1 -x sxhkd; \
+  "$XDG_CONFIG_HOME/bspwm/bspwmrc"
 
 ### Quit bspwm normally
 super + ctrl + alt + shift + Escape
@@ -166,7 +169,9 @@ super + r
 
 ### Clear all receptacles in the current desktop
 super + shift + r
-  for win in `bspc query -N -n .leaf.!window`; do bspc node $win -k; done;
+  for win in `bspc query -N -n .leaf.!window`; do \
+    bspc node $win -k; \
+  done
 
 ### Show desktop information
 super + d
