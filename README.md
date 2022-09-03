@@ -5,15 +5,6 @@ These are my dotfiles, managed by
 
 
 
-## Naming
-
-Anything in the root directory beginning with `_` is not managed by `chezmoi`
-(at least not directly). These directories contain either cached values or
-configurations which must be installed manually (because they use `sudo`,
-cannot be easily scripted, etc).
-
-
-
 ## Color Themes
 
 If a `chezmoi` template needs access to colors, then include
