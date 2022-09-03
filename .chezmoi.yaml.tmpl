@@ -1,7 +1,7 @@
-{{ $editor := promptString "What text editor do you use" -}}
-{{ $git_name := promptString "What is you full name for git" -}}
-{{ $git_email := promptString "What is your email address for git" -}}
-{{ $location_wttr := promptString "What is your location for wttr.in (city-province-country)" -}}
+{{- $editor := promptStringOnce . "editor" "What text editor do you use" -}}
+{{- $git_name := promptStringOnce .git "name" "What is you full name for git" -}}
+{{- $git_email := promptStringOnce .git "email" "What is your email address for git" -}}
+{{- $location_wttr := promptStringOnce .location "wttr" "What is your location for wttr.in (city-province-country)" -}}
 
 format: yaml
 mode: file
