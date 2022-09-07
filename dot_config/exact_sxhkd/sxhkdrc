@@ -66,6 +66,10 @@ super + b
 # Notifications
 #------------------------------------------------------------------------------
 
+### Show music information
+super + Tab; n; m
+  "$HOME/.local/bin/notify-music" --notify
+
 ### Show network information
 super + Tab; n; n
   "$HOME/.local/bin/notify-network" --notify

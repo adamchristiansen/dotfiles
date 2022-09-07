@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+
+import os
+
+from dotfiles import notify, run
+
+# The command to get information from mpd.
+MPC_CMD = ['mpc', 'current', '-f',
+  '\n'.join(map(lambda x: f"%{x}%", ['title', 'artist', 'album', 'file'])),
+]
+
+class NoSongPlayingError(Exception):
+  pass
+
+class CurrentSong():
+  """
+  Information about the current song.
+  """
+
+  def __init__(self):
+    r = run(MPC_CMD)
+    if r.exitcode != 0:
+      raise RuntimeError(r.stderr)
+    if not r.stdout.strip():
+      raise NoSongPlayingError()
+    self.title, self.artist, self.album, self.filepath = r.stdout.split('\n')
+    # Make the filepath absolute
+    self.filepath = os.path.join(os.path.expanduser('~/Music'), self.filepath)
+
+  @property
+  def coverpath(self):
+    """The absolute path to the album cover."""
+    dir = os.path.dirname(self.filepath)
+    exts = ['png', 'jpg', 'jpeg']
+    for p in map(lambda ext: os.path.join(dir, f"cover.{ext}"), exts):
+      if os.path.exists(p):
+        return p
+    return None
+
+def show(c, send_notification=True):
+  """
+  Send a notification.
+
+  # Arguments
+
+  - `c` (CurrentSong|None): The current song if one is playing, else `None`.
+  - `send_notification` (bool): Whether a graphical notification should be sent
+    or information simply printed to the terminal.
+  """
+  if c is not None:
+    body = '\n'.join([c.title, c.album, c.artist])
+  else:
+    body = 'No song playing'
+  if send_notification:
+    notify(
+      app='Now Playing ♫',
+      body=body,
+      icon=c.coverpath if c is not None else 'media-tape',
+      tag='mpd-now-playing',
+    )
+  else:
+    print(body)
+
+if __name__ == '__main__':
+  import argparse
+  parser = argparse.ArgumentParser(
+    description="Show the current playing song")
+  parser.add_argument("--notify",
+    action="store_true",
+    help="send a notification")
+  args = parser.parse_args()
+
+  try:
+    c = CurrentSong()
+  except NoSongPlayingError:
+    show(None, args.notify)
+  else:
+    show(c, args.notify)
