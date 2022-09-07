@@ -48,12 +48,14 @@ def show(c, send_notification=True):
     or information simply printed to the terminal.
   """
   if c is not None:
+    app = 'Now Playing ♫'
     body = '\n'.join([c.title, c.album, c.artist])
   else:
+    app = 'Now Playing'
     body = 'No song playing'
   if send_notification:
     notify(
-      app='Now Playing ♫',
+      app=app,
       body=body,
       icon=c.coverpath if c is not None else 'media-tape',
       tag='mpd-now-playing',
