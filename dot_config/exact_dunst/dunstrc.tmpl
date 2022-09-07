@@ -37,8 +37,8 @@ icon_theme = Papirus
 # The icon size of 24 is used because it has the most icons for SVG themes.
 # The icon is upscaled using the (min|max)_icon_size.
 icon_size = 24
-min_icon_size = 48
-max_icon_size = 48
+min_icon_size = 24
+max_icon_size = 128
 
 # Progress bar
 progress_bar = true
@@ -56,13 +56,13 @@ separator_color = frame
 separator_height = 0
 
 # Sort by urgency
-sort = yes
+sort = true
 
 # Allowed notifications recalled from history to timeout automatically
-sticky_history = no
+sticky_history = false
 
 # Wrap long lines
-word_wrap = yes
+word_wrap = true
 
 [urgency_low]
 background = "#{{- $color.base07.hex.rgb -}}"
