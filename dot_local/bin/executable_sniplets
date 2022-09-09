@@ -13,7 +13,7 @@ def snipfiles(dir):
   Get the absolute paths of all .snip files in a directory.
   """
   f = lambda f: str(f.absolute())
-  return sorted(map(f, pathlib.Path(dir).glob("*.snip")))
+  return sorted(map(f, pathlib.Path(dir).glob("*.sniplets")))
 
 class SnipletsDb:
   """
