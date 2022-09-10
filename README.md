@@ -20,8 +20,8 @@ variable, such as
 {{ $color.base0a.hex.rgb }}
 ```
 
-See the [color README](dot_config/exact_color/README.md) for more information
-on using colors.
+See the [color README](home/dot_config/exact_color/README.md) for more
+information on using colors.
 
 
 
