@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 
 lyrics_directory  = "~/Music/.lyrics"
-ncmpcpp_directory = "~/Music/.ncmpcpp"
+ncmpcpp_directory = "~/.config/ncmpcpp"
 
 #------------------------------------------------------------------------------
 # mpd
