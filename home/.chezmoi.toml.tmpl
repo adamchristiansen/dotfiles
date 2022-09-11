@@ -11,7 +11,7 @@
 {{- $shell := promptStringOnce . "shell" "shell" "bash" -}}
 {{- $umask := promptStringOnce . "umask" "umask" "022" | trunc -3 -}}
 
-format = "toml"
+format = "json"
 mode = "file"
 umask = 0o{{- $umask }}
 
