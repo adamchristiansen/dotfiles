@@ -1,0 +1,38 @@
+{{- $colorscheme := promptStringOnce . "colorscheme" "colorscheme" "moonlight" -}}
+{{- $dimBorder := promptIntOnce .dim "border" "border (px)" 2 -}}
+{{- $dimGap := promptIntOnce .dim "gap" "gap (px)" 48 -}}
+{{- $dimPadding := promptIntOnce .dim "padding" "padding (px)" 8 -}}
+{{- $editor := promptStringOnce . "editor" "editor" "vi" -}}
+{{- $fontName := promptStringOnce .font "name" "font name" "monospace" -}}
+{{- $fontSize := promptIntOnce .font "size" "font size (pt)" 11 -}}
+{{- $gitEmail := promptStringOnce .git "email" "git email" -}}
+{{- $gitName := promptStringOnce .git "name" "git author name" -}}
+{{- $locationWttr := promptStringOnce .location "wttr" "wttr.in location (city-province-country)" -}}
+{{- $shell := promptStringOnce . "shell" "shell" "bash" -}}
+{{- $umask := promptStringOnce . "umask" "umask" "022" | trunc -3 -}}
+
+format = "toml"
+mode = "file"
+umask = 0o{{- $umask }}
+
+[data]
+colorscheme = {{ $colorscheme | quote }}
+editor = {{ $editor | quote }}
+shell = {{ $shell | quote }}
+umask = {{ printf "0%s" $umask | quote }}
+
+[data.dim]
+border = {{ $dimBorder }}
+gap = {{ $dimGap }}
+padding = {{ $dimPadding }}
+
+[data.font]
+name = {{ $fontName | quote }}
+size = {{ $fontSize }}
+
+[data.git]
+email = {{ $gitEmail | quote }}
+name = {{ $gitName | quote }}
+
+[data.location]
+wttr = {{ $locationWttr | quote }}
