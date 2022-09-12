@@ -2,12 +2,12 @@
 music_directory    "~/Music"
 bind_to_address    "localhost"
 port               "6600"
-db_file            "~/Music/.mpd/database"
-log_file           "/dev/null" # "~/.mpd/log"
-playlist_directory "~/Music/.mpd/playlists"
-pid_file           "~/Music/.mpd/pid"
-state_file         "~/Music/.mpd/state"
-sticker_file       "~/Music/.mpd/sticker.sql"
+db_file            "~/.cache/mpd/database"
+log_file           "~/.cache/mpd/log"
+pid_file           "~/.cache/mpd/pid"
+playlist_directory "~/.cache/mpd/playlists"
+state_file         "~/.cache/mpd/state"
+sticker_file       "~/.cache/mpd/sticker.sql"
 
 # Start in paused mode (no audio output)
 restore_paused "yes"

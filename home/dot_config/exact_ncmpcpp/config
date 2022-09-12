@@ -2,7 +2,7 @@
 # ncmpcpp paths
 #------------------------------------------------------------------------------
 
-lyrics_directory  = "~/Music/.lyrics"
+lyrics_directory  = "~/.cache/ncmpcpp/lyrics"
 ncmpcpp_directory = "~/.config/ncmpcpp"
 
 #------------------------------------------------------------------------------
