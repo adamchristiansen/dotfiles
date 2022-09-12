@@ -1,0 +1,12 @@
+#/usr/bin/env sh
+
+set -e
+
+USAGE="Pull diverged changes and overwrite local branch"
+SUBDIRECTORY_OK=1
+. "$(git --exec-path)/git-sh-setup"
+
+remote="$(git remote)"
+branch="$(git branch --show-current)"
+git fetch
+git reset "${remote}/${branch}" --hard
