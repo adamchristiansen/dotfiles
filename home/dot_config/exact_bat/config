@@ -1,0 +1,4 @@
+--theme=base16
+
+--map-syntax ".chezmoiignore:Git Ignore"
+--map-syntax "*.ino:C++"
