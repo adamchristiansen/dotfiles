@@ -59,13 +59,20 @@ fn source { |filepath|
   }
 }
 
+# Source all of the enviros in a directory in alphabetical order.
 fn source-dir { |dirpath &recurse=$false|
   if (not (path:is-dir $dirpath)) {
     fail 'Path is not a directory'
   }
 
-  ls $dirpath | each { |item|
-    set item = $dirpath/$item
+  var itempaths = []
+  try {
+    set @itempaths = (put $dirpath/*.enviro)
+  } catch {
+    # Do nothing
+  }
+
+  put $@itempaths | each { |item|
     if (path:is-regular $item) {
       source $item
     } elif (and $recurse (path:is-dir $item)) {

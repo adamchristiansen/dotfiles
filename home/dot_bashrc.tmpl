@@ -1,8 +1,6 @@
 # Source and export environment variables
-source "$HOME/.config/enviro"
-envirod="$HOME/.local/etc/enviro.d"
-for f in $(ls "$envirod"); do
-  source "$envirod/$f"
+for f in $HOME/.local/etc/enviro.d/*.enviro; do
+  source "$f"
 done
 
 umask {{ .umask }}
