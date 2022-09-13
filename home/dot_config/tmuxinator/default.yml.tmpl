@@ -1,5 +1,5 @@
 name: default
-root: ~
+root: {{ .chezmoi.homeDir }}
 
 startup_window: term
 
@@ -11,13 +11,13 @@ windows:
         - # Terminal
   - music:
       panes: ncmpcpp
-      root: ~/Music
+      root: {{ .chezmoi.homeDir }}/Music
   - dots:
       layout: even-horizontal
       panes:
         - # Terminal
         - # Terminal
-      root: ~/.local/share/chezmoi
+      root: {{ .chezmoi.sourceDir }}
   - update:
       layout: even-horizontal
       panes:
