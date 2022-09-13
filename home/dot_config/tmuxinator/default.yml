@@ -11,7 +11,7 @@ windows:
         - # Terminal
   - music:
       panes: ncmpcpp
-      root: ~/Music/sync
+      root: ~/Music
   - dots:
       layout: even-horizontal
       panes:
