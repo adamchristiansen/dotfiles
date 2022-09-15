@@ -32,9 +32,9 @@ plug "andreyorst/kaktree" defer kaktree %{
     -docstring "show and focus file tree"
   map global user "F" ":kaktree-toggle<ret>" -docstring "toggle file tree"
 
-  set-option global kaktree_dir_icon_close "▸  "
-  set-option global kaktree_dir_icon_open  "▾  "
-  set-option global kaktree_file_icon      "⠀⠀ "
+  set-option global kaktree_dir_icon_close "▸"
+  set-option global kaktree_dir_icon_open  "▾"
+  set-option global kaktree_file_icon      "⠀"
   set-option global kaktree_indentation 2
   set-option global kaktree_show_help false
   set-option global kaktree_show_hidden true
