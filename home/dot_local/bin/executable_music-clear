@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+
+from dotfiles import notify, run
+
+parser = argparse.ArgumentParser(
+  description="Clear the current playlist")
+parser.add_argument("--notify", action="store_true",
+  help="send a notification")
+args = parser.parse_args()
+
+r = run(["mpc", "clear"])
+if r.exitcode != 0:
+  print(r)
+  sys.exit(1)
+
+app = "Now Playing"
+body = "Playlist cleared"
+if args.notify:
+  notify(
+    app=app,
+    body=body,
+    icon="media-tape",
+    tag="mpd-now-playing",
+  )
