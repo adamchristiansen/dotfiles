@@ -58,6 +58,10 @@ super + Tab; p; {p,u,t}
 super + Tab; x
   "$HOME/.local/bin/clipboard" --clear --notify
 
+### Set the display temperature to dusk, night, witch, or normal mode
+super + Tab; t; {d,n,w,x}
+  "$HOME/.local/bin/nightshift" -{d,n,w,x} --notify
+
 ### Toggle the status bar
 super + b
   "$HOME/.config/polybar/toggle"
