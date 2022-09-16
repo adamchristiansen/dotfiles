@@ -2,11 +2,13 @@
 
 set -e
 
-USAGE="Pull diverged changes and overwrite local branch"
 SUBDIRECTORY_OK=1
 . "$(git --exec-path)/git-sh-setup"
 
+cd_to_toplevel
+
 remote="$(git remote)"
 branch="$(git branch --show-current)"
+
 git fetch
 git reset "${remote}/${branch}" --hard
