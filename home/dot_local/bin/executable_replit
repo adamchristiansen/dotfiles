@@ -6,7 +6,6 @@ Display a menu to select a language to run on https://replit.com.
 
 import subprocess
 import re
-import sys
 
 from dotfiles import menu
 
@@ -54,9 +53,6 @@ def language(name):
 
 if __name__ == "__main__":
   names = sorted(LANGUAGES.keys())
-  index = menu(names)
-  if index is None:
-    # Nothing was selected
-    sys.exit()
+  index = menu(names, index=True)
   url = f"https://replit.com/languages/{language(names[index])}"
   subprocess.run(["xdg-open", url], capture_output=True)

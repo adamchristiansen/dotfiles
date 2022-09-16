@@ -1,32 +1,27 @@
 import subprocess
 
-# The menu command to run.
-MENU_COMMAND = ["rofi", "-dmenu", "-i", "-format", "i"]
+from .exit import exit as ex
 
-# The encoding for subprocess communication.
-ENCODING = "utf-8"
-
-def menu(options):
+def menu(options, index=False, exit=True, fail=True):
   """
-  Run the menu command with the options provided.
+  Show a menu with the provided options.
 
-  # Arguments
+  When index is true, the index of the selected item is returned, and when
+  false, the item itself is returned.
 
-  - `options` (list<str>): The list of options to show.
-
-  # Returns
-
-  (int|None): An integer index into the `options` when an option was
-  successfully selected. `None` is returned when the menu was cancelled or an
-  error occurred.
+  When exit is true, the program exits when no item is selected. When fail is
+  true, the program exits with a failure.
   """
-  r = subprocess.run(MENU_COMMAND,
-    input="\n".join(options).encode(ENCODING),
+  cmd = ["rofi", "-dmenu", "-i"]
+  if index:
+    cmd.extend(["-format", "i"])
+  r = subprocess.run(cmd,
+    input="\n".join(options).encode("utf-8"),
     stdout=subprocess.PIPE)
-  try:
-    if r.returncode == 0:
-      return int(r.stdout.decode(ENCODING).strip())
-    else:
-      return None
-  except ValueError:
+  # Rofi returns non-zero when no selection is made
+  if r.returncode != 0:
+    if exit:
+      log.fatal("menu error") if fail else ex.success()
     return None
+  v = r.stdout.decode("utf-8").strip()
+  return int(v) if index else v

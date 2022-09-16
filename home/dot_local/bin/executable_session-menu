@@ -4,15 +4,7 @@
 Display a menu to select one of the `session-*` commands to run.
 """
 
-import subprocess
-import sys
+from dotfiles import menu, run
 
-from dotfiles import menu
-
-if __name__ == "__main__":
-  opts = ["Lock", "Logout", "Reboot", "Shutdown", "Suspend"]
-  i = menu(opts)
-  if i is None:
-    # Nothing was selected
-    sys.exit()
-  subprocess.run(f"session-{opts[i].lower()}")
+opt = menu(["Lock", "Logout", "Reboot", "Shutdown", "Suspend"])
+run(f"session-{opt.lower()}", check=True)

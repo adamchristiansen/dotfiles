@@ -122,10 +122,7 @@ if __name__ == "__main__":
   # Show the selection menu
   opts = songs.options(*args.keys)
   opts_list = list(opts.keys())
-  sel_index = menu(opts_list)
-  if sel_index is None:
-    # Nothing was selected
-    sys.exit()
+  sel_index = menu(opts_list, index=True)
   # Play the selection
   if args.queue:
     mpc_play_queue(sel_index)
