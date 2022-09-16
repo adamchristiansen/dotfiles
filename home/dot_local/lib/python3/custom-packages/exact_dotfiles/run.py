@@ -10,22 +10,26 @@ The output of a command.
 """
 Run = collections.namedtuple("Run", ["exitcode", "stdout", "stderr"])
 
-def run(cmd):
+def run(cmd, check=False):
   """
   Run a command.
 
   # Arguments
 
   - cmd (list<str>): The command to run.
+  - check (bool): Raise an exception on non-zero exitcode.
 
   # Returns
 
   (Run): The command output.
   """
-  ENCODING = "utf-8"
-  p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  p = subprocess.run(
+    cmd,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    check=check)
   return Run(
     p.returncode,
-    stdout = (p.stdout if p.stdout is not None else b"").decode(ENCODING).strip(),
-    stderr = (p.stderr if p.stderr is not None else b"").decode(ENCODING).strip(),
+    (p.stdout if p.stdout is not None else b"").decode("utf-8").strip(),
+    (p.stderr if p.stderr is not None else b"").decode("utf-8").strip(),
   )
