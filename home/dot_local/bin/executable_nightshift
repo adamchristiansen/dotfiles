@@ -1,56 +1,44 @@
 #!/usr/bin/env python3
 
-# Modifies the color temperature to make the screen easier to  look at in
-# different brightness levels. The following parameters can be used:
-#
-#   off
-#       Turns off the nightshift. This is the default.
-#   dusk
-#       Ideal for the evening, Slightly prefers reds.
-#   night
-#       Ideal for the night. Moderately prefers reds.
-#   witch
-#       Ideal for the witching hour. Aggressively prefers reds.
-#
-# When no shift parameter is supplied, the screen is reset to the default
-# temperature.
-
 import argparse
 import sys
 
 from dotfiles import notify, run
 
+CONST_NORMAL = ("Normal", 6500)
+CONST_DUSK   = ("Dusk",   5500)
+CONST_NIGHT  = ("Night",  4500)
+CONST_WITCH  = ("Witch",  3500)
+
 parser = argparse.ArgumentParser(
   description="Set the screen temperature")
 group = parser.add_mutually_exclusive_group()
 group.add_argument("-x", "--off",
-  action="store_const", dest="args", const=("Normal", 6500),
+  action="store_const", dest="args", const=CONST_NORMAL,
   help="normal mode (6500K)")
 group.add_argument("-d", "--dusk",
-  action="store_const", dest="args", const=("Dusk", 5500),
+  action="store_const", dest="args", const=CONST_DUSK,
   help="dusk mode (5500K)")
 group.add_argument("-n", "--night",
-  action="store_const", dest="args", const=("Night", 4500),
+  action="store_const", dest="args", const=CONST_NIGHT,
   help="night mode (4500K)")
 group.add_argument("-w", "--witch",
-  action="store_const", dest="args", const=("Witch", 3500),
+  action="store_const", dest="args", const=CONST_WITCH,
   help="witch mode (3500K)")
 parser.add_argument("--notify",
   action="store_true",
   help="send a notification")
 
 args = parser.parse_args()
-if args.args is not None:
-  mode, temperature = args.args
-else:
-  mode, temperature = "Normal", 6500
+mode, temperature = args.args if args.args is not None else CONST_NORMAL
 
-# Always clear the current setting because the temperature stacks
+# Always clear the current setting first because the temperature stacks
 # multiplicatively
 r = run(["redshift", "-x"])
 if r.exitcode != 0:
   print(r.stderr)
   sys.exit(1)
+
 # Set the new temperature
 r = run(["redshift", "-O", str(temperature)])
 if r.exitcode != 0:
