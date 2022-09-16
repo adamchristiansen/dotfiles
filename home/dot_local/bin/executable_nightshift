@@ -34,16 +34,8 @@ mode, temperature = args.args if args.args is not None else CONST_NORMAL
 
 # Always clear the current setting first because the temperature stacks
 # multiplicatively
-r = run(["redshift", "-x"])
-if r.exitcode != 0:
-  print(r.stderr)
-  sys.exit(1)
-
-# Set the new temperature
-r = run(["redshift", "-O", str(temperature)])
-if r.exitcode != 0:
-  print(r.stderr)
-  sys.exit(2)
+run(["redshift", "-x"], check=True)
+run(["redshift", "-O", str(temperature)], check=True)
 
 body = f"{mode} Mode ({temperature}K)"
 if args.notify:
