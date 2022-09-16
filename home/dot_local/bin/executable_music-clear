@@ -4,7 +4,7 @@ from dotfiles import notify, run
 
 run(["mpc", "clear"], check=True)
 notify(
-  app="Now Playing",
+  app="Now Playing ♫",
   body="Playlist cleared",
   icon="media-tape",
   tag="mpd-now-playing",

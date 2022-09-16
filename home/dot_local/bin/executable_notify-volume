@@ -81,9 +81,6 @@ parser.add_argument("mode",
 parser.add_argument("--delta",
   type=int, default=5,
   help="the amount to change the volume")
-parser.add_argument("--notify",
-  action="store_true",
-  help="send a notification")
 
 args = parser.parse_args()
 
@@ -148,20 +145,14 @@ def show_volume(volume, mute):
   # The percentage for the progress bar
   percent = volume if not mute else 0
   # Show notification
-  if args.notify:
-    notify(
-      app="Volume",
-      summary=text,
-      icon=icon,
-      tag="volume",
-      progress=percent,
-      urgency="low"
-    )
-  else:
-    s = f"{volume}%"
-    if mute:
-      s += " mute"
-    print(s)
+  notify(
+    app="Volume",
+    summary=text,
+    icon=icon,
+    tag="volume",
+    progress=percent,
+    urgency="low"
+  )
 
 if args.mode is not None:
   mixer_set(*args.mode.next(*mixer_state()))

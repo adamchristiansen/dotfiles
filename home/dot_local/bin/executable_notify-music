@@ -4,77 +4,40 @@ import os
 
 from dotfiles import notify, run
 
-# The command to get information from mpd.
-MPC_CMD = ['mpc', 'current', '-f',
-  '\n'.join(map(lambda x: f"%{x}%", ['title', 'artist', 'album', 'file'])),
+MPC_CMD = ["mpc", "current", "-f",
+  "\n".join(map(lambda x: f"%{x}%", ["title", "artist", "album", "file"])),
 ]
 
-class NoSongPlayingError(Exception):
-  pass
-
-class CurrentSong():
-  """
-  Information about the current song.
-  """
-
-  def __init__(self):
-    r = run(MPC_CMD)
-    if r.exitcode != 0:
-      raise RuntimeError(r.stderr)
-    if not r.stdout.strip():
-      raise NoSongPlayingError()
-    self.title, self.artist, self.album, self.filepath = r.stdout.split('\n')
-    # Make the filepath absolute
-    self.filepath = os.path.join(os.path.expanduser('~/Music'), self.filepath)
-
-  @property
-  def coverpath(self):
-    """The absolute path to the album cover."""
-    dir = os.path.dirname(self.filepath)
-    exts = ['png', 'jpg', 'jpeg']
-    for p in map(lambda ext: os.path.join(dir, f"cover.{ext}"), exts):
-      if os.path.exists(p):
-        return p
+def current_song():
+  r = run(MPC_CMD, check=True)
+  if not r.stdout:
     return None
+  title, artist, album, filepath = r.stdout.split("\n")
+  filepath = os.path.join(os.path.expanduser("~/Music"), filepath)
+  dir = os.path.dirname(filepath)
+  exts = ["png", "jpg", "jpeg"]
+  coverpath = None
+  for p in map(lambda ext: os.path.join(dir, f"cover.{ext}"), exts):
+    if os.path.exists(p):
+      coverpath = p
+      break
+  return {
+    "title": title,
+    "artist": artist,
+    "album": album,
+    "coverpath": coverpath,
+  }
 
-def show(c, send_notification=True):
-  """
-  Send a notification.
-
-  # Arguments
-
-  - `c` (CurrentSong|None): The current song if one is playing, else `None`.
-  - `send_notification` (bool): Whether a graphical notification should be sent
-    or information simply printed to the terminal.
-  """
+def show(c):
   if c is not None:
-    app = 'Now Playing ♫'
-    body = '\n'.join([c.title, c.album, c.artist])
+    body = "\n".join([c["title"], c["album"], c["artist"]])
   else:
-    app = 'Now Playing'
-    body = 'No song playing'
-  if send_notification:
-    notify(
-      app=app,
-      body=body,
-      icon=c.coverpath if c is not None else 'media-tape',
-      tag='mpd-now-playing',
-    )
-  else:
-    print(body)
+    body = "No song playing"
+  notify(
+    app="Now Playing ♫",
+    body=body,
+    icon=c["coverpath"] if c is not None else "media-tape",
+    tag="mpd-now-playing",
+  )
 
-if __name__ == '__main__':
-  import argparse
-  parser = argparse.ArgumentParser(
-    description="Show the current playing song")
-  parser.add_argument("--notify",
-    action="store_true",
-    help="send a notification")
-  args = parser.parse_args()
-
-  try:
-    c = CurrentSong()
-  except NoSongPlayingError:
-    show(None, args.notify)
-  else:
-    show(c, args.notify)
+show(current_song())

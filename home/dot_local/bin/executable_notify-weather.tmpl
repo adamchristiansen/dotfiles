@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 
 from dotfiles import notify, run
@@ -117,7 +118,7 @@ def int_scale(scale):
 
 def float_scale(scale):
   """
-  Get an float from a value that may be an integer or a float after applying
+  Get a float from a value that may be an integer or a float after applying
   a scaling factor to it.
   """
   return lambda x: scale * float(x)
@@ -276,33 +277,10 @@ def send_notification(w):
     tag="weather",
   )
 
-def main(args):
-  w = Weather(args.location)
-  if args.notify:
-    send_notification(w)
-  else:
-    print(f"Location     => {w.location}")
-    print(f"Pressure     => {w.pressure} kPa")
-    print(f"Temperature  => {w.temperature} C, feels like {w.temperature_feel} C")
-    print(f"Weather Code => {w.weather_code}")
-    print(f"Weather Desc => {w.weather_desc}")
-    print(f"Wind         => {w.wind_speed} km/h, {w.wind_dir_card}, {w.wind_dir_arrow}")
+parser = argparse.ArgumentParser(description="Get the current weather")
+parser.add_argument("location", nargs="?",
+  default="{{ .location.wttr }}",
+  help="Override the default location")
+args = parser.parse_args()
 
-if __name__ == "__main__":
-  import argparse
-
-  p = argparse.ArgumentParser(description="Get the current weather")
-  p.add_argument("location", nargs="?",
-    default="{{ .location.wttr }}",
-    help="Override the default location")
-  p.add_argument("-n", "--notify", action="store_true", help="Trigger a notification")
-  args = p.parse_args()
-
-  try:
-    main(args)
-  except Exception as e:
-    message = str(e).capitalize()
-    if args.notify:
-      send_notification(message, urgency="critical")
-    else:
-      print(message, file=sys.stderr)
+send_notification(Weather(args.location))

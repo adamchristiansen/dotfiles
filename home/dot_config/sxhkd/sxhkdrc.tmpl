@@ -72,23 +72,23 @@ super + b
 
 ### Show music information
 super + Tab; n; m
-  "$HOME/.local/bin/notify-music" --notify
+  "$HOME/.local/bin/notify-music"
 
 ### Show network information
 super + Tab; n; n
-  "$HOME/.local/bin/notify-network" --notify
+  "$HOME/.local/bin/notify-network"
 
 ### Show current time
 super + Tab; n; t
-  "$HOME/.local/bin/notify-datetime" --notify
+  "$HOME/.local/bin/notify-datetime"
 
 ### Show volume
 super + Tab; n; v
-  "$HOME/.local/bin/notify-volume" --notify
+  "$HOME/.local/bin/notify-volume"
 
 ### Show current weather
 super + Tab; n; w
-  "$HOME/.local/bin/notify-weather" --notify
+  "$HOME/.local/bin/notify-weather"
 
 ### Clear notifications
 super + Tab; space
@@ -100,19 +100,19 @@ super + Tab; space
 
 ### Mute volume
 super + a; a
-  "$HOME/.local/bin/notify-volume" mute --notify
+  "$HOME/.local/bin/notify-volume" mute
 
 ### Decrease the volume
 super + a; s
-  "$HOME/.local/bin/notify-volume" down --notify
+  "$HOME/.local/bin/notify-volume" down
 
 ### Increase the volume
 super + a; d
-  "$HOME/.local/bin/notify-volume" up --notify
+  "$HOME/.local/bin/notify-volume" up
 
 ### Set the volume to a value out of 10
-super + a; {1-9}
-  "$HOME/.local/bin/notify-volume" {1-9}0 --notify
+super + a; {1-9,0}
+  "$HOME/.local/bin/notify-volume" {1-9,10}0
 
 ### Choose an album to play
 super + a; c; a
