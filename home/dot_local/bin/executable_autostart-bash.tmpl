@@ -5,5 +5,5 @@
 
 set -e
 
-source "{{- env "HOME" -}}/.bashrc"
+source {{ .chezmoi.homeDir }}/.bashrc
 $@
