@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+import argparse
 import collections
 import re
+import time
 
 from dotfiles import notify, run
 
@@ -105,14 +107,13 @@ def interfaces():
 
   return sorted(ints, key=lambda x: x.device)
 
-def notify_network(i, send_notification=False):
+def notify_network(i):
   """
   Generate a notification for a wired interface.
 
   # Arguments
 
   - i (Interface): The interface status.
-  - send_notification (bool): Send a notification instead of printing to the command line.
   """
   wireless = i.type == "wireless"
 
@@ -158,70 +159,61 @@ def notify_network(i, send_notification=False):
       icon = "network-transmit-receive"
       body = "Connected"
 
-  if send_notification:
-    # Generate a notification
-    notify(
-      app=f"Wire{'less' if wireless else 'd'} Network",
-      summary=summary,
-      body=body,
-      icon=icon,
-      urgency=urgency,
-      tag=f"network-{i.device}"
-    )
-  else:
-    # Print on stdout
-    if i.device    is not None: print(f"Device:      {i.device}")
-    if i.type      is not None: print(f"  Type:      {i.type}")
-    if i.ssid      is not None: print(f"  SSID:      {i.ssid}")
-    if i.strength  is not None: print(f"  Strength:  {i.strength}")
-    if i.connected is not None: print(f"  Connected: {i.connected}")
+  # Generate a notification
+  notify(
+    app=f"Wire{'less' if wireless else 'd'} Network",
+    summary=summary,
+    body=body,
+    icon=icon,
+    urgency=urgency,
+    tag=f"network-{i.device}"
+  )
+  # Print on stdout
+  if i.device    is not None: print(f"Device:      {i.device}")
+  if i.type      is not None: print(f"  Type:      {i.type}")
+  if i.ssid      is not None: print(f"  SSID:      {i.ssid}")
+  if i.strength  is not None: print(f"  Strength:  {i.strength}")
+  if i.connected is not None: print(f"  Connected: {i.connected}")
 
-if __name__ == "__main__":
-  import argparse
-  import time
+parser = argparse.ArgumentParser(
+  description="Query network state")
+parser.add_argument("--interval",
+  type=float, default=3,
+  help="time in seconds to sleep between monitor queries")
+parser.add_argument("--monitor",
+  action="store_true",
+  help="run until manually stopped")
+args = parser.parse_args()
 
-  parser = argparse.ArgumentParser(
-    description="Query network state")
-  parser.add_argument("--interval",
-    type=float, default=3,
-    help="time in seconds to sleep between monitor queries")
-  parser.add_argument("--monitor",
-    action="store_true",
-    help="run until manually stopped")
-  parser.add_argument("--notify",
-    action="store_true",
-    help="send a notification")
-  args = parser.parse_args()
+def show_all():
+  for i in interfaces():
+    show_one(i)
 
-  def show_all():
-    for i in interfaces():
-      show_one(i)
+def show_one(i):
+  notify_network(i)
 
-  def show_one(i):
-    notify_network(i, args.notify)
-
-  if args.monitor:
-    prev = None
-    while True:
-      ints = interfaces()
-      if prev is None:
-        # Show everything at startup
-        show_all()
-      else:
-        # Check to changes to existing devices
-        for i in ints:
-          if i.device in prev:
-            p = prev[i.device]
-            if not i.connected and p.connected:
-              show_one(i)
-            elif i.connected and not p.connected:
-              show_one(i)
-          else:
-            # This is a new connection so it is always notified
+if args.monitor:
+  prev = None
+  while True:
+    ints = interfaces()
+    if prev is None:
+      # Show everything at startup
+      show_all()
+    else:
+      # Check to changes to existing devices
+      for i in ints:
+        if i.device in prev:
+          p = prev[i.device]
+          if not i.connected and p.connected:
             show_one(i)
-      # Update and sleep
-      prev = {i.device: i for i in ints}
-      time.sleep(args.interval)
-  else:
-    # Display once and then exit
-    show_all()
+          elif i.connected and not p.connected:
+            show_one(i)
+        else:
+          # This is a new connection so it is always notified
+          show_one(i)
+    # Update and sleep
+    prev = {i.device: i for i in ints}
+    time.sleep(args.interval)
+else:
+  # Display once and then exit
+  show_all()
