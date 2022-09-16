@@ -23,7 +23,7 @@ class Hotkey:
       .replace("return", "R") \
       .replace("space", "⎵") \
       .replace(" + ", "-") \
-      .replace("; ", " -> ")
+      .replace("; ", " → ")
     self.description = description
 
 class Hints:
@@ -59,7 +59,7 @@ class Hints:
     max_length = 0
     for hint in self.hints:
       max_length = max(max_length, len(hint.hotkey))
-    fmt = "{{:{}}} ==> {{}}".format(max_length)
+    fmt = "{{:{}}}   {{}}".format(max_length)
     return list(map(
       lambda x: fmt.format(x.hotkey, x.description), self.hints))
 
