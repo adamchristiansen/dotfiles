@@ -6,7 +6,7 @@ set -e
 
 # Send SIGUSR1 to any processes with the name $1.
 send_sigusr1() {
-  killall -SIGUSR1 "$1" > /dev/null 2>&1
+  pkill -SIGUSR1 "$1" > /dev/null 2>&1
 }
 
 # If at least one instance of the program in $1 is running, then execute the
