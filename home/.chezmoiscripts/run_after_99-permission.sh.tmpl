@@ -6,6 +6,8 @@
 # access them. This is safe, and it is the default on distributions such
 # as Void Linux.
 
-chmod 700 "$HOME"
+set -e
+
+chmod 700 $HOME
 
 {{- end -}}

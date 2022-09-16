@@ -2,6 +2,8 @@
 
 # Tells all running processes to reload their config files.
 
+set -e
+
 # Send SIGUSR1 to any processes with the name $1.
 send_sigusr1() {
   killall -SIGUSR1 "$1" > /dev/null 2>&1

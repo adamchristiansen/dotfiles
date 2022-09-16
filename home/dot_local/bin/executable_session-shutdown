@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 if command -v zenity > /dev/null; then
   zenity --question --default-cancel \
     --no-wrap --text="Are you sure you want to shutdown?" \

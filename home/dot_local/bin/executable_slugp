@@ -2,4 +2,6 @@
 
 # Create a slug of the basename of the current working directory.
 
+set -e
+
 slug $(basename "$PWD")

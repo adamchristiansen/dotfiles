@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 wallpaper=$(wallpaper-picker $@)
 if [ $? -eq 0 ]; then
   wallpaper-setter "$wallpaper"

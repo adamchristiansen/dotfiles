@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 if ! pgrep polybar; then
   polybar bar &
 else

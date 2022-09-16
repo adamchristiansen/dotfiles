@@ -1,5 +1,7 @@
 #/usr/bin/env sh
 
+set -e
+
 USAGE="Apply the current gitignore"
 SUBDIRECTORY_OK=1
 . "$(git --exec-path)/git-sh-setup"

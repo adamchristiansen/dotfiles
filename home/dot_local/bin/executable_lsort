@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
 
 # Lexicographic sort
+
+set -e
+
 LC_ALL=C sort "$@"
