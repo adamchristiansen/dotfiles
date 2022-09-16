@@ -2,7 +2,9 @@
 
 # Attach to or create a default tmux session.
 
-if type "tmuxinator" > /dev/null 2>&1; then
+set -e
+
+if type tmuxinator > /dev/null 2>&1; then
   tmuxinator start default
 else
   cd

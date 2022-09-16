@@ -25,6 +25,8 @@
 #
 # and the directory is recursively searched.
 
+set -e
+
 # Try to set the wallpaper, otherwise use a fallback color
 wallpaper_dir="$XDG_STATE_HOME/wallpaper"
 wallpaper_file=$(ls "$wallpaper_dir" | head -n 1)

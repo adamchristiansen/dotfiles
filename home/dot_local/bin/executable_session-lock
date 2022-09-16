@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 if command -v mpc > /dev/null; then
   mpc pause > /dev/null 2>&1
 fi

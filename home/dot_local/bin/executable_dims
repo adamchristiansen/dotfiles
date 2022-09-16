@@ -6,6 +6,8 @@
 #   -q, --quick
 #       Print dimensions and exit immediately.
 
+set -e
+
 quick=0
 
 if [ $# -ge 1 ]; then

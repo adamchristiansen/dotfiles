@@ -3,5 +3,7 @@
 # Guarantees that a program is run with all environment variables loaded. This
 # is useful for autostart programs that run before an interactive shell.
 
+set -e
+
 source "{{- env "HOME" -}}/.bashrc"
 $@
