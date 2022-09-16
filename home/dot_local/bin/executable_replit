@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 
-"""
-Display a menu to select a language to run on https://replit.com.
-"""
-
-import subprocess
 import re
 
-from dotfiles import menu
+from dotfiles import menu, run
 
 # A dictionary mapping a language name to a URL slug on replit.com.
 #
@@ -51,8 +46,5 @@ def language(name):
     return LANGUAGES[name]
   return re.sub(r"[^a-z0-9]+", "", name.lower())
 
-if __name__ == "__main__":
-  names = sorted(LANGUAGES.keys())
-  index = menu(names, index=True)
-  url = f"https://replit.com/languages/{language(names[index])}"
-  subprocess.run(["xdg-open", url], capture_output=True)
+name = menu(sorted(LANGUAGES.keys()))
+run(["xdg-open", f"https://replit.com/languages/{language(name)}"])
