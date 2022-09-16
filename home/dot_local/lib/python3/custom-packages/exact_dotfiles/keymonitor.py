@@ -3,7 +3,7 @@ import sys
 import termios
 import tty
 
-class KeyListener:
+class keymonitor:
   """
   Non-blocking keypress reader.
   """

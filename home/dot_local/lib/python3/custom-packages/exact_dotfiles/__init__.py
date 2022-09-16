@@ -1,6 +1,6 @@
 from .colorize import colorize
 from .exit import exit
-from .keylistener import KeyListener
+from .keymonitor import keymonitor
 from .fs import fs
 from .log import log
 from .menu import menu

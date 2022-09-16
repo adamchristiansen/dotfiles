@@ -3,7 +3,7 @@
 import argparse
 import time
 
-from dotfiles import KeyListener, run
+from dotfiles import keymonitor, run
 
 parser = argparse.ArgumentParser(description="Show terminal dimensions")
 parser.add_argument("-m", "--monitor",
@@ -17,8 +17,8 @@ def show(newline=True):
   print(f"\r{cols} × {lines}", end="\n" if newline else "")
 
 if args.monitor:
-  with KeyListener() as kl:
-    while kl.get() is None:
+  with keymonitor() as km:
+    while km.get() is None:
       show(newline=False)
       time.sleep(0.1)
 else:
