@@ -1,32 +1,20 @@
 #!/usr/bin/env python3
 
-import os
+import argparse
 import pathlib
 
-if "XDG_CONFIG_HOME" in os.environ:
-  DEFAULT_SNIPDIR = os.path.join(os.environ["XDG_CONFIG_HOME"], "sniplets")
-else:
-  DEFAULT_SNIPDIR = os.path.join(os.environ["HOME"], ".config/sniplets")
+from dotfiles import menu, xdg
 
 def snipfiles(dir):
-  """
-  Get the absolute paths of all .snip files in a directory.
-  """
+  """Get the absolute paths of all .sniplets files in a directory."""
   f = lambda f: str(f.absolute())
   return sorted(map(f, pathlib.Path(dir).glob("*.sniplets")))
 
 class SnipletsDb:
-  """
-  Process sniplets into a database.
-  """
+  """Process sniplets into a database."""
 
-  def __init__(self, snipdir=None):
-    """
-    Load a database from the specified snip directory. If no directory is
-    specified, the DEFAULT_SNIPDIR is used. The database is sorted by key.
-    """
-    if not snipdir:
-      snipdir = DEFAULT_SNIPDIR
+  def __init__(self, snipdir):
+    """Load a database from the specified snip directory."""
     self._db = []
     for snipfile in snipfiles(snipdir):
       with open(snipfile) as f:
@@ -41,33 +29,23 @@ class SnipletsDb:
     self._db.sort()
 
   def __getitem__(self, index):
-    """
-    Look up a value in the database by index.
-    """
+    """Look up a value in the database by index."""
     return self._db[index][1]
 
   def fuzzy_lines(self):
-    """
-    Get the lines to print in a fuzzy finder.
-    """
+    """Get the lines to print in a fuzzy finder."""
     width = max(map(lambda x: len(x[1]), self._db))
     fmt = "{{:{}}}{{}}".format(width + 1)
     f = lambda kv: fmt.format(kv[1], " ".join(kv[0]))
     return list(map(f, self._db))
 
-if __name__ == "__main__":
-  import argparse
-  import sys
+parser = argparse.ArgumentParser(
+  description="Search for text sniplets")
+parser.add_argument("snipdir", nargs="?", default=xdg.config_home("sniplets"),
+  help="The directory containing the sniplets")
+args = parser.parse_args()
 
-  from dotfiles import menu
-
-  parser = argparse.ArgumentParser(
-    description="Search for text sniplets")
-  parser.add_argument("snipdir", nargs="?", default=None,
-    help="The directory containing the sniplets")
-  args = parser.parse_args()
-
-  db = SnipletsDb(args.snipdir)
-  lines = db.fuzzy_lines()
-  index = menu(lines, index=True)
-  print(db[index], end="")
+db = SnipletsDb(args.snipdir)
+lines = db.fuzzy_lines()
+index = menu(lines, index=True)
+print(db[index], end="")
