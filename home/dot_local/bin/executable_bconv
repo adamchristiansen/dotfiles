@@ -7,9 +7,7 @@ from dotfiles import log
 DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def inbase(x, base):
-  """
-  Convert an integer x to the specified base.
-  """
+  """Convert an integer x to the specified base."""
   if x == 0:
     return 0
   neg = x < 0

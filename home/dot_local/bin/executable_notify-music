@@ -28,16 +28,14 @@ def current_song():
     "coverpath": coverpath,
   }
 
-def show(c):
-  if c is not None:
-    body = "\n".join([c["title"], c["album"], c["artist"]])
-  else:
-    body = "No song playing"
-  notify(
-    app="Now Playing ♫",
-    body=body,
-    icon=c["coverpath"] if c is not None else "media-tape",
-    tag="mpd-now-playing",
-  )
-
-show(current_song())
+c = current_song()
+if c is not None:
+  body = "\n".join([c["title"], c["album"], c["artist"]])
+else:
+  body = "No song playing"
+notify(
+  app="Now Playing ♫",
+  body=body,
+  icon=c["coverpath"] if c is not None else "media-tape",
+  tag="mpd-now-playing",
+)

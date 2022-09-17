@@ -25,9 +25,6 @@ group.add_argument("-n", "--night",
 group.add_argument("-w", "--witch",
   action="store_const", dest="args", const=CONST_WITCH,
   help="witch mode (3500K)")
-parser.add_argument("--notify",
-  action="store_true",
-  help="send a notification")
 
 args = parser.parse_args()
 mode, temperature = args.args if args.args is not None else CONST_NORMAL
@@ -37,14 +34,10 @@ mode, temperature = args.args if args.args is not None else CONST_NORMAL
 run(["redshift", "-x"], check=True)
 run(["redshift", "-O", str(temperature)], check=True)
 
-body = f"{mode} Mode ({temperature}K)"
-if args.notify:
-  notify(
-    app="Nightshift",
-    body=body,
-    icon="face-cool",
-    urgency="low",
-    tag="nightshift",
-  )
-else:
-  print(body)
+notify(
+  app="Nightshift",
+  body=f"{mode} Mode ({temperature}K)"
+  icon="face-cool",
+  urgency="low",
+  tag="nightshift",
+)

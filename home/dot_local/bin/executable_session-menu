@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-"""
-Display a menu to select one of the `session-*` commands to run.
-"""
-
 from dotfiles import menu, run
 
 opt = menu(["Lock", "Logout", "Reboot", "Shutdown", "Suspend"])

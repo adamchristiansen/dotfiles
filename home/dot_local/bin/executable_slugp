@@ -4,4 +4,4 @@
 
 set -e
 
-slug $(basename "$PWD")
+slug "$(basename "$PWD")"
