@@ -6,7 +6,9 @@ set -e
 
 # Send SIGUSR1 to any processes with the name $1.
 send_sigusr1() {
-  pkill -SIGUSR1 "$1" > /dev/null 2>&1
+  if pgrep -x "$1" > /dev/null; then
+    pkill -SIGUSR1 "$1" > /dev/null 2>&1
+  fi
 }
 
 # If at least one instance of the program in $1 is running, then execute the
@@ -22,6 +24,3 @@ send_sigusr1 picom
 when_running qutebrowser "qutebrowser --target=tab-silent :config-source"
 send_sigusr1 sxhkd
 when_running tmux "tmux source-file $XDG_CONFIG_HOME/tmux/tmux.conf"
-
-# This script always exits successfully
-exit 0
