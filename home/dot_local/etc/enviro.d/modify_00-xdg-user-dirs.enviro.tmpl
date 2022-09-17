@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+
+# Create the XDG user directories as an enviro using the user-dirs.dirs file.
+
+with open("{{ .chezmoi.sourceDir }}/dot_config/user-dirs.dirs") as f:
+  lines = f.readlines()
+
+lines = map(lambda x: x.strip(), lines)
+lines = filter(lambda x: x and not x.startswith("#"), lines)
+lines = map(lambda x: f"export {x}", lines)
+
+print("\n".join(lines))
