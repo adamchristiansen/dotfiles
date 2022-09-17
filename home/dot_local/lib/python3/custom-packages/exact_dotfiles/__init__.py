@@ -1,4 +1,4 @@
-from .colorize import colorize
+from .color import color
 from .exit import exit
 from .keymonitor import keymonitor
 from .fs import fs

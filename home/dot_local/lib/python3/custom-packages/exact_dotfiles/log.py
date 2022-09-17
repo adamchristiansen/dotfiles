@@ -1,19 +1,17 @@
 import sys
 
-from .colorize import colorize as clrz
+from .color import color
 
 LEVELS = {
-  "debug": lambda s: clrz("DEBUG: ", "bold", "black") + clrz(s, "black"),
-  "info": lambda s: clrz("INFO: ", "bold", "cyan") + s,
-  "warn": lambda s: clrz("WARNING: ", "bold", "yellow") + s,
-  "error": lambda s: clrz("ERROR: ", "bold", "red") + s,
-  "fatal": lambda s: clrz("FATAL: ", "bold", "red") + s,
+  "debug": lambda s: color.black("DEBUG: ", bold=True) + color.black(s),
+  "info": lambda s: color.cyan("INFO: ", bold=True) + s,
+  "warn": lambda s: color.yellow("WARNING: ", bold=True) + s,
+  "error": lambda s: color.red("ERROR: ", bold=True) + s,
+  "fatal": lambda s: color.red("FATAL: ", bold=True) + s,
 }
 
 class log:
-  """
-  Log to the console in a pretty way.
-  """
+  """Log to the console in a pretty way."""
 
   @staticmethod
   def _log(message, stderr=False, level=None, exitcode=None):
