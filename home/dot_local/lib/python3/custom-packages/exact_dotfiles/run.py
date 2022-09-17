@@ -10,13 +10,14 @@ The output of a command.
 """
 Run = collections.namedtuple("Run", ["exitcode", "stdout", "stderr"])
 
-def run(cmd, check=False):
+def run(cmd, input=None, check=False):
   """
   Run a command.
 
   # Arguments
 
   - cmd (list<str>): The command to run.
+  - input (bytes|None): Optional input to stdin.
   - check (bool): Raise an exception on non-zero exitcode.
 
   # Returns
@@ -25,6 +26,7 @@ def run(cmd, check=False):
   """
   p = subprocess.run(
     cmd,
+    input=input,
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
     check=check)
