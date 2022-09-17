@@ -1,9 +1,7 @@
 import os
 
 class xdg:
-  """
-  Get XDG paths.
-  """
+  """Get XDG paths."""
 
   @staticmethod
   def home(*paths):

@@ -1,6 +1,5 @@
-import shutil
-
 from .numeric import clamp
+from .plat import plat
 from .run import run
 
 def notify(
@@ -14,25 +13,22 @@ def notify(
     hints=None
   ):
   """
-  Create a notification.
+  Create a notification using the name of the app, a summary, and body. An icon
+  can be specified as either an icon name or an absolute path to the image.
 
-  # Arguments
+  The urgency can be low, normal, or critical.
 
-  - `app` (str|None): The name of the app.
-  - `summary` (str|None): The notification summary.
-  - `body` (str|None): The notification body.
-  - `icon` (str|None): The notification icon.
-  - `urgency` (str|None): The notification urgency.
-  - `tag` (str|None): The stacking tag.
-  - `progrees` (int|None): Progress as a percentage.
-  - `hints` (dict<str,(int|float|str)>): Extra hints to pass. The hint type is
-    automatically determined from the argument type.
+  The tag is a name used for notification stacking, so that similar
+  notifications overwrite each other instead of creating a new one.
 
-  # Returns
+  The progress in percent can be given to display a progress bar.
 
-  (Run): Output of sending the notification.
+  Any extra hints that are given are passed along. Hints are dictionary of
+  strings mapping to ints, floats, or strings for the data to pass.
+
+  The output of running the notification is returned.
   """
-  if shutil.which("osascript") is not None:
+  if plat.hascmd("osascript"):
     cmd = ["osascript", "-e"]
     title = app if app is not None else "Notification"
     message = body

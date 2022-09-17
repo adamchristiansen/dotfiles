@@ -3,9 +3,7 @@ import pathlib
 import shutil
 
 class fs:
-  """
-  File system operations.
-  """
+  """File system operations."""
 
   @staticmethod
   def cleardir(dir_path):

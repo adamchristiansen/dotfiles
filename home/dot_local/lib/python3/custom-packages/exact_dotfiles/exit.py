@@ -1,9 +1,7 @@
 import sys
 
 class exit:
-  """
-  Exit a program.
-  """
+  """Exit a program."""
 
   @staticmethod
   def success():
