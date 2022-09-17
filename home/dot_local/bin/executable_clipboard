@@ -72,7 +72,7 @@ class ClipXSel(Clip):
 
 def detect():
   """Detect a clipboard manager to use."""
-  if plat.hascmd("pbcopy") and plat.hascmd("pbpaste"):
+  if plat.hascmd("pbcopy", "pbpaste"):
     return ClipPb()
   elif plat.hasenv("WAYLAND_DISPLAY") and plat.hascmd("wl-copy", "wl-paste"):
     return ClipWayland()
