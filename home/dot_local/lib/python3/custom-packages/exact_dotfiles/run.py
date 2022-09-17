@@ -1,28 +1,13 @@
 import collections
 import subprocess
 
-"""
-The output of a command.
-
-- `exitcode` (int)
-- `stdout` (str)
-- `stderr` (str)
-"""
-Run = collections.namedtuple("Run", ["exitcode", "stdout", "stderr"])
+RunResult = collections.namedtuple("Run", ["exitcode", "stdout", "stderr"])
 
 def run(cmd, input=None, check=False):
   """
-  Run a command.
-
-  # Arguments
-
-  - cmd (list<str>): The command to run.
-  - input (bytes|None): Optional input to stdin.
-  - check (bool): Raise an exception on non-zero exitcode.
-
-  # Returns
-
-  (Run): The command output.
+  Run a command specified as a list of strings. The optional input is used for
+  stdin. An exception is raised on error when check is set. Returns the
+  exitcode, stdout, and stderr of the command.
   """
   p = subprocess.run(
     cmd,
@@ -30,7 +15,7 @@ def run(cmd, input=None, check=False):
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
     check=check)
-  return Run(
+  return RunResult(
     p.returncode,
     (p.stdout if p.stdout is not None else b"").decode("utf-8").strip(),
     (p.stderr if p.stderr is not None else b"").decode("utf-8").strip(),

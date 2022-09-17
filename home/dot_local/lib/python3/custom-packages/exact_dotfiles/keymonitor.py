@@ -4,9 +4,7 @@ import termios
 import tty
 
 class keymonitor:
-  """
-  Non-blocking keypress reader.
-  """
+  """Non-blocking keypress reader."""
 
   def __init__(self, nested=None):
     """
