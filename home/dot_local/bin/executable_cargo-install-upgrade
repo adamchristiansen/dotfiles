@@ -4,7 +4,10 @@
 
 set -e
 
-packages="$(cargo install --list | grep -oE '^(\S+)')"
-if [ ! -z "$packages" ]; then
-  cargo install $packages
+installed="$(cargo install --list)"
+if [ ! -z "$installed" ]; then
+  packages="$(echo "$installed" | grep -oE '^(\S+)')"
+  if [ ! -z "$packages" ]; then
+    cargo install $packages
+  fi
 fi
