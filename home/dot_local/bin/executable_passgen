@@ -55,9 +55,7 @@ def randints(n, m=4):
   return [int.from_bytes(x, 'big') for x in zip_longest(*[iter(bs)] * m)]
 
 def make_pattern(size, charset):
-  """
-  Make a pattern to be filled with random data.
-  """
+  """Make a pattern to be filled with random data."""
   length, chunk = size
   if chunk is None:
     return charset * length
@@ -68,29 +66,23 @@ def make_pattern(size, charset):
   return "-".join(s)
 
 def fill(pattern):
-  """
-  Fill in a pattern.
-  """
+  """Fill in a pattern."""
   return "".join([
     CHARSETS[c](i) if c in CHARSETS else c
     for c, i in zip(pattern, randints(len(pattern)))
   ])
 
-def main():
-  p = argparse.ArgumentParser(
-    description="Generate a random password.")
-  p.add_argument("size",
-    nargs="?",
-    default=(24, 6),
-    type=type_size,
-    help="Set a custom size.")
-  p.add_argument("-c", "--charset",
-    choices=CHARSETS.keys(),
-    default="W",
-    help="Set the character set.")
-  args = p.parse_args()
+parser = argparse.ArgumentParser(
+  description="Generate a random password.")
+parser.add_argument("size",
+  nargs="?",
+  default=(24, 6),
+  type=type_size,
+  help="Set a custom size.")
+parser.add_argument("-c", "--charset",
+  choices=CHARSETS.keys(),
+  default="W",
+  help="Set the character set.")
+args = parser.parse_args()
 
-  print(fill(make_pattern(args.size, args.charset)))
-
-if __name__ == "__main__":
-  main()
+print(fill(make_pattern(args.size, args.charset)))
