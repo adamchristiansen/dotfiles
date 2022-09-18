@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
-import shutil
-import subprocess
-import sys
+
+from dotfiles import log, plat, run
 
 parser = argparse.ArgumentParser(
   description="Install updates automagically.",
@@ -14,9 +13,6 @@ parser.add_argument("--clean", "-c",
 parser.add_argument("--dry-run", "-n",
   action="store_true",
   help="print actions without running anything")
-parser.add_argument("--no-color",
-  action="store_true",
-  help="do not colorize output")
 parser.add_argument("--sudo", "-s",
   action="store_true",
   help="run with sudo (where appropriate)")
@@ -31,20 +27,8 @@ parser.add_argument("--yes", "-y",
   help="run without asking for confirmation")
 args = parser.parse_args()
 
-
-class Color:
-  RED     = "\033[31m"
-  GREEN   = "\033[32m"
-  YELLOW  = "\033[33m"
-  BLUE    = "\033[34m"
-  MAGENTA = "\033[35m"
-  CYAN    = "\033[36m"
-  NORMAL  = "\033[0m"
-
 class PackageManager:
-  """
-  Represents a package manager and the commands needed to use it.
-  """
+  """A package manager and the commands needed to use it."""
 
   def __init__(self,
       name,
@@ -58,23 +42,15 @@ class PackageManager:
     """
     Create a new package manager.
 
-    # Arguments
-
-    * name (str): The name of the package manager.
-    * required_commands (list<string>): All of the commands that must exist
-      on the system for the package manager.
-    * required_conditions (list<list<string>>): Conditions that must be met
-      for the package manager to be run.
-    * command_update (list<string>): The command (with options) to run for
-      an update.
-    * command_upgrade (list<string>): The command (with options) to run for
-      an upgrade.
-    * command_clean (list<string>): The command (with options) to run for a
-      clean.
-    * can_use_sudo (bool): Indicates that the commands are allowed to be
-      run with as root.
-    * yes_flag (str): The flag to append to the commands when the `--yes`
-      option is used.
+    - name is the name of the package manager when displaying information.
+    - required_commands must exist in the PATH for the package manager to run.
+    - required_conditions are commands that must evaluate to true for the
+      package manager to run.
+    - command_update updates local package information.
+    - command_upgrade upgrades the packages.
+    - command_clean removes package orphans and remnants.
+    - can_use_sudo indicates that the commands are allowed to be run as root.
+    - yes_flag is added to commands to allow running without user confirmation.
     """
     self._name = name
     self._required_commands = required_commands
@@ -85,74 +61,57 @@ class PackageManager:
     self._can_use_sudo = can_use_sudo
     self._yes_flag = yes_flag
 
-  def run(self, **kwargs):
+  def run(self):
     """
     Run all prescribed operations if the package manager is present on the
     system.
-
-    # Arguments
-
-    * kwargs: The same as the arguments to the program.
     """
     if self._exists():
-      if "update" in kwargs and kwargs["update"]:
-        self._run_command("update", self._command_update, **kwargs)
-      if "upgrade" in kwargs and kwargs["upgrade"]:
-        self._run_command("upgrade", self._command_upgrade, **kwargs)
-      if "clean" in kwargs and kwargs["clean"]:
-        self._run_command("clean", self._command_clean, **kwargs)
+      if args.update:
+        self._run_command("update", self._command_update)
+      if args.upgrade:
+        self._run_command("upgrade", self._command_upgrade)
+      if args.clean:
+        self._run_command("clean", self._command_clean)
 
   def _exists(self):
-    """
-    Test whether the package mamanger exists on the system.
-    """
-    for command in self._required_commands:
-      if shutil.which(command) is None:
-        return False
+    """Test whether the package manager exists on the system."""
+    if not plat.hascmd(*self._required_commands):
+      return False
     for condition in self._required_conditions:
-      completed = subprocess.run(condition)
-      if completed.returncode != 0:
+      if run(condition).exitcode != 0:
         return False
     return True
 
-
-  def _run_command(self, action_name, command, **kwargs):
+  def _run_command(self, action_name, command):
     """
-    Run a command. This exits the program if an error occurrs.
-
-    # Arguments
-
-    * action_name (str): The name of the action being run.
-    * command (list<str>): The command to run.
-    * kwargs: The same as the arguments to the program.
+    Run a command and exit the program if an error occurrs. action_name is the
+    name of the action being run by the command.
     """
     if command is None:
-      return True
-    if self._can_use_sudo and "sudo" in kwargs and kwargs["sudo"]:
+      return
+    if args.sudo and self._can_use_sudo:
       command = ["sudo"] + command
-    if self._yes_flag and "yes" in kwargs and kwargs["yes"]:
+    if args.yes and self._yes_flag:
       command = command + [self._yes_flag]
     command_str = " ".join(command)
-    # Print the header
-    header = "⟩⟩⟩ {} {} ⟩⟩⟩ {}".format(self._name, action_name, command_str)
-    if not ("no_color" in kwargs and kwargs["no_color"]):
-      header = "{}{}{}".format(Color.MAGENTA, header, Color.NORMAL)
-    print(header)
-    # Run the command
-    if not ("dry_run" in kwargs and kwargs["dry_run"]):
-      completed = subprocess.run(command)
-      if completed.returncode != 0:
-        sys.exit(1)
+    log.info(f"{self._name} {action_name} -> {command_str}")
+    if not args.dry_run:
+      r = run(command)
+      if r.exitcode != 0:
+        log.debug(f"stdout: {r.stdout}")
+        log.debug(f"stderr: {r.stderr}")
+        log.fatal(f"{command_str} exited with {r.exitcode}")
 
 # The available package managers. Keep sorted alphabetically by name
 PACKAGE_MANAGERS = [
   PackageManager(
     name="apt",
-    required_commands=["apt-get"],
+    required_commands=["apt", "apt-get"],
     required_conditions=[],
-    command_update=["apt-get", "update"],
-    command_upgrade=["apt-get", "upgrade"],
-    command_clean=["apt-get", "autoremove"],
+    command_update=["apt", "update"],
+    command_upgrade=["apt", "upgrade"],
+    command_clean=["apt", "autoremove"],
     can_use_sudo=True,
     yes_flag="-y"
   ),
@@ -182,6 +141,16 @@ PACKAGE_MANAGERS = [
     required_conditions=[],
     command_update=None,
     command_upgrade=["chezmoi", "upgrade"],
+    command_clean=None,
+    can_use_sudo=False,
+    yes_flag=None
+  ),
+  PackageManager(
+    name="dotfiles",
+    required_commands=["chezmoi", "git"],
+    required_conditions=[],
+    command_update=["chezmoi", "git", "--", "pull"],
+    command_upgrade=["chezmoi", "apply"],
     command_clean=None,
     can_use_sudo=False,
     yes_flag=None
@@ -219,4 +188,4 @@ PACKAGE_MANAGERS = [
 ]
 
 for pm in PACKAGE_MANAGERS:
-  pm.run(**vars(args))
+  pm.run()
