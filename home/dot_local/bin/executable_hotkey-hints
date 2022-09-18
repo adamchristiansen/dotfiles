@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
 
-import os
-import subprocess
-
-from dotfiles import menu
+from dotfiles import menu, xdg
 
 class Hotkey:
-  """
-  Represents a hotkey with a canonicalized key combination and action description.
-  """
+  """A hotkey with a canonicalized key combination and action description."""
 
   def __init__(self, hotkey, description):
     self.hotkey = hotkey \
       .lower() \
       .replace("@space", "space") \
-      .replace("super", "Ƨ") \
+      .replace("super", "∇") \
       .replace("ctrl", "C") \
       .replace("alt", "M") \
       .replace("shift", "S") \
@@ -23,18 +18,16 @@ class Hotkey:
       .replace("return", "R") \
       .replace("space", "⎵") \
       .replace(" + ", "-") \
-      .replace("; ", " → ")
+      .replace("; ", " -> ")
     self.description = description
 
 class Hints:
-  """
-  A collection of hotkey hints.
-  """
+  """A collection of hotkey hints."""
 
   def __init__(self, filename, doc_start="###"):
     """
-    Initialize a set of hints in the sxhkdrc located at `filename`. `doc_start`
-    is the token which starts a documentation comment.
+    Initialize a set of hints in the sxhkdrc located at filename. doc_start is
+    the token which starts a documentation comment.
     """
     hints = []
     with open(filename) as f:
@@ -45,26 +38,19 @@ class Hints:
           seen = True
           description.append(line[len(doc_start):].strip())
         elif seen:
-          hotkey = line.strip()
-          hints.append(Hotkey(hotkey, " ".join(description)))
+          hints.append(Hotkey(line.strip(), " ".join(description).strip()))
           seen = False
           description = []
-    self.hints = list(sorted(hints, key=lambda x: x.description))
+    self.hints = sorted(hints, key=lambda x: x.description)
 
   @property
   def tabular(self):
-    """
-    Get a tabulated list of hotkeys to show.
-    """
-    max_length = 0
-    for hint in self.hints:
-      max_length = max(max_length, len(hint.hotkey))
+    """A tabulated list of hotkeys to show."""
+    max_length = max(map(lambda h: len(h.hotkey), self.hints))
     fmt = "{{:{}}}   {{}}".format(max_length)
     return list(map(
-      lambda x: fmt.format(x.hotkey, x.description), self.hints))
+      lambda h: fmt.format(h.hotkey, h.description), self.hints))
 
-if __name__ == "__main__":
-  XDG_CONFIG_HOME = os.environ["XDG_CONFIG_HOME"]
-  SXHKDRC = os.path.join(XDG_CONFIG_HOME, "sxhkd", "sxhkdrc")
-  hints = Hints(SXHKDRC).tabular
-  menu(hints)
+sxhkdrc = xdg.config_home("sxhkd", "sxhkdrc")
+hints = Hints(sxhkdrc).tabular
+menu(hints)
