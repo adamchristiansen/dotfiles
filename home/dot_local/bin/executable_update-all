@@ -52,50 +52,50 @@ class PackageManager:
     - can_use_sudo indicates that the commands are allowed to be run as root.
     - yes_flag is added to commands to allow running without user confirmation.
     """
-    self._name = name
-    self._required_commands = required_commands
-    self._required_conditions = required_conditions
-    self._command_update = command_update
-    self._command_upgrade = command_upgrade
-    self._command_clean = command_clean
-    self._can_use_sudo = can_use_sudo
-    self._yes_flag = yes_flag
+    self.name = name
+    self.required_commands = required_commands
+    self.required_conditions = required_conditions
+    self.command_update = command_update
+    self.command_upgrade = command_upgrade
+    self.command_clean = command_clean
+    self.can_use_sudo = can_use_sudo
+    self.yes_flag = yes_flag
+
+  def exists(self):
+    """Test whether the package manager exists on the system."""
+    if not plat.hascmd(*self.required_commands):
+      return False
+    for condition in self.required_conditions:
+      if run(condition).exitcode != 0:
+        return False
+    return True
 
   def run(self):
     """
     Run all prescribed operations if the package manager is present on the
     system.
     """
-    if self._exists():
+    if self.exists():
       if args.update:
-        self._run_command("update", self._command_update)
+        self.run_command("update", self.command_update)
       if args.upgrade:
-        self._run_command("upgrade", self._command_upgrade)
+        self.run_command("upgrade", self.command_upgrade)
       if args.clean:
-        self._run_command("clean", self._command_clean)
+        self.run_command("clean", self.command_clean)
 
-  def _exists(self):
-    """Test whether the package manager exists on the system."""
-    if not plat.hascmd(*self._required_commands):
-      return False
-    for condition in self._required_conditions:
-      if run(condition).exitcode != 0:
-        return False
-    return True
-
-  def _run_command(self, action_name, command):
+  def run_command(self, action_name, command):
     """
     Run a command and exit the program if an error occurrs. action_name is the
     name of the action being run by the command.
     """
     if command is None:
       return
-    if args.sudo and self._can_use_sudo:
+    if args.sudo and self.can_use_sudo:
       command = ["sudo"] + command
-    if args.yes and self._yes_flag:
-      command = command + [self._yes_flag]
+    if args.yes and self.yes_flag:
+      command = command + [self.yes_flag]
     command_str = " ".join(command)
-    log.info(f"{self._name} {action_name} -> {command_str}")
+    log.info(f"{self.name} {action_name} -> {command_str}")
     if not args.dry_run:
       r = run(command)
       if r.exitcode != 0:
@@ -146,16 +146,6 @@ PACKAGE_MANAGERS = [
     yes_flag=None
   ),
   PackageManager(
-    name="dotfiles",
-    required_commands=["chezmoi", "git"],
-    required_conditions=[],
-    command_update=["chezmoi", "git", "--", "pull"],
-    command_upgrade=["chezmoi", "apply"],
-    command_clean=None,
-    can_use_sudo=False,
-    yes_flag=None
-  ),
-  PackageManager(
     name="pip",
     required_commands=["pipupgrade"],
     required_conditions=[],
@@ -187,5 +177,5 @@ PACKAGE_MANAGERS = [
   ),
 ]
 
-for pm in PACKAGE_MANAGERS:
+for pm in sorted(PACKAGE_MANAGERS, key=lambda p: p.name):
   pm.run()
