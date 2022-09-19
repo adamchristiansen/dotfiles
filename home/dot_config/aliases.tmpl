@@ -1,20 +1,15 @@
-{{- /*
-
-To maintain compatibility with non-POSIX shells, shell aliases are defined in
-the following way:
-
-- Empty lines are allowed
-- Lines containing only comments (`# ...`) are allowed
-  - Comments are not allowed on the same line as a variable definition
-- Variable/alias/abbreviation values can be unquoted (if just a single token),
-  single quoted, or double quoted
-- Lines matching `alias VAR=...` are added as aliases/abbreviations
-- Abbreviations are added as aliases so that shells do not support
-  abbreviations may still add them
-- Subshells should use POSIX `$(...)` syntax. When parsed by another shell,
-  the syntax will be converted appropriately.
-
-*/ -}}
+# Shell aliases are defined in the following way:
+#
+# - Empty lines are allowed
+# - Lines containing only comments (`# ...`) are allowed
+#   - Comments are not allowed on the same line as a variable definition
+# - Variable/alias/abbreviation values can be unquoted (if just a single
+#   token), single quoted, or double quoted
+# - Lines matching `alias VAR=...` are added as aliases/abbreviations
+# - Abbreviations are added as aliases so that shells do not support
+#   abbreviations may still add them
+# - Subshells should use POSIX `$(...)` syntax. When parsed by another shell,
+#   the syntax will be converted appropriately.
 
 alias a=tmux-default
 alias cdp='cd ..'
