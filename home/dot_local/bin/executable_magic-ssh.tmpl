@@ -71,17 +71,16 @@ class Agent(plat.magic_shell):
     ])
 
 parser = argparse.ArgumentParser(description="Automagically manage ssh-agent")
-parser.add_argument("-l", "--add-keys",
+group = parser.add_mutually_exclusive_group()
+group.add_argument("-N", "--no-keys",
   action="store_true",
-  help="add SSH keys only when starting an SSH agent")
-parser.add_argument("-L", "--force-add-keys",
+  help="do not add any keys")
+group.add_argument("-L", "--force-add-keys",
   action="store_true",
-  help="always add SSH keys (this can be slow)")
+  help="force add all keys (this can be slow)")
 args = parser.parse_args()
 
 agent = Agent()
-if args.force_add_keys:
-  agent.add_keys()
-elif args.add_keys and not agent.already_running:
+if args.force_add_keys or (not agent.already_running and not args.no_keys):
   agent.add_keys()
 print(agent.magic_shell())

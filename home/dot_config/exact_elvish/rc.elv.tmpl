@@ -1,10 +1,17 @@
+# Set the umask for the session
+try {
+  use unix
+  set unix:umask = {{ .umask }}
+} catch {
+  # Do nothing
+}
+
 # Basic Elvish settings
 set notify-bg-job-success = $false
 set value-out-indicator = (echo (styled '▶ ' blue bold))
 
 # Environment variables
-use enviro
-enviro:source-dir ~/.local/etc/enviro.d
+eval ($E:HOME/.local/bin/magic-enviro | slurp)
 
 # Load completions
 if (has-external carapace) {
@@ -27,19 +34,9 @@ alias:source ~/.config/aliases
 use vertical
 
 # Start SSH agent
-if (has-external magic-ssh) {
-  eval (magic-ssh -l | slurp)
-}
+eval (e:magic-ssh | slurp)
 
 # Load zoxide
 if (has-external zoxide) {
   eval (zoxide init elvish | slurp)
-}
-
-# Set the umask for the session
-try {
-  use unix
-  set unix:umask = {{ .umask }}
-} catch {
-  # Do nothing
 }
