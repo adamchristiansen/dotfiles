@@ -30,7 +30,7 @@ class Agent:
 
   def _read_env_file(self):
     """Read SSH agent environment variables from a file."""
-    text = fs.readfile(ENV_FILE)
+    text = fs.read_file(ENV_FILE)
     self._env_vars = dict(re.findall(r"([A-Z_]+)=(.*?);", text, re.DOTALL))
     self.pid = int(self._env_vars["SSH_AGENT_PID"])
     self.socket = self._env_vars["SSH_AUTH_SOCK"]
@@ -38,7 +38,7 @@ class Agent:
   def _write_env_file(self):
     """Write the SSH environment file."""
     r = run(["ssh-agent", "-s"], check=True)
-    fs.writefile(ENV_FILE, r.stdout)
+    fs.write_file(ENV_FILE, r.stdout)
 
   def add_keys(self):
     """Add all keys in SSH directory."""

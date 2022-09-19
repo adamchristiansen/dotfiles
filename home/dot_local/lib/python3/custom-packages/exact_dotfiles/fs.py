@@ -6,7 +6,7 @@ class fs:
   """File system operations."""
 
   @staticmethod
-  def cleardir(dir_path):
+  def clear_dir(dir_path):
     """Clear the contents of a directory."""
     for path in pathlib.Path(dir_path).iterdir():
       if path.is_file():
@@ -36,13 +36,13 @@ class fs:
     os.makedirs(dir_path, exist_ok=True)
 
   @staticmethod
-  def readfile(file_path, mode='r'):
+  def read_file(file_path, mode='r'):
     """Read file contents."""
     with open(file_path, mode=mode) as f:
       return f.read()
 
   @staticmethod
-  def writefile(file_path, data, mode='w', mkdir=False):
+  def write_file(file_path, data, mode='w', mkdir=False):
     """Write to file."""
     if mkdir:
       fs.mkdir(os.path.dirname(file_path))
