@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+
+import argparse
+import collections
+import os
+import pathlib
+import re
+
+from dotfiles import fs, log, plat, run, xdg
+
+SSH_DIR = xdg.home(".ssh")
+ENV_FILE = xdg.home(".ssh", "environment")
+
+Env = collections.namedtuple("Env", ["pid", "socket"])
+
+class Agent:
+  def __init__(self):
+    self.already_running = True
+    self._env_vars = {}
+    # If the environment does not exist then start a new SSH agent
+    if not fs.exists(ENV_FILE, kind="file"):
+      self._write_env_file()
+    # Get the SSH environment variables
+    self._read_env_file()
+    # If not running, start the SSH agent and try reading the environment again
+    if not (plat.pid_exists(self.pid) and fs.exists(self.socket)):
+      self._write_env_file()
+      self._read_env_file()
+      self.already_running = False
+
+  def _read_env_file(self):
+    """Read SSH agent environment variables from a file."""
+    text = fs.readfile(ENV_FILE)
+    self._env_vars = dict(re.findall(r"([A-Z_]+)=(.*?);", text, re.DOTALL))
+    self.pid = int(self._env_vars["SSH_AGENT_PID"])
+    self.socket = self._env_vars["SSH_AUTH_SOCK"]
+
+  def _write_env_file(self):
+    """Write the SSH environment file."""
+    r = run(["ssh-agent", "-s"], check=True)
+    fs.writefile(ENV_FILE, r.stdout)
+
+  def add_keys(self):
+    """Add all keys in SSH directory."""
+    for pub_key in pathlib.Path(SSH_DIR).glob("*.pub"):
+      priv_key = re.sub(r"\.pub$", "", str(pub_key))
+      {{ if eq .chezmoi.os "darwin" -}}
+      run(["ssh-add", "-K", priv_key], check=True, append_env=self._env_vars)
+      {{- else -}}
+      run(["ssh-add", priv_key], check=True, append_env=self._env_vars)
+      {{- end }}
+
+  def export_bourne(self):
+    """Bourne shell commands for setting up the environment."""
+    return "\n".join([
+      f"SSH_AGENT_PID={self.pid};",
+      f"export SSH_AGENT_PID;",
+      f"SSH_AUTH_SOCK={self.socket};",
+      f"export SSH_AUTH_SOCK;",
+    ])
+
+  def export_c(self):
+    """C shell commands for setting up the environment."""
+    return "\n".join([
+      f"setenv SSH_AGENT_PID {self.pid}",
+      f"setenv SSH_AUTH_SOCK {self.socket}"
+    ])
+
+  def export_elvish(self):
+    """Elvish commands for setting up the environment."""
+    return "\n".join([
+      f"set E:SSH_AGENT_PID = {self.pid}",
+      f"set E:SSH_AUTH_SOCK = {self.socket}"
+    ])
+
+  def export(self, shell=None):
+    """Shell commands for setting up the environment."""
+    if shell is None:
+      shell = os.path.basename(os.environ["SHELL"])
+    if shell in ["ash", "bash", "dash", "sh", "zsh"]:
+      return self.export_bourne()
+    elif shell in ["csh", "fish"]:
+      return self.export_c()
+    elif shell in ["elvish"]:
+      return self.export_elvish()
+    else:
+      log.fatal(f"unknown shell: {shell}")
+
+parser = argparse.ArgumentParser(description="Automagically manage ssh-agent")
+parser.add_argument("-l", "--add-keys",
+  action="store_true",
+  help="add SSH keys only when starting an SSH agent")
+parser.add_argument("-L", "--force-add-keys",
+  action="store_true",
+  help="always add SSH keys (this can be slow)")
+args = parser.parse_args()
+
+agent = Agent()
+if args.force_add_keys:
+  agent.add_keys()
+elif args.add_keys and not agent.already_running:
+  agent.add_keys()
+print(agent.export())
