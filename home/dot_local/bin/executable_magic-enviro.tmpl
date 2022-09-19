@@ -4,6 +4,12 @@ import collections
 import os
 import pathlib
 import re
+import sys
+
+# Before importing dotfiles, it is necessary to modify the Python path, since
+# this script will likely run before the Python path is properly configured.
+sys.path.append(os.path.join(
+  os.environ["HOME"], ".local", "lib", "python3", "custom-packages"))
 
 from dotfiles import fs, log, plat, xdg
 
@@ -31,7 +37,8 @@ def find(line):
 def interpolate(value, vars):
   """Interpolate a variable value from a dictionary of known variables."""
   def replace(m):
-    return vars[list(filter(lambda x: x, m.groups()))[0]]
+    name = list(filter(lambda x: x, m.groups()))[0]
+    return vars[name] if name in vars else ""
   return re.sub(INTERPOLATE_REGEX, replace, value)
 
 def enviro_lines(enviro_path):
@@ -78,24 +85,20 @@ class Enviro(plat.magic_shell):
           clean.append(path)
       self._exports["PATH"] = ":".join(clean)
 
-    # Escape single quotes
-    for k, v in self._exports.items():
-      self._exports[k] = v.replace("'", "\\'")
-
-  def _map(self, f):
+  def _map(self, f, quote_escape):
     """Map the exported variables into a specific format."""
     items = []
     for k, v in sorted(self._exports.items()):
-      items.append(f(k, v))
+      items.append(f(k, v.replace("'", quote_escape)))
     return "\n".join(items)
 
   def magic_bourne(self):
-    return self._map(lambda k, v: f"export {k}='{v}'")
+    return self._map(lambda k, v: f"export {k}='{v}'", "\\'")
 
   def magic_csh(self):
-    return self._map(lambda k, v: f"setenv {k} '{v}'")
+    return self._map(lambda k, v: f"setenv {k} '{v}'", "\\'")
 
   def magic_elvish(self):
-    return self._map(lambda k, v: f"set E:{k} = '{v}'")
+    return self._map(lambda k, v: f"set E:{k} = '{v}'", "''")
 
 print(Enviro().magic_shell())

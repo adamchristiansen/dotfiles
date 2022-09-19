@@ -1,9 +1,10 @@
+# Set the umask
+umask {{ .umask }}
+
 # Source and export environment variables
 for f in $HOME/.local/etc/enviro.d/*.enviro; do
   source "$f"
 done
-
-umask {{ .umask }}
 
 # If not running interactively, don't do anything more
 [[ $- != *i* ]] && return

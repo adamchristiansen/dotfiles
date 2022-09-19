@@ -2,7 +2,7 @@
 umask {{ .umask }}
 
 # Load enviros
-magic-enviro | source
+$HOME/.local/bin/magic-enviro | source
 
 # TODO magic-abbr
 # Abbreviations
@@ -54,7 +54,6 @@ alias cdppp  'cd ../../..'
 alias cdpppp 'cd ../../../..'
 alias e      $EDITOR
 alias f      ranger
-alias j      just
 alias m      make
 alias rq     'rg --no-ignore --hidden --follow --glob "!.git/*"'
 alias l      exa
