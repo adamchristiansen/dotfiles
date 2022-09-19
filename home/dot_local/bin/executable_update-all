@@ -97,10 +97,8 @@ class PackageManager:
     command_str = " ".join(command)
     log.info(f"{self.name} {action_name} -> {command_str}")
     if not args.dry_run:
-      r = run(command)
+      r = run(command, capture=False)
       if r.exitcode != 0:
-        log.debug(f"stdout: {r.stdout}")
-        log.debug(f"stderr: {r.stderr}")
         log.fatal(f"{command_str} exited with {r.exitcode}")
 
 # The available package managers. Keep sorted alphabetically by name

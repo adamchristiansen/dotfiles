@@ -3,11 +3,11 @@ import sys
 from .color import color
 
 LEVELS = {
-  "debug": lambda s: color.black("DEBUG: ", bold=True) + color.black(s),
-  "info": lambda s: color.cyan("INFO: ", bold=True) + s,
-  "warn": lambda s: color.yellow("WARNING: ", bold=True) + s,
-  "error": lambda s: color.red("ERROR: ", bold=True) + s,
-  "fatal": lambda s: color.red("FATAL: ", bold=True) + s,
+  "debug": lambda s: color.magenta("DEBUG: ", bold=True) + color.magenta(s),
+  "info": lambda s: color.blue("INFO: ", bold=True) + color.blue(s),
+  "warn": lambda s: color.yellow("WARNING: ", bold=True) + color.yellow(s),
+  "error": lambda s: color.red("ERROR: ", bold=True) + color.red(s),
+  "fatal": lambda s: color.red("FATAL: ", bold=True) + color.red(s),
 }
 
 class log:
