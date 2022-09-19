@@ -23,5 +23,5 @@ if wallpaper is None:
 run(["hsetroot", "-cover", wallpaper], check=True)
 state = xdg.state_home("wallpaper")
 fs.mkdir(state)
-fs.cleardir(state)
+fs.clear_dir(state)
 fs.cp(wallpaper, os.path.join(state, os.path.basename(wallpaper)))
