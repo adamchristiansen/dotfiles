@@ -27,7 +27,9 @@ alias:source ~/.config/aliases
 use vertical
 
 # Start SSH agent
-eval (ssh-magic -l | slurp)
+if (has-external magic-ssh) {
+  eval (magic-ssh -l | slurp)
+}
 
 # Load zoxide
 if (has-external zoxide) {

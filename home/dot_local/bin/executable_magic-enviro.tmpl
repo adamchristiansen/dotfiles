@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+import collections
+import os
+import pathlib
+import re
+
+from dotfiles import fs, log, plat, xdg
+
+ENVIRO_DIR = xdg.home(".local", "etc", "enviro.d")
+
+# The second value indicates whether interpolation is allowed
+EXPORT_REGEXES = [
+  (re.compile(r"^(export\s+)?(\w+)=\'((?:\.|[^\'\\])*)\'$"), False),
+  (re.compile(r"^(export\s+)?(\w+)=\"((?:\.|[^\"\\])*)\"$"), True),
+  (re.compile(r"^(export\s+)?(\w+)=(([^\s])*)$"), True),
+]
+
+INTERPOLATE_REGEX = re.compile(r"\$(\w+)|\$\{(\w+)\}")
+
+Var = collections.namedtuple("Var", ["export", "name", "value"])
+
+def find(line):
+  """Find an export statement in a line."""
+  for r, interp in EXPORT_REGEXES:
+    m = re.search(r, line)
+    if m is not None:
+      return m, interp
+  return None, None
+
+def interpolate(value, vars):
+  """Interpolate a variable value from a dictionary of known variables."""
+  def replace(m):
+    return vars[list(filter(lambda x: x, m.groups()))[0]]
+  return re.sub(INTERPOLATE_REGEX, replace, value)
+
+def enviro_lines(enviro_path):
+  """Get the non-comment and non-empty lines from an enviro file."""
+  lines = fs.read_file(enviro_path).splitlines()
+  lines = map(lambda x: x.strip(), lines)
+  lines = filter(lambda x: x and not x.startswith("#"), lines)
+  return lines
+
+class Enviro(plat.magic_shell):
+  """Load all enviros."""
+
+  def __init__(self):
+    """Load all enviros into a database."""
+    vars = {**os.environ}
+    self._exports = {}
+    for enviro_path in sorted(pathlib.Path(ENVIRO_DIR).glob("*.enviro")):
+      for line in enviro_lines(enviro_path):
+        m, interp = find(line)
+        if m is not None:
+          # Build a variable and interpolate it
+          var = Var(
+            export=m[1],
+            name=m[2],
+            value=interpolate(m[3], vars) if interp else m[3],
+          )
+          # Add the variable to the collection of known variables so it can be
+          # used for interpolation later
+          vars[var.name] = var.value
+          if var.export:
+            self._exports[var.name] = var.value
+        else:
+          log.fatal(f"invalid enviro in {enviro}: {line}")
+      # Remove non-exported vars so they are not processed in the next enviro
+      vars = {**os.environ, **self._exports}
+
+    # Remove duplicates from PATH, keeping the first occurrence
+    if "PATH" in self._exports:
+      seen = set()
+      clean = []
+      for path in self._exports["PATH"].split(":"):
+        if path not in seen:
+          seen.add(path)
+          clean.append(path)
+      self._exports["PATH"] = ":".join(clean)
+
+    # Escape single quotes
+    for k, v in self._exports.items():
+      self._exports[k] = v.replace("'", "\\'")
+
+  def _map(self, f):
+    """Map the exported variables into a specific format."""
+    items = []
+    for k, v in sorted(self._exports.items()):
+      items.append(f(k, v))
+    return "\n".join(items)
+
+  def magic_bourne(self):
+    return self._map(lambda k, v: f"export {k}='{v}'")
+
+  def magic_c(self):
+    return self._map(lambda k, v: f"setenv {k} '{v}'")
+
+  def magic_elvish(self):
+    return self._map(lambda k, v: f"set E:{k} = '{v}'")
+
+print(Enviro().magic_shell())
