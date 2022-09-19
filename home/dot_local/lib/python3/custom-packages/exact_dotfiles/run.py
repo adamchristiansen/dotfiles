@@ -4,10 +4,11 @@ import subprocess
 
 RunResult = collections.namedtuple("Run", ["exitcode", "stdout", "stderr"])
 
-def run(cmd, input=None, check=False, append_env=None):
+def run(cmd, input=None, check=False, append_env=None, capture=True):
   """
   Run a command specified as a list of strings. The optional input is used for
-  stdin. Environment variables can be added with append environment option. An
+  stdin. Environment variables can be added with append environment option. The
+  capture option causes stdout and stderr to be captured in strings. An
   exception is raised on error when check is set. Returns the exitcode, stdout,
   and stderr of the command.
   """
@@ -17,8 +18,8 @@ def run(cmd, input=None, check=False, append_env=None):
   p = subprocess.run(
     cmd,
     input=input,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
+    stdout=subprocess.PIPE if capture else None,
+    stderr=subprocess.PIPE if capture else None,
     check=check,
     env=env)
   return RunResult(
