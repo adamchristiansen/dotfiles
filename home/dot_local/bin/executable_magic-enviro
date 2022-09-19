@@ -6,6 +6,10 @@ import pathlib
 import re
 import sys
 
+# Disable writing bytecode. This prevents caching imports in case this is
+# disabled in an enviro.
+sys.dont_write_bytecode = True
+
 # Before importing dotfiles, it is necessary to modify the Python path, since
 # this script will likely run before the Python path is properly configured.
 sys.path.append(os.path.join(
