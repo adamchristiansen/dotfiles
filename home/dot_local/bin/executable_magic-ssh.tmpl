@@ -13,7 +13,7 @@ ENV_FILE = xdg.home(".ssh", "environment")
 
 Env = collections.namedtuple("Env", ["pid", "socket"])
 
-class Agent:
+class Agent(plat.magic_shell):
   def __init__(self):
     self.already_running = True
     self._env_vars = {}
@@ -50,8 +50,7 @@ class Agent:
       run(["ssh-add", priv_key], check=True, append_env=self._env_vars)
       {{- end }}
 
-  def export_bourne(self):
-    """Bourne shell commands for setting up the environment."""
+  def magic_bourne(self):
     return "\n".join([
       f"SSH_AGENT_PID={self.pid};",
       f"export SSH_AGENT_PID;",
@@ -59,32 +58,17 @@ class Agent:
       f"export SSH_AUTH_SOCK;",
     ])
 
-  def export_c(self):
-    """C shell commands for setting up the environment."""
+  def magic_csh(self):
     return "\n".join([
       f"setenv SSH_AGENT_PID {self.pid}",
       f"setenv SSH_AUTH_SOCK {self.socket}"
     ])
 
-  def export_elvish(self):
-    """Elvish commands for setting up the environment."""
+  def magic_elvish(self):
     return "\n".join([
       f"set E:SSH_AGENT_PID = {self.pid}",
       f"set E:SSH_AUTH_SOCK = {self.socket}"
     ])
-
-  def export(self, shell=None):
-    """Shell commands for setting up the environment."""
-    if shell is None:
-      shell = os.path.basename(os.environ["SHELL"])
-    if shell in ["ash", "bash", "dash", "sh", "zsh"]:
-      return self.export_bourne()
-    elif shell in ["csh", "fish"]:
-      return self.export_c()
-    elif shell in ["elvish"]:
-      return self.export_elvish()
-    else:
-      log.fatal(f"unknown shell: {shell}")
 
 parser = argparse.ArgumentParser(description="Automagically manage ssh-agent")
 parser.add_argument("-l", "--add-keys",
@@ -100,4 +84,4 @@ if args.force_add_keys:
   agent.add_keys()
 elif args.add_keys and not agent.already_running:
   agent.add_keys()
-print(agent.export())
+print(agent.magic_shell())

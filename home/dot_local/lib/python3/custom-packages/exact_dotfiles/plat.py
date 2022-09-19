@@ -11,7 +11,7 @@ class MagicShell(abc.ABC):
   def magic_bourne(self):
     """Use for Bourne-like shells."""
     pass
-  def magic_c(self):
+  def magic_csh(self):
     """Use for C-like shells."""
     pass
   def magic_elvish(self):
@@ -24,7 +24,7 @@ class MagicShell(abc.ABC):
     if shell in ["ash", "bash", "dash", "sh", "zsh"]:
       return self.magic_bourne()
     elif shell in ["csh", "fish"]:
-      return self.magic_c()
+      return self.magic_csh()
     elif shell in ["elvish"]:
       return self.magic_elvish()
     else:
