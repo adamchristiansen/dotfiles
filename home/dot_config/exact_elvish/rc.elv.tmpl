@@ -19,8 +19,7 @@ if (has-external carapace) {
 }
 
 # Abbreviations
-use abbr
-abbr:source ~/.config/abbreviations
+eval (magic-abbr | slurp)
 set edit:small-word-abbr[clear] = 'edit:clear'
 set edit:small-word-abbr['2>n'] = ' 2> /dev/null'
 set edit:small-word-abbr['>n'] = ' > /dev/null'
