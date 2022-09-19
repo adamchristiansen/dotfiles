@@ -1,33 +1,6 @@
 use math
 use str
 
-# Test if a path exists.
-fn path-exists { |path|
-  try {
-    e:test -e $path
-    put $true
-  } catch _ {
-    put $false
-  }
-}
-
-# Test if a path exists and is a file.
-fn file-exists { |path|
-  try {
-    e:test -f $path
-    put $true
-  } catch _ {
-    put $false
-  }
-}
-
-# Test if a process with a pid is running under the current user.
-fn is-user-process { |pid|
-  or (e:ps -u $E:USER | each { |line|
-    ==s $pid [(str:split " " $line)][0]
-  })
-}
-
 # Check if a container is empty.
 fn empty { |value|
   == (count $value) 0
@@ -41,20 +14,6 @@ fn not-empty { |value|
 # Reverse a list.
 fn reverse { |list|
   order &reverse=$true &less-than={|_ _| put $true } $list
-}
-
-# Find an enviroment variable. This first searches the supplied map to see if
-# the name is in the map. If not in the map it searches environment variables
-# under the `$E:` prefix. If nothing is found, then an empty string is
-# returned.
-fn find-env { |name &vs=[&]|
-  if (has-key $vs $name) {
-    put $vs[$name]
-  } elif (has-env $name) {
-    get-env $name
-  } else {
-    put ''
-  }
 }
 
 # Coerce a number into an integer.

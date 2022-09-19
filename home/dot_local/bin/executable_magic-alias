@@ -8,9 +8,9 @@ import sys
 
 from dotfiles import fs, log, plat, xdg
 
-ABBR_FILE = xdg.config_home("abbreviations")
+ALIAS_FILE = xdg.config_home("aliases")
 
-ABBR_REGEXES = [
+ALIAS_REGEXES = [
   re.compile(r"^alias\s+(\w+)=\'((?:\\.|[^\'\\])*)\'$"),
   re.compile(r"^alias\s+(\w+)=\"((?:\\.|[^\"\\])*)\"$"),
   re.compile(r"^alias\s+(\w+)=(\S*)$"),
@@ -20,7 +20,7 @@ SUBSHELL_REGEX = re.compile(r"\$\((?:[^$]*\$\([^)]*\))*[^)]*\)")
 
 def find(line):
   """Find an alias statement in a line."""
-  for r in ABBR_REGEXES:
+  for r in ALIAS_REGEXES:
     m = re.search(r, line)
     if m is not None:
       return m
@@ -30,37 +30,36 @@ def replacement(value, quote_replace, subshell_outer, subshell_inner):
   """Replace quotes and subshell delimiters."""
   def replace(m):
     s = m[0][2:-1] # Strip the '$(' and ')' from the start and end
-    s.replace("'", quote_replace)
     s = s.replace("$(", subshell_inner[0]).replace(")", subshell_inner[1])
     s = subshell_outer[0] + s + subshell_outer[1]
     return s
-  return re.sub(SUBSHELL_REGEX, replace, value)
+  return re.sub(SUBSHELL_REGEX, replace, value.replace("'", quote_replace))
 
-def abbr_lines(abbr_file=ABBR_FILE):
-  """Get the non-comment and non-empty lines from an abbreviations file."""
-  lines = fs.read_file(abbr_file).splitlines()
+def alias_lines(alias_file=ALIAS_FILE):
+  """Get the non-comment and non-empty lines from an aliases file."""
+  lines = fs.read_file(alias_file).splitlines()
   lines = map(lambda x: x.strip(), lines)
   lines = filter(lambda x: x and not x.startswith("#"), lines)
   return lines
 
-class Abbr(plat.magic_shell):
-  """Load all abbreviations."""
+class Alias(plat.magic_shell):
+  """Load all aliases."""
 
   def __init__(self):
-    """Load all abbreviations into a database."""
-    self._abbrs = {}
-    for line in abbr_lines():
+    """Load all aliases into a database."""
+    self._aliases = {}
+    for line in alias_lines():
       m = find(line)
       if m is not None:
         name, value = m[1], m[2]
-        self._abbrs[name] = value
+        self._aliases[name] = value
       else:
-        log.fatal(f"invalid abbreviation in {ABBR_FILE}: {line}")
+        log.fatal(f"invalid alias in {ALIAS_FILE}: {line}")
 
   def _map(self, f, quote_replace, subshell_outer, subshell_inner):
     """Map the exported variables into a specific format."""
     items = []
-    for k, v in sorted(self._abbrs.items()):
+    for k, v in sorted(self._aliases.items()):
       vp = replacement(v, quote_replace, subshell_outer, subshell_inner)
       items.append(f(k, vp))
     return "\n".join(items)
@@ -74,16 +73,19 @@ class Abbr(plat.magic_shell):
 
   def magic_csh(self):
     return self._map(
-      f=lambda k, v: f"abbr -ga {k} {v}",
-      quote_replace="'",
+      f=lambda k, v: f"alias {k} '{v}'",
+      quote_replace="\\'",
       subshell_outer=("'(", ")'"),
       subshell_inner=("(", ")"))
 
   def magic_elvish(self):
     return self._map(
-      f=lambda k, v: f"set edit:small-word-abbr[{k}] = '{v}'",
+      f=lambda k, v: "\n".join([
+        f"var fn~ = {{ |@args| {v} $@args }}",
+        f"edit:add-var {k}~ $fn~",
+      ]),
       quote_replace="''",
       subshell_outer=("(", ")"),
       subshell_inner=("(", ")"))
 
-print(Abbr().magic_shell())
+print(Alias().magic_shell())
