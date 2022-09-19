@@ -52,22 +52,22 @@ class Agent(plat.magic_shell):
 
   def magic_bourne(self):
     return "\n".join([
-      f"SSH_AGENT_PID={self.pid};",
+      f"SSH_AGENT_PID='{self.pid}';",
       f"export SSH_AGENT_PID;",
-      f"SSH_AUTH_SOCK={self.socket};",
+      f"SSH_AUTH_SOCK='{self.socket}';",
       f"export SSH_AUTH_SOCK;",
     ])
 
   def magic_csh(self):
     return "\n".join([
-      f"setenv SSH_AGENT_PID {self.pid}",
-      f"setenv SSH_AUTH_SOCK {self.socket}"
+      f"setenv SSH_AGENT_PID '{self.pid}'",
+      f"setenv SSH_AUTH_SOCK '{self.socket}'"
     ])
 
   def magic_elvish(self):
     return "\n".join([
-      f"set E:SSH_AGENT_PID = {self.pid}",
-      f"set E:SSH_AUTH_SOCK = {self.socket}"
+      f"set E:SSH_AGENT_PID = '{self.pid}'",
+      f"set E:SSH_AUTH_SOCK = '{self.socket}'"
     ])
 
 parser = argparse.ArgumentParser(description="Automagically manage ssh-agent")

@@ -93,7 +93,7 @@ class Enviro(plat.magic_shell):
     return "\n".join(items)
 
   def magic_bourne(self):
-    return self._map(lambda k, v: f"export {k}='{v}'", "\\'")
+    return self._map(lambda k, v: f"export {k}=$'{v}'", "\'\"\'\"\'")
 
   def magic_csh(self):
     return self._map(lambda k, v: f"setenv {k} '{v}'", "\\'")

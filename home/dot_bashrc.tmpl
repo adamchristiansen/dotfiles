@@ -2,12 +2,17 @@
 umask {{ .umask }}
 
 # Source and export environment variables
-for f in $HOME/.local/etc/enviro.d/*.enviro; do
-  source "$f"
-done
+eval "$($HOME/.local/bin/magic-enviro)"
 
 # If not running interactively, don't do anything more
 [[ $- != *i* ]] && return
+
+# Aliases
+eval "$(magic-abbr)"
+eval "$(magic-alias)"
+
+# SSH agent
+eval "$(magic-ssh)"
 
 # Disable persistent command history
 HISTFILE=""
@@ -29,10 +34,6 @@ case "$TERM" in
     PS1='\u@\h:\w\$ '
     ;;
 esac
-
-# Aliases
-source "$HOME/.config/abbreviations"
-source "$HOME/.config/aliases"
 
 # Enable programmable completion features
 if ! shopt -oq posix; then

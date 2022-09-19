@@ -66,8 +66,8 @@ class Alias(plat.magic_shell):
 
   def magic_bourne(self):
     return self._map(
-      f=lambda k, v: f"alias {k}='{v}'",
-      quote_replace="\\'",
+      f=lambda k, v: f"alias {k}=$'{v}'",
+      quote_replace="\'\"\'\"\'",
       subshell_outer=("$(", ")"),
       subshell_inner=("$(", ")"))
 
