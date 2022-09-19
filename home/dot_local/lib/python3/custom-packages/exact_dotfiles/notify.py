@@ -28,7 +28,7 @@ def notify(
 
   The output of running the notification is returned.
   """
-  if plat.hascmd("osascript"):
+  if plat.has_cmd("osascript"):
     cmd = ["osascript", "-e"]
     title = app if app is not None else "Notification"
     message = body

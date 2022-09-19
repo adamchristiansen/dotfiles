@@ -63,7 +63,7 @@ class PackageManager:
 
   def exists(self):
     """Test whether the package manager exists on the system."""
-    if not plat.hascmd(*self.required_commands):
+    if not plat.has_cmd(*self.required_commands):
       return False
     for condition in self.required_conditions:
       if run(condition).exitcode != 0:
