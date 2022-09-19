@@ -4,46 +4,8 @@ umask {{ .umask }}
 # Load enviros
 $HOME/.local/bin/magic-enviro | source
 
-# TODO magic-abbr
 # Abbreviations
-abbr -ga cz    chezmoi
-abbr -ga cza   chezmoi apply
-abbr -ga czaf  chezmoi apply --force
-abbr -ga czcd  cd '(chezmoi source-path)'
-abbr -ga cze   chezmoi edit
-abbr -ga czga  chezmoi git -- add -A
-abbr -ga czgc  chezmoi git -- commit
-abbr -ga czgp  chezmoi git -- push
-abbr -ga czgpl chezmoi git -- pull
-abbr -ga czgs  chezmoi git -- status --short
-abbr -ga czgsu chezmoi git -- status --short -u
-abbr -ga czs   chezmoi status
-abbr -ga czx   chezmoi execute-template '<'
-abbr -ga ga    git add -A
-abbr -ga gb    git branch
-abbr -ga gc    git commit
-abbr -ga gcm   git commit -m
-abbr -ga gch   git checkout
-abbr -ga gcl   git clean -fdXn
-abbr -ga gd    git diff
-abbr -ga gl    git log
-abbr -ga glg   git log --graph --oneline
-abbr -ga gp    git push
-abbr -ga gpl   git pull
-abbr -ga gplf  git pull --no-rebase --ff-only
-abbr -ga gplm  git pull --no-rebase --ff
-abbr -ga gplr  git pull --rebase
-abbr -ga gr    git reset
-abbr -ga grh   git reset HEAD
-abbr -ga gs    git status --short
-abbr -ga gsu   git status --short -u
-abbr -ga let   set -l
-abbr -ga mux   tmuxinator
-abbr -ga muxc  tmuxinator start code -n '(slugp)'
-abbr -ga muxd  tmuxinator start default -n '(slugp)'
-abbr -ga ta    tmux attach-session -t
-abbr -ga tl    tmux list-sessions
-abbr -ga tn    tmux new -s
+magic-abbr | source
 
 # TODO magic-alias
 # Aliases
