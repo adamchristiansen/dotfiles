@@ -92,13 +92,10 @@ class Enviro(plat.magic_shell):
       items.append(f(k, v.replace("'", quote_escape)))
     return "\n".join(items)
 
-  def magic_bourne(self):
+  def magic_posix(self):
     return self._map(lambda k, v: f"export {k}=$'{v}'", "\'\"\'\"\'")
 
   def magic_csh(self):
     return self._map(lambda k, v: f"setenv {k} '{v}'", "\\'")
-
-  def magic_elvish(self):
-    return self._map(lambda k, v: f"set E:{k} = '{v}'", "''")
 
 print(Enviro().magic_shell())

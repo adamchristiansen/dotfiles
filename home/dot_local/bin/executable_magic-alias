@@ -64,7 +64,7 @@ class Alias(plat.magic_shell):
       items.append(f(k, vp))
     return "\n".join(items)
 
-  def magic_bourne(self):
+  def magic_posix(self):
     return self._map(
       f=lambda k, v: f"alias {k}=$'{v}'",
       quote_replace="\'\"\'\"\'",
@@ -76,16 +76,6 @@ class Alias(plat.magic_shell):
       f=lambda k, v: f"alias {k} '{v}'",
       quote_replace="\\'",
       subshell_outer=("'(", ")'"),
-      subshell_inner=("(", ")"))
-
-  def magic_elvish(self):
-    return self._map(
-      f=lambda k, v: "\n".join([
-        f"var fn~ = {{ |@args| {v} $@args }}",
-        f"edit:add-var {k}~ $fn~",
-      ]),
-      quote_replace="''",
-      subshell_outer=("(", ")"),
       subshell_inner=("(", ")"))
 
 print(Alias().magic_shell())

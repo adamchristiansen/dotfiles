@@ -4,29 +4,33 @@ import os
 import shutil
 
 from .log import log
+from .run import run
 
 class MagicShell(abc.ABC):
   """Magically run a method when a specific shell is used."""
 
-  def magic_bourne(self):
-    """Use for Bourne-like shells."""
+  def magic_posix(self):
+    """Use for POSIX shells."""
     pass
+
   def magic_csh(self):
     """Use for C-like shells."""
     pass
-  def magic_elvish(self):
-    """Use for Elvish shells."""
-    pass
+
   def magic_shell(self, shell=None):
     """Magically determine the shell."""
     if shell is None:
-      shell = os.path.basename(os.environ["SHELL"])
+      # Look at the invocation of the parent process (which should be the
+      # shell) to determine the shell type
+      r = run(["ps", "-o", "comm", "-p", str(os.getppid())])
+      if r.exitcode != 0:
+        log.fatal("could not determine shell")
+      abs_shell = r.stdout.splitlines()[1].strip().lstrip("-")
+      shell = os.path.basename(abs_shell)
     if shell in ["ash", "bash", "dash", "sh", "zsh"]:
-      return self.magic_bourne()
+      return self.magic_posix()
     elif shell in ["csh", "fish"]:
       return self.magic_csh()
-    elif shell in ["elvish"]:
-      return self.magic_elvish()
     else:
       log.fatal(f"unknown shell: {shell}")
 
