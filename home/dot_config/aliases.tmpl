@@ -18,6 +18,11 @@ alias l=exa
 alias la='exa --git -a'
 alias ll='exa --git -al'
 alias lt="exa --git -alT --ignore-glob='.git'"
+{{- if eq .chezmoi.os "darwin" }}
+alias o='open'
+{{- else if eq .chezmoi.os "linux" }}
+alias o='xdg-open'
+{{- end }}
 alias pp='clipboard --paste'
 alias yc='clipboard --clear'
 alias yy='clipboard --copy'
