@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
 
 from dotfiles import notify, run
 
-MPC_CMD = ["mpc", "current", "-f",
-  "\n".join(map(lambda x: f"%{x}%", ["title", "artist", "album", "file"])),
-]
+parser = argparse.ArgumentParser(
+  description="Show music informatoin")
+parser.add_argument("--clear",
+  action="store_true",
+  help="clear the playlist")
+args = parser.parse_args()
+
+def clear():
+  run(["mpc", "clear"], check=True)
 
 def current_song():
-  r = run(MPC_CMD, check=True)
+  mpc_cmd = ["mpc", "current", "-f",
+    "\n".join(map(lambda x: f"%{x}%", ["title", "artist", "album", "file"])),
+  ]
+  r = run(mpc_cmd, check=True)
   if not r.stdout:
     return None
   title, artist, album, filepath = r.stdout.split("\n")
@@ -29,10 +39,14 @@ def current_song():
   }
 
 c = current_song()
-if c is not None:
-  body = "\n".join([c["title"], c["album"], c["artist"]])
+if args.clear:
+  clear()
+  body = "Playlist cleared"
 else:
-  body = "No song playing"
+  if c is not None:
+    body = "\n".join([c["title"], c["album"], c["artist"]])
+  else:
+    body = "No song playing"
 notify(
   app="Now Playing ♫",
   body=body,
