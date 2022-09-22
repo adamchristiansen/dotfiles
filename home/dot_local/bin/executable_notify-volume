@@ -5,46 +5,26 @@ import re
 import sys
 import textwrap
 
-from dotfiles import clamp, notify, run
+from dotfiles import clamp, log, notify, run
 
-class ModeAbs:
-  """
-  Computes the next volume for an absolute change.
-  """
-  def __init__(self, volume):
-    self.__volume = volume
+class Mode:
+  def __init__(self, value=None):
+    self.value = value
 
+class ModeAbs(Mode):
   def next(self, _volume, _mute):
-    return (clamp_percent(self.__volume), False)
+    return (clamp(self.value, 0, 100), False)
 
-class ModeRel:
-  """
-  Computes the next volume for a relative change.
-  """
-  def __init__(self, n):
-    self.__n = n
-
+class ModeRel(Mode):
   def next(self, volume, _mute):
-    next_volume = clamp_percent(volume + args.delta * self.__n)
-    next_mute = False
-    if next_volume == 0:
-      next_mute = True
-    return (next_volume, next_mute)
+    next_volume = clamp(volume + args.delta * self.value, 0, 100)
+    return (next_volume, not next_volume)
 
-class ModeMute:
-  """
-  Computes the next volume for a mute.
-  """
-  def __init__(self):
-    pass
-
+class ModeMute(Mode):
   def next(self, volume, mute):
     return (volume, not mute if volume > 0 else True)
 
 def mode(arg):
-  """
-  Parse the volume control mode.
-  """
   if arg is None:
     return None
   elif re.match(r"^\d+$", arg):
@@ -81,58 +61,35 @@ parser.add_argument("mode",
 parser.add_argument("--delta",
   type=int, default=5,
   help="the amount to change the volume")
-
 args = parser.parse_args()
 
-def clamp_percent(v):
-  return clamp(v, 0, 100)
-
 def mixer_run(args):
-  """
-  Run a command on the mixer. This automatically determines the approrpriate
-  mixer command so only the arguments need to be given.
-  """
-  # Find the device to use for `amixer` that works on the system
-  cmd = None
+  """Run a command on the mixer. Only the arguments need to be provided."""
   if run(["amixer", "get", "Master"]).exitcode == 0:
     cmd = ["amixer"]
   elif run(["amixer", "-D", "pulse", "get", "Master"]).exitcode == 0:
     cmd = ["amixer", "-D", "pulse"]
   if cmd is None:
-    print("could not find mixer command", file=sys.stderr)
-    sys.exit(1)
+    log.fata("could not find mixer command")
   cmd.extend(args)
   return run(cmd)
 
 def mixer_state(nearest=True):
-  """
-  Return the volume percentage and muted state.
-  """
+  """Get the volume percentage and muted state."""
   _, s, _ = mixer_run(["get", "Master"])
   mute = "[off]" in s
   volume = int(re.search("(\d+)%", s).group(1))
   if nearest:
     # Match the volume to the nearest multiple of delta
-    volume = clamp_percent(int(args.delta * round(volume / args.delta)))
+    volume = clamp(int(args.delta * round(volume / args.delta)), 0, 100)
   return volume, mute
 
 def mixer_set(volume, mute):
-  """
-  Set the volume percentage and muted state.
-  """
   mixer_run(["set", "Master", f"{volume}%"])
   mixer_run(["set", "Master", "off" if mute else "on"])
 
-def show_volume(volume, mute):
-  """
-  Notify the volume percentage and muted state.
-  """
-  # Get the volume text
-  if not mute:
-    text = f"{volume}%"
-  else:
-    text = f"Mute ({volume}%)"
-  # Select the icon to show
+def notify_volume(volume, mute):
+  text = f"{volume}%" if not mute else f"Mute ({volume}%)"
   if mute:
     icon = "audio-volume-muted"
   else:
@@ -142,18 +99,15 @@ def show_volume(volume, mute):
       icon = "audio-volume-medium"
     else:
       icon = "audio-volume-high"
-  # The percentage for the progress bar
-  percent = volume if not mute else 0
-  # Show notification
   notify(
     app="Volume",
     summary=text,
     icon=icon,
     tag="volume",
-    progress=percent,
+    progress=volume if not mute else 0,
     urgency="low"
   )
 
 if args.mode is not None:
   mixer_set(*args.mode.next(*mixer_state()))
-show_volume(*mixer_state())
+notify_volume(*mixer_state())
