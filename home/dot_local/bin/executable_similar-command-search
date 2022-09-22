@@ -3,11 +3,12 @@
 import argparse
 import sys
 
+from dotfiles import exit
+
 p = argparse.ArgumentParser(description="Look up similar commands")
 p.add_argument("query", type=str, help="the query string")
 p.add_argument("--count", type=int, default=1,
          help="the maximum number of results to output (default: 1)")
-
 args = p.parse_args()
 
 def list_executables():
@@ -16,9 +17,9 @@ def list_executables():
   paths = os.environ["PATH"].split(pathsep)
   executables = []
   for path in filter(isdir, paths):
-    for file_ in os.listdir(path):
-      if os.access(join(path, file_), os.X_OK):
-        executables.append(file_)
+    for f in os.listdir(path):
+      if os.access(join(path, f), os.X_OK):
+        executables.append(f)
   return sorted(set(executables))
 
 def bigram_similarity(q, p):
@@ -48,4 +49,4 @@ if results:
   for result in results[:args.count]:
     print(result)
 else:
-  sys.exit(1)
+  exit.failure()
