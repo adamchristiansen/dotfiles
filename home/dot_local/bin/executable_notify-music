@@ -38,11 +38,12 @@ def current_song():
     "coverpath": coverpath,
   }
 
-c = current_song()
 if args.clear:
   clear()
+  c = None
   body = "Playlist cleared"
 else:
+  c = current_song()
   if c is not None:
     body = "\n".join([c["title"], c["album"], c["artist"]])
   else:
