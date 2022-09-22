@@ -1,3 +1,4 @@
+from .array import array
 from .color import color
 from .exit import exit
 from .fs import fs
