@@ -7,7 +7,6 @@
 {{- $fontSize := promptIntOnce .font "size" "font size (pt)" 11 -}}
 {{- $gitEmail := promptStringOnce .git "email" "git email" -}}
 {{- $gitName := promptStringOnce .git "name" "git author name" -}}
-{{- $locationWttr := promptStringOnce .location "wttr" "wttr.in location (city-province-country)" -}}
 {{- $shell := promptStringOnce . "shell" "shell" "bash" -}}
 {{- $umask := promptStringOnce . "umask" "umask" "022" | trunc -3 -}}
 
@@ -33,6 +32,3 @@ size = {{ $fontSize }}
 [data.git]
 email = {{ $gitEmail | quote }}
 name = {{ $gitName | quote }}
-
-[data.location]
-wttr = {{ $locationWttr | quote }}
