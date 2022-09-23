@@ -4,14 +4,10 @@
 Select a number of songs and and play them.
 """
 
+import argparse
 from collections import OrderedDict
-import subprocess
-import sys
 
-from dotfiles import menu
-
-# The encoding for subprocess communication.
-ENCODING = "utf-8"
+from dotfiles import menu, run
 
 # The delimeter to use between tags of a song. Note that mpc uses # to escape
 # characters.
@@ -21,9 +17,7 @@ TAG_DELIM = "#|#|#|"
 SEL_DELIM = "  ▸  "
 
 class Song:
-  """
-  Represents the metadata of a song.
-  """
+  """Represents the metadata of a song."""
   def __init__(self, album, albumartist, artist, filename, title, track, index):
     self.album = album
     self.albumartist = albumartist
@@ -34,20 +28,13 @@ class Song:
     self.index = str(index)
 
 class Songs:
-  """
-  Manage and query a collection of songs.
-  """
+  """Manage and query a collection of songs."""
   def __init__(self, queue=False):
     """
-    Load all of the song information.
-
-    # Arguments
-
-    - `queue` (bool): Search in the queue if true. If false, the entire library
-      is searched.
+    Load all of the song information. By default searches the entire library,
+    but can be set to search only the queue.
     """
-    # Find all of the songs
-    p = subprocess.run(
+    r = run(
       ["mpc", "playlist" if queue else "listall", "-f",
         "%album%" + TAG_DELIM +
         "%albumartist%" + TAG_DELIM +
@@ -55,13 +42,9 @@ class Songs:
         "%file%" + TAG_DELIM +
         "%title%" + TAG_DELIM +
         "%track%"],
-      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if p.returncode:
-      print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
-      sys.exit(1)
-    out = p.stdout.decode(ENCODING).strip()
+      check=True)
     self._songs = []
-    for i, line in enumerate(out.split("\n")):
+    for i, line in enumerate(r.stdout.split("\n")):
       fields = line.split(TAG_DELIM.replace("#", ""))
       self._songs.append(Song(*fields, i + 1))
 
@@ -85,46 +68,31 @@ class Songs:
     return opts
 
 def mpc_play_songs(song_list):
-  """
-  Play all of the songs in the list in the order that they appear.
-  """
-  # Get the number of songs in queue
-  p = subprocess.run(["mpc", "playlist"],
-    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  if p.returncode:
-    print(f"mpc error: {p.stderr.decode(ENCODING).strip()}")
-    sys.exit(1)
-  text = p.stdout.decode(ENCODING).strip()
-  count = len(text.split("\n")) if text else 0
-  # Add the songs and start playing the first one
+  """Play all of the songs in the list in the order that they appear."""
+  r = run(["mpc", "playlist"], check=True)
+  count = len(r.stdout.split("\n")) if r.stdout else 0
   for song in song_list:
-    subprocess.run(["mpc", "add", song.filename])
+    run(["mpc", "add", song.filename], check=True)
   mpc_play_queue(count)
 
 def mpc_play_queue(index):
-  """
-  Play the song at the index in the queue. Note that this starts at 1, not 0.
-  """
-  subprocess.run(["mpc", "play", str(index + 1)])
+  """Play the song at the index in the queue. Note that this starts at 1. """
+  run(["mpc", "play", str(index + 1)], check=True)
 
-if __name__ == "__main__":
-  import argparse
-  # Command line arguments
-  parser = argparse.ArgumentParser(
-    description="Choose a song to play")
-  parser.add_argument("keys", type=str, nargs="+",
-    help="the song tags to search on")
-  parser.add_argument("--queue", action="store_true",
-    help="only consider the queue")
-  args = parser.parse_args()
-  # Get songs
-  songs = Songs(queue=args.queue)
-  # Show the selection menu
-  opts = songs.options(*args.keys)
-  opts_list = list(opts.keys())
-  sel_index = menu(opts_list, index=True)
-  # Play the selection
-  if args.queue:
-    mpc_play_queue(sel_index)
-  else:
-    mpc_play_songs(opts[opts_list[sel_index]])
+parser = argparse.ArgumentParser(
+  description="Choose a song to play")
+parser.add_argument("keys", type=str, nargs="+",
+  help="the song tags to search on")
+parser.add_argument("--queue", action="store_true",
+  help="only consider the queue")
+args = parser.parse_args()
+
+songs = Songs(queue=args.queue)
+opts = songs.options(*args.keys)
+opts_list = list(opts.keys())
+sel_index = menu(opts_list, index=True)
+
+if args.queue:
+  mpc_play_queue(sel_index)
+else:
+  mpc_play_songs(opts[opts_list[sel_index]])
