@@ -5,7 +5,10 @@ import re
 import sys
 import textwrap
 
-from dotfiles import clamp, log, notify, run
+from dotfiles import log, notify, run
+
+def clamp(v, lo, hi):
+  return lo if v < lo else (hi if v > hi else v)
 
 class Mode:
   def __init__(self, value=None):
