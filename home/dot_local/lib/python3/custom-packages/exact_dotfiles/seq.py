@@ -1,12 +1,8 @@
 class seq:
-  """A sequence that acts like a list but with convenient methods."""
-  def __init__(self, it=None):
-    """Create a new sequence from an iterator."""
-    self.__xs = list(it) if it is not None else []
+  """A lazy iterator with a fluent interface."""
 
-  def dup(self):
-    """Make a duplicate of the seqeunce."""
-    return seq(self)
+  def __init__(self, *iterables):
+    self.__its = iterables
 
   def all(self, pred):
     """Test if all items satisfy a predicate."""
@@ -22,20 +18,9 @@ class seq:
         return True
     return False
 
-  def clear(self):
-    """Empty the sequence."""
-    self.__xs.clear()
-
-  def collect(self):
-    """Collect into a list."""
-    return list(self)
-
   def concat(self, it, *its):
     """Concatenate iterators on the end."""
-    self.__xs.extend(it)
-    for it in its:
-      self.__xs.extend(it)
-    return self
+    return seq(self, it, *its)
 
   def count(self, pred):
     """Count items that satisfy a predicate."""
@@ -53,13 +38,11 @@ class seq:
 
   def enum(self):
     """Enumerate the items."""
-    for i in range(len(self)):
-      self[i] = (i, self[i])
-    return self
+    return seq(enumerate(self))
 
   def first(self):
     """Take the first item."""
-    return self[0]
+    return next(iter(self))
 
   def fold(self, f, v=None):
     """Fold a function from left to right."""
@@ -76,18 +59,18 @@ class seq:
 
   def keep(self, pred):
     """Keep items that satisfy a predicate."""
-    self.__xs[:] = [x for x in self.__xs if pred(x)]
-    return self
+    return seq(filter(pred, self))
 
   def last(self):
     """Take the last item."""
-    return self[-1]
+    v = None
+    for x in self:
+      v = x
+    return v
 
   def map(self, f):
     """Modify each item."""
-    for i in range(len(self)):
-      self[i] = f(self[i])
-    return self
+    return seq(map(f, self))
 
   def max(self):
     """The maximum item."""
@@ -114,62 +97,32 @@ class seq:
           break
     return count == 1
 
-  def push(self, x, *xs):
-    """Append to end."""
-    self.__xs.append(x)
-    self.__xs.extend(xs)
-    return self
-
   def remove(self, pred):
     """Remove items that satisfy a predicate."""
-    self.__xs[:] = [x for x in self.__xs if not pred(x)]
-    return self
+    return self.keep(lambda x: not pred(x))
 
   def reverse(self):
     """Reverse the sequence."""
-    for i in range(len(self) // 2):
-      j = len(self) - i - 1
-      self[i], self[j] = self[j], self[i]
-    return self
+    return seq(reversed(self))
 
   def sort(self, key=None, reverse=False):
     """Sort the sequence."""
-    self.__xs.sort(key=key, reverse=reverse)
-    return self
+    return seq(sorted(self, key=key, reverse=reverse))
 
   def sum(self):
     """Sum the sequence."""
     return sum(self)
 
-  def __add__(self, it):
-    return self.dup().concat(it)
+  def __add__(self, other):
+    return self.concat(other)
 
-  def __radd__(self, it):
-    return self + it
-
-  def __iadd__(self, it):
-    return self.concat(it)
-
-  def __contains__(self, key):
-    return key in self.__xs
-
-  def __delitem__(self, key):
-    del self.__xs[key]
-
-  def __getitem__(self, key):
-    return self.__xs[key]
+  def __radd__(self, other):
+    return seq(other) + self
 
   def __iter__(self):
-    return iter(self.__xs)
+    for s in self.__its:
+      for x in s:
+        yield x
 
-  def __len__(self):
-    return len(self.__xs)
-
-  def __repr__(self):
-    return repr(self.__xs)
-
-  def __setitem__(self, key, value):
-    self.__xs[key] = value
-
-  def __str__(self):
-    return str(self.__xs)
+  def __reversed__(self):
+    return reversed(list(self))
