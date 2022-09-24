@@ -1,6 +1,5 @@
-import subprocess
-
-from .exit import exit as ex
+from . import exit as ex
+from .run import run
 
 def menu(options, index=False, exit=True, fail=True):
   """
@@ -15,13 +14,10 @@ def menu(options, index=False, exit=True, fail=True):
   cmd = ["rofi", "-dmenu", "-i"]
   if index:
     cmd.extend(["-format", "i"])
-  r = subprocess.run(cmd,
-    input="\n".join(options).encode("utf-8"),
-    stdout=subprocess.PIPE)
+  r = run(cmd)
   # Rofi returns non-zero when no selection is made
   if r.returncode != 0:
     if exit:
       log.fatal("menu error") if fail else ex.success()
     return None
-  v = r.stdout.decode("utf-8").strip()
-  return int(v) if index else v
+  return int(r.stdout) if index else r.stdout

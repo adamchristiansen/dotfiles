@@ -1,6 +1,9 @@
-from .numeric import clamp
-from .plat import plat
+from . import plat
 from .run import run
+
+def _clamp(v, lo, hi):
+  """Clamp a value between low and high limits."""
+  return lo if v < lo else (hi if v > hi else v)
 
 def notify(
     app=None,
@@ -49,7 +52,7 @@ def notify(
     if tag is not None:
       cmd.extend(["--hint", f"string:x-dunst-stack-tag:{tag}"])
     if progress is not None:
-      progress = clamp(progress, 0, 100)
+      progress = _clamp(progress, 0, 100)
       cmd.extend(["--hint", f"int:value:{progress}"])
     if hints is not None:
       for k, v in hints.items():
