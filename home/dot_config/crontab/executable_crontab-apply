@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+
+import sys
+
+from dotfiles import fs, xdg
+
+text = fs.read_file(xdg.config_home("crontab", "crontab"))
+fs.write_file(sys.argv[1], text)
