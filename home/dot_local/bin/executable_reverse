@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+
+import sys
+
+from dotfiles import fn, seq
+
+print(seq(sys.stdin.read().splitlines()).map(fn.rstrip).reverse().join("\n"))

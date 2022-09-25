@@ -30,6 +30,16 @@ class seq:
         c += 1
     return c
 
+  def drop(self, n):
+    """Drop the next n items."""
+    it = iter(self)
+    for _ in range(n):
+      try:
+        next(it)
+      except StopIteration:
+        break
+    return seq(it)
+
   def each(self, f):
     """Evaluate a function on each item."""
     for x in self:
@@ -113,6 +123,10 @@ class seq:
     """Sum the sequence."""
     return sum(self)
 
+  def take(self, n):
+    """Take up to n items."""
+    return taker(n, self)
+
   def __add__(self, other):
     return self.concat(other)
 
@@ -126,3 +140,15 @@ class seq:
 
   def __reversed__(self):
     return reversed(list(self))
+
+class taker(seq):
+  def __init__(self, n, *its):
+    super().__init__(*its)
+    self.__n = n
+    self.__taken = 0
+  def __iter__(self):
+    for x in super().__iter__():
+      if self.__taken >= self.__n:
+        break
+      self.__taken += 1
+      yield x
