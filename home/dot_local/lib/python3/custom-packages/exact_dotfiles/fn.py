@@ -51,6 +51,12 @@ inv = lambda x: 1 / x
 """Strip whitespace."""
 strip  = lambda x: x.strip()
 
+"""Strip left whitespace."""
+lstrip  = lambda x: x.lstrip()
+
+"""Strip right whitespace."""
+rstrip  = lambda x: x.rstrip()
+
 """Convert to lowercase."""
 lower = lambda x: x.lower()
 
