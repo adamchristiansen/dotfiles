@@ -14,9 +14,9 @@ def menu(options, index=False, exit=True, fail=True):
   cmd = ["rofi", "-dmenu", "-i"]
   if index:
     cmd.extend(["-format", "i"])
-  r = run(cmd)
+  r = run(cmd, input="\n".join(options).encode("utf-8"))
   # Rofi returns non-zero when no selection is made
-  if r.returncode != 0:
+  if r.exitcode != 0:
     if exit:
       log.fatal("menu error") if fail else ex.success()
     return None
