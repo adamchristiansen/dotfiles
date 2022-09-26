@@ -17,7 +17,7 @@ sys.path.append(os.path.join(
 
 from dotfiles import fs, log, plat, xdg
 
-ENVIRO_DIR = xdg.home(".local", "etc", "enviro.d")
+ENVIRO_DIR = xdg.config_home("magicshell")
 
 # The second value indicates whether interpolation is allowed
 EXPORT_REGEXES = [

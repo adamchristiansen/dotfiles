@@ -8,7 +8,7 @@ import sys
 
 from dotfiles import fs, log, plat, xdg
 
-ABBR_FILE = xdg.config_home("abbreviations")
+ABBR_FILE = xdg.config_home("magicshell", "abbreviations")
 
 ABBR_REGEXES = [
   re.compile(r"^alias\s+(\w+)=\'((?:\\.|[^\'\\])*)\'$"),
