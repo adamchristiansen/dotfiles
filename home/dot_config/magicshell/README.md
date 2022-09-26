@@ -1,3 +1,8 @@
+# Magic Shell
+
+Automatically load variables, aliases, and abbreviations using `magic-enviro`,
+`magic-alias`, and `magic-abbr`.
+
 ## Enviro
 
 Environment variables in _enviro_ format are defined in the following way:

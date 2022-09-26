@@ -8,7 +8,7 @@ import sys
 
 from dotfiles import fs, log, plat, xdg
 
-ALIAS_FILE = xdg.config_home("aliases")
+ALIAS_FILE = xdg.config_home("magicshell", "aliases")
 
 ALIAS_REGEXES = [
   re.compile(r"^alias\s+(\w+)=\'((?:\\.|[^\'\\])*)\'$"),
