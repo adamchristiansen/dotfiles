@@ -1,12 +1,12 @@
 {{- $colorscheme := promptStringOnce . "colorscheme" "colorscheme" "moonlight" -}}
-{{- $dimBorder := promptIntOnce .dim "border" "border (px)" 2 -}}
-{{- $dimGap := promptIntOnce .dim "gap" "gap (px)" 48 -}}
-{{- $dimPadding := promptIntOnce .dim "padding" "padding (px)" 8 -}}
+{{- $dimBorder := promptIntOnce . "dimBorder" "border (px)" 2 -}}
+{{- $dimGap := promptIntOnce . "dimGap" "gap (px)" 48 -}}
+{{- $dimPadding := promptIntOnce . "dimPadding" "padding (px)" 8 -}}
 {{- $editor := promptStringOnce . "editor" "editor" "vi" -}}
-{{- $fontName := promptStringOnce .font "name" "font name" "monospace" -}}
-{{- $fontSize := promptIntOnce .font "size" "font size (pt)" 11 -}}
-{{- $gitEmail := promptStringOnce .git "email" "git email" -}}
-{{- $gitName := promptStringOnce .git "name" "git author name" -}}
+{{- $fontName := promptStringOnce . "fontName" "font name" "monospace" -}}
+{{- $fontSize := promptIntOnce . "fontSize" "font size (pt)" 11 -}}
+{{- $gitEmail := promptStringOnce . "gitEmail" "git email" -}}
+{{- $gitName := promptStringOnce . "gitName" "git author name" -}}
 {{- $shell := promptStringOnce . "shell" "shell" "bash" -}}
 {{- $umask := promptStringOnce . "umask" "umask" "022" | trunc -3 -}}
 
@@ -16,19 +16,13 @@ umask = 0o{{- $umask }}
 
 [data]
 colorscheme = {{ $colorscheme | quote }}
+dimBorder = {{ $dimBorder }}
+dimGap = {{ $dimGap }}
+dimPadding = {{ $dimPadding }}
 editor = {{ $editor | quote }}
+fontName = {{ $fontName | quote }}
+fontSize = {{ $fontSize }}
+gitEmail = {{ $gitEmail | quote }}
+gitName = {{ $gitName | quote }}
 shell = {{ $shell | quote }}
 umask = {{ printf "0%s" $umask | quote }}
-
-[data.dim]
-border = {{ $dimBorder }}
-gap = {{ $dimGap }}
-padding = {{ $dimPadding }}
-
-[data.font]
-name = {{ $fontName | quote }}
-size = {{ $fontSize }}
-
-[data.git]
-email = {{ $gitEmail | quote }}
-name = {{ $gitName | quote }}

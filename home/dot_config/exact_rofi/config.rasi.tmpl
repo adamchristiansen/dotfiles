@@ -5,7 +5,7 @@ configuration {
   case-sensitive: false;
   disable-history: true;
   drun-display-format: "{name}";
-  font: "{{- .font.name }} {{ add .font.size -}}";
+  font: "{{- .fontName }} {{ add .fontSize -}}";
   matching: "normal";
   normalize-match: true;
   scroll-method: 1; // continuous
@@ -18,7 +18,7 @@ configuration {
 
 window {
   background-color: @background;
-  border: {{ .dim.border -}}px {{ .dim.border -}}px 0 {{ .dim.border -}}px;
+  border: {{ .dimBorder -}}px {{ .dimBorder -}}px 0 {{ .dimBorder -}}px;
   border-color: @border;
   location: south;
   height: 38%;
@@ -40,12 +40,12 @@ entry {
 
 inputbar {
   background-color: @background;
-  border: 0 0 {{ .dim.border -}}px 0;
+  border: 0 0 {{ .dimBorder -}}px 0;
   border-color: @border;
   children: [ entry ];
   expand: false;
   margin: 0;
-  padding: {{ mul 2 .dim.padding -}}px;
+  padding: {{ mul 2 .dimPadding -}}px;
   text-color: @foreground;
 }
 
@@ -60,20 +60,20 @@ listview {
 mainbox {
   background-color: @background;
   children: [ inputbar, listview ];
-  padding: {{ .dim.padding -}}px {{ mul 2 .dim.padding -}}px {{ mul 2 .dim.padding -}}px {{ mul 2 .dim.padding -}}px;
-  spacing: {{ mul 2 .dim.padding -}}px;
+  padding: {{ .dimPadding -}}px {{ mul 2 .dimPadding -}}px {{ mul 2 .dimPadding -}}px {{ mul 2 .dimPadding -}}px;
+  spacing: {{ mul 2 .dimPadding -}}px;
 }
 
 element {
   background-color: @background;
   orientation: vertical;
-  padding: {{ mul 2 .dim.padding -}}px;
+  padding: {{ mul 2 .dimPadding -}}px;
   text-color: @foreground;
 }
 
 element selected {
   background-color: @background-alt;
-  border: 0 0 0 {{ .dim.border -}}px;
+  border: 0 0 0 {{ .dimBorder -}}px;
   border-color: @accent;
   text-color: @foreground;
 }
