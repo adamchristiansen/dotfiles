@@ -42,7 +42,7 @@ def abbr_lines(abbr_file=ABBR_FILE):
   lines = filter(lambda x: x and not x.startswith("#"), lines)
   return lines
 
-class Abbr(plat.magic_shell):
+class Abbr(plat.magicshell):
   """Load all abbreviations."""
 
   def __init__(self):
@@ -78,4 +78,4 @@ class Abbr(plat.magic_shell):
       subshell_outer=("'(", ")'"),
       subshell_inner=("(", ")"))
 
-print(Abbr().magic_shell())
+print(Abbr().magic())
