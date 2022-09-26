@@ -36,8 +36,8 @@ window:
   # Blank space added around the window in pixels. This padding is scaled
   # by DPI and the specified value is always added at both opposing sides.
   padding:
-    x: {{ .dim.padding }}
-    y: {{ .dim.padding }}
+    x: {{ .dimPadding }}
+    y: {{ .dimPadding }}
 
   # Spread additional padding evenly around the terminal content.
   dynamic_padding: true
@@ -86,7 +86,7 @@ font:
     #   - (macOS) Menlo
     #   - (Linux) monospace
     #   - (Windows) Consolas
-    family: {{ .font.name }}
+    family: {{ .fontName }}
 
     # The `style` can be specified to pick a specific face.
     #style: Regular
@@ -114,7 +114,7 @@ font:
     #style: Italic
 
   # Point size
-  size: {{ .font.size }}
+  size: {{ .fontSize }}
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.

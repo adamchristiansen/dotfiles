@@ -21,14 +21,14 @@ COLOR_BASE0E = "#{{- $color.base0e.hex.rgb -}}" # Pink
 COLOR_BASE0F = "#{{- $color.base0f.hex.rgb -}}" # Extra color
 
 # Define fonts
-FONT_NAME = "{{- .font.name -}}"
-FONT_SIZE = "{{- .font.size -}}pt"
+FONT_NAME = "{{- .fontName -}}"
+FONT_SIZE = "{{- .fontSize -}}pt"
 
 # Define dimensions and style related to that
 BORDER_STYLE      = "solid"
 BORDER_WIDTH      = "1px"
 INDICATOR_WIDTH   = 2
-PADDING           = {{ .dim.padding }}
+PADDING           = {{ .dimPadding }}
 RADIUS            = 0
 SCROLLBAR_PADDING = 0
 SCROLLBAR_WIDTH   = 8

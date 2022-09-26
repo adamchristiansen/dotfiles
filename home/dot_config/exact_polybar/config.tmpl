@@ -18,7 +18,7 @@ border-bottom-size = 100%:-32
 border-left-size = 0
 border-color = "#80{{ $color.base00.hex.rgb }}"
 
-font-0 = {{ .font.name }}:size={{ .font.size }};1
+font-0 = {{ .fontName }}:size={{ .fontSize }};1
 
 ; Create empty module so that the polybar will start
 modules-left = empty-text-label
@@ -26,7 +26,7 @@ modules-center =
 modules-right =
 
 tray-position = center
-tray-padding = {{ .dim.padding }}
+tray-padding = {{ .dimPadding }}
 tray-background = ${colors.background}
 
 ; Allow control via polybar-msg
