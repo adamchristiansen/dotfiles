@@ -42,7 +42,7 @@ def alias_lines(alias_file=ALIAS_FILE):
   lines = filter(lambda x: x and not x.startswith("#"), lines)
   return lines
 
-class Alias(plat.magic_shell):
+class Alias(plat.magicshell):
   """Load all aliases."""
 
   def __init__(self):
@@ -78,4 +78,4 @@ class Alias(plat.magic_shell):
       subshell_outer=("'(", ")'"),
       subshell_inner=("(", ")"))
 
-print(Alias().magic_shell())
+print(Alias().magic())

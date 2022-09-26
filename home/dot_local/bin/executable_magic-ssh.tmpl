@@ -13,7 +13,7 @@ ENV_FILE = xdg.home(".ssh", "environment")
 
 Env = collections.namedtuple("Env", ["pid", "socket"])
 
-class Agent(plat.magic_shell):
+class Agent(plat.magicshell):
   def __init__(self):
     self.already_running = True
     self._env_vars = {}
@@ -75,4 +75,4 @@ args = parser.parse_args()
 agent = Agent()
 if args.force_add_keys or (not agent.already_running and not args.no_keys):
   agent.add_keys()
-print(agent.magic_shell())
+print(agent.magic())

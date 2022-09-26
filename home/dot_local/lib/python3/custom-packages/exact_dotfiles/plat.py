@@ -6,7 +6,7 @@ import shutil
 from . import log
 from .run import run
 
-class magic_shell(abc.ABC):
+class magicshell(abc.ABC):
   """Magically run a method when a specific shell is used."""
 
   def magic_posix(self):
@@ -17,8 +17,8 @@ class magic_shell(abc.ABC):
     """Use for C-like shells."""
     pass
 
-  def magic_shell(self, shell=None):
-    """Magically determine the shell."""
+  def magic(self, shell=None):
+    """Magically determine the shell and run its method."""
     if shell is None:
       # Look at the invocation of the parent process (which should be the
       # shell) to determine the shell type

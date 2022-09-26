@@ -52,7 +52,7 @@ def enviro_lines(enviro_path):
   lines = filter(lambda x: x and not x.startswith("#"), lines)
   return lines
 
-class Enviro(plat.magic_shell):
+class Enviro(plat.magicshell):
   """Load all enviros."""
 
   def __init__(self):
@@ -102,4 +102,4 @@ class Enviro(plat.magic_shell):
   def magic_csh(self):
     return self._map(lambda k, v: f"setenv {k} '{v}'", "\\'")
 
-print(Enviro().magic_shell())
+print(Enviro().magic())
