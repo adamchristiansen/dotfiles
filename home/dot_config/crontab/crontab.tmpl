@@ -5,10 +5,6 @@
 #  │   │   │   │   ╭─── day of week (0 - 6, sun - mon)
 #  │   │   │   │   │
 #  *   *   *   *   *    /usr/bin/echo sample crontab entry
-  00  22   *   *   *    $HOME/.local/bin/nightshift -d
-  00  23   *   *   *    $HOME/.local/bin/nightshift -n
-  00  00   *   *   *    $HOME/.local/bin/nightshift -w
-  00  06   *   *   *    $HOME/.local/bin/nightshift -x
 
 {{- $local := (joinPath (env "XDG_CONFIG_HOME") "crontab" "crontab.local") -}}
 {{- if stat $local }}
