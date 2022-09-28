@@ -3,7 +3,7 @@ Encoding=UTF-8
 Type=Application
 Name=Keyring
 Comment=GNOME Keyring
-Exec={{ env "HOME" }}/.local/bin/bashtion gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,keyring
+Exec={{ env "HOME" }}/.local/bin/bashful gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,keyring
 OnlyShowIn=XFCE;
 RunHook=0
 StartupNotify=false
