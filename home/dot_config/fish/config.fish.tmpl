@@ -14,10 +14,21 @@ magic-alias | source
 magic-ssh | source
 
 # https://github.com/decors/fish-colored-man
-set -gx man_blink     -o red
-set -gx man_bold      -o green
-set -gx man_standout  -o yellow
-set -gx man_underline -u brcyan
+set -gx man_blink     --bold red
+set -gx man_bold      --bold green
+set -gx man_standout  --bold yellow
+set -gx man_underline --underline brcyan
+
+# https://github.com/Gazorby/fish-abbreviation-tips
+set -gx ABBR_TIPS_PROMPT (string join "" \
+  "\n💡 " \
+  (set_color -o yellow) \
+  "{{ `{{ .abbr }}` }}" \
+  (set_color normal)(set_color cyan) \
+  " →  " \
+  (set_color normal) \
+  "{{ `{{ .cmd }}` }}" \
+)
 
 # Shell colors
 set -gx fish_color_autosuggestion  black
