@@ -4,6 +4,11 @@ umask {{ .umask }}
 # Source and export environment variables
 eval "$($HOME/.local/bin/magic-enviro)"
 
+# LS_COLORS
+if type vivid > /dev/null 2>&1; then
+  export LS_COLORS="$(vivid generate $XDG_CONFIG_HOME/vivid/uuu.yml)"
+fi
+
 # If not running interactively, don't do anything more
 [[ $- != *i* ]] && return
 

@@ -1,8 +1,13 @@
 # Set the umask
 umask {{ .umask }}
 
-# Load enviros
+# Source and export environment variables
 $HOME/.local/bin/magic-enviro | source
+
+# LS_COLORS
+if type -q vivid
+  set -gx LS_COLORS (vivid generate $XDG_CONFIG_HOME/vivid/uuu.yml)
+end
 
 # Abbreviations
 magic-abbr | source
