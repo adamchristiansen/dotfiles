@@ -1,0 +1,3 @@
+{{- $ls := include ".gen/ls_colors.json" | mustFromJson -}}
+
+export LS_COLORS='{{- $ls.ls_colors -}}'
