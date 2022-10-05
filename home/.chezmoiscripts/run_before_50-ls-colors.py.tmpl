@@ -351,7 +351,7 @@ LS.color(text_markup, [
   # Man Pages
   '*.1', '*.2', '*.3', '*.4', '*.5', '*.6', '*.7', '*.8', '*.man', '*.roff',
   # Text
-  '*.asciidoc', '*.markdown', '*.md', '*.mdx', '*.mdown', '*.rst',
+  '*.asciidoc', '*.markdown', '*.md', '*.mdx', '*.mdown', '*.pod', '*.rst',
   # Web
   '*.htm', '*.html', '*.shtml', '*.xhtml',
 ])
@@ -377,6 +377,7 @@ LS.color(tools, [
   '.chezmoidata.json', '.chezmoidata.toml', '.chezmoidata.yaml',
   '.chezmoiexternal.json', '.chezmoiexternal.toml', '.chezmoiexternal.yaml',
   '.chezmoiignore', '.chezmoiremove', '.chezmoiroot', '.chezmoiversion',
+  '*.tmpl',
   # CI/CD
   '.travis.yml', 'appveyor.yml',
   # CMake
@@ -421,6 +422,8 @@ LS.color(tools, [
   'SConscript', 'SConstruct',
   # Style
   '.clang-format', '.flake8', '.prettierrc*', '.prettier*',
+  # X
+  '.dmrc', '.Xauthority', '.xinitrc', '.xsession*',
   # Yarn
   '.yarnrc*', 'yarn.lock',
   # Other
@@ -460,8 +463,8 @@ LS.color(unimportant, [
   # Scons
   '*.scons_opt', '*.sconsign.dblite',
   # Other
-  '*.bak', '*.lock', '*.log', '*.orig', '*.pid', '*.swp', '*.tmp', '*~',
-  '.hushlogin', '.sudo_as_admin_successful',
+  '*.bak', '*.lock', '*.log', '*.old', '*.orig', '*.pid', '*.swp', '*.tmp',
+  '*$*', '*~*', '.hushlogin', '.sudo_as_admin_successful',
 ])
 
 p = pathlib.Path('{{ .chezmoi.sourceDir }}/.gen/ls_colors.json')
