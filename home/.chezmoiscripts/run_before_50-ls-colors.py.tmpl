@@ -146,7 +146,7 @@ text_license         = LS.do(Mod.Bold)
 text_markup          = LS.do(Fg.Green)
 text_normal          = LS.do()
 text_special         = LS.do(Fg.Yellow, Mod.Bold)
-tools                = LS.do(Fg.Red, Mod.Bold)
+tools                = LS.do(Fg.White)
 unimportant          = LS.do(Fg.Black)
 
 # Core LS_COLORS types that are not matched against file names
@@ -170,9 +170,6 @@ LS.color(directory, ['ow']) # Directory: other-writable (o+w), not sticky
 LS.color(directory, ['st']) # Directory: sticky (+t) and not other-writable
 LS.color(executable, ['ex']) # Executable
 LS.color(symbolic_link_broken, ['mi']) # Broken symbolic link (ls -l)
-# LS.color(terminal_code, ['lc']) # Opening terminal code
-# LS.color(terminal_code, ['rc']) # Closing terminal code
-# LS.color(LS.do(Fg.Red), ['ec']) # Non-filename text
 
 LS.color(archive, [
   # Compressed
