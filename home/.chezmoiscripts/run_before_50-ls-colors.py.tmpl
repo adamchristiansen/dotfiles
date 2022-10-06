@@ -105,14 +105,17 @@ class LS:
       keys.discard(c)
     no_glob = set(filter(lambda x: '*' not in x, keys))
     keys -= no_glob
-    end_glob = set(filter(lambda x: x.endswith('*'), keys))
-    keys -= end_glob
     rest = keys
     # The last match found is applied so they are sorted in reverse priority
-    order = core + sorted(rest) + sorted(end_glob) + sorted(no_glob)
+    order = core + sorted(rest) + sorted(no_glob)
     ls_colors = []
     for k in order:
-      ls_colors.append(f"{k}={LS._colors[k]['ls_color']}")
+      # Make sure that all patterns start with a * and do not have a * anywhere
+      # else in them
+      if k.count('*') >= 2 or ('*' in k and not k.startswith('*')):
+        raise ValueError(f"invalid LS_COLORS pattern: {k}")
+      pattern = k if '*' in k or k in core else '*' + k
+      ls_colors.append(f"{pattern}={LS._colors[k]['ls_color']}")
     return {
       'data': copy.deepcopy(LS._colors),
       'ls_colors': ':'.join(ls_colors),
@@ -343,9 +346,9 @@ LS.color(office, [
   '*.xls', '*.xlsx', '*.ods', '*.xlr',
 ])
 LS.color(text_license, [
-  'COPYING', 'COPYING.*',
-  'COPYRIGHT', 'COPYRIGHT.*',
-  'LICENSE', 'LICENSE-*', 'LICENSE.*',
+  'COPYING', 'COPYING.md', 'COPYING.txt',
+  'COPYRIGHT', 'COPYRIGHT.md', 'COPYRIGHT.txt',
+  'LICENSE', 'LICENSE-APACHE', 'LICENSE-MIT', 'LICENSE.md', 'LICENSE.txt',
 ])
 LS.color(text_markup, [
   # Man Pages
@@ -359,13 +362,13 @@ LS.color(text_normal, [
   '*.txt',
 ])
 LS.color(text_special, [
-  'CHANGELOG', 'CHANGELOG.*',
-  'CODE_OF_CONDUCT', 'CODE_OF_CONDUCT.*',
-  'CONTRIBUTING', 'CONTRIBUTING.*',
-  'CONTRIBUTORS', 'CONTRIBUTORS.*',
-  'INSTALL', 'INSTALL.*',
-  'README', 'README.*',
-  'TODO', 'TODO.*',
+  'CHANGELOG', 'CHANGELOG.md', 'CHANGELOG.txt',
+  'CODE_OF_CONDUCT', 'CODE_OF_CONDUCT.md', 'CHANGELOG.txt',
+  'CONTRIBUTING', 'CONTRIBUTING.md', 'CONTRIBUTING.txt',
+  'CONTRIBUTORS', 'CONTRIBUTORS.md', 'CONTRIBUTORS.txt',
+  'INSTALL', 'INSTALL.md', 'INSTALL.txt',
+  'README', 'README.md', 'README.txt',
+  'TODO', 'TODO.md', 'TODO.txt',
 ])
 LS.color(tools, [
   # Automake
@@ -421,13 +424,13 @@ LS.color(tools, [
   # Scons
   'SConscript', 'SConstruct',
   # Style
-  '.clang-format', '.flake8', '.prettierrc*', '.prettier*',
+  '.clang-format', '.flake8', '.prettierrc',
   # X
-  '.dmrc', '.Xauthority', '.xinitrc', '.xsession*',
+  '.dmrc', '.Xauthority', '.xinitrc', '.xsession-errors',
   # Yarn
-  '.yarnrc*', 'yarn.lock',
+  '.yarnrc', 'yarn.lock',
   # Other
-  '.*ignore',
+  '.ignore',
 ])
 LS.color(unimportant, [
   # Automake
@@ -454,8 +457,6 @@ LS.color(unimportant, [
   '*.bc',
   # macOS
   '.CFUserTextEncoding', '.DS_Store', '.localized',
-  # Microsoft Office
-  '~$*',
   # Python
   '*.pyc', '*.pyd', '*.pyo',
   # Rust
@@ -464,7 +465,7 @@ LS.color(unimportant, [
   '*.scons_opt', '*.sconsign.dblite',
   # Other
   '*.bak', '*.lock', '*.log', '*.old', '*.orig', '*.pid', '*.swp', '*.tmp',
-  '*$*', '*~*', '.hushlogin', '.sudo_as_admin_successful',
+  '*~', '.hushlogin', '.sudo_as_admin_successful',
 ])
 
 p = pathlib.Path('{{ .chezmoi.sourceDir }}/.gen/ls_colors.json')
