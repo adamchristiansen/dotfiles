@@ -158,8 +158,8 @@ draw_bold_text_with_bright_colors: true
 colors:
   # Default colors
   primary:
-    background: "0x{{- $color.base00.hex.rgb -}}"
-    foreground: "0x{{- $color.base05.hex.rgb -}}"
+    background: "0x{{- $color.bg.hex.rgb -}}"
+    foreground: "0x{{- $color.fg.hex.rgb -}}"
 
     # Bright and dim foreground colors
     #
@@ -174,8 +174,8 @@ colors:
   # Colors which should be used to draw the terminal cursor. If these are unset,
   # the cursor color will be the inverse of the cell color.
   cursor:
-    text:   "0x{{- $color.base00.hex.rgb -}}"
-    cursor: "0x{{- $color.base05.hex.rgb -}}"
+    text:   "0x{{- $color.bg.hex.rgb -}}"
+    cursor: "0x{{- $color.fg.hex.rgb -}}"
 
   # Vi mode cursor colors
   #
@@ -243,25 +243,25 @@ colors:
 
   # Normal colors
   normal:
-    black:   "0x{{- $color.base03.hex.rgb -}}"
-    red:     "0x{{- $color.base08.hex.rgb -}}"
-    green:   "0x{{- $color.base0b.hex.rgb -}}"
-    yellow:  "0x{{- $color.base0a.hex.rgb -}}"
-    blue:    "0x{{- $color.base0d.hex.rgb -}}"
-    magenta: "0x{{- $color.base0e.hex.rgb -}}"
-    cyan:    "0x{{- $color.base0c.hex.rgb -}}"
-    white:   "0x{{- $color.base09.hex.rgb -}}"
+    black:   "0x{{- $color.black.hex.rgb -}}"
+    red:     "0x{{- $color.red.hex.rgb -}}"
+    green:   "0x{{- $color.green.hex.rgb -}}"
+    yellow:  "0x{{- $color.yellow.hex.rgb -}}"
+    blue:    "0x{{- $color.blue.hex.rgb -}}"
+    magenta: "0x{{- $color.pink.hex.rgb -}}"
+    cyan:    "0x{{- $color.cyan.hex.rgb -}}"
+    white:   "0x{{- $color.purple.hex.rgb -}}"
 
   # Bright colors
   bright:
-    black:   "0x{{- $color.base03.hex.rgb -}}"
-    red:     "0x{{- $color.base08.hex.rgb -}}"
-    green:   "0x{{- $color.base0b.hex.rgb -}}"
-    yellow:  "0x{{- $color.base0a.hex.rgb -}}"
-    blue:    "0x{{- $color.base0d.hex.rgb -}}"
-    magenta: "0x{{- $color.base0e.hex.rgb -}}"
-    cyan:    "0x{{- $color.base0c.hex.rgb -}}"
-    white:   "0x{{- $color.base09.hex.rgb -}}"
+    black:   "0x{{- $color.black.hex.rgb -}}"
+    red:     "0x{{- $color.red.hex.rgb -}}"
+    green:   "0x{{- $color.green.hex.rgb -}}"
+    yellow:  "0x{{- $color.yellow.hex.rgb -}}"
+    blue:    "0x{{- $color.blue.hex.rgb -}}"
+    magenta: "0x{{- $color.pink.hex.rgb -}}"
+    cyan:    "0x{{- $color.cyan.hex.rgb -}}"
+    white:   "0x{{- $color.purple.hex.rgb -}}"
 
   # Dim colors
   #
@@ -311,7 +311,7 @@ colors:
 bell:
   animation: EaseOutExpo
   duration: 0
-  color: "0x{{- $color.base05.hex.rgb -}}"
+  color: "0x{{- $color.fg.hex.rgb -}}"
 
 # Mouse bindings
 #

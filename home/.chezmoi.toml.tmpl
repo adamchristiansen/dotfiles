@@ -8,6 +8,7 @@
 {{- $gitEmail := promptStringOnce . "gitEmail" "git email" -}}
 {{- $gitName := promptStringOnce . "gitName" "git author name" -}}
 {{- $shell := promptStringOnce . "shell" "shell" "bash" -}}
+{{- $specialColor := promptStringOnce . "specialColor" "special color" "orange" -}}
 {{- $umask := promptStringOnce . "umask" "umask" "022" | trunc -3 -}}
 
 format = "json"
@@ -25,4 +26,5 @@ fontSize = {{ $fontSize }}
 gitEmail = {{ $gitEmail | quote }}
 gitName = {{ $gitName | quote }}
 shell = {{ $shell | quote }}
+specialColor = {{ $specialColor | quote }}
 umask = {{ printf "0%s" $umask | quote }}
