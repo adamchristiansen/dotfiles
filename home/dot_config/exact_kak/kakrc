@@ -9,7 +9,7 @@ set-option global ui_options \
   terminal_padding_char=
 set-option global startup_info_version 99999999 # Disable startup message
 
-colorscheme uuu
+colorscheme significance
 hook global BufCreate .* %{
   add-highlighter buffer/ number-lines \
     -relative -hlcursor -separator '  ' -min-digits 4
