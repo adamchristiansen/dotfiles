@@ -39,6 +39,7 @@ plug "andreyorst/fzf.kak" config %{
   set-option global fzf_grep_command "rg"
   set-option global fzf_highlight_command "bat"
 
+  set-option global fzf_default_opts %sh{ printf "$FZF_DEFAULT_OPTS" }
   set-option global fzf_preview true
   set-option global fzf_preview_height '50%'
   set-option global fzf_preview_pos "top"
