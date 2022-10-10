@@ -17,42 +17,39 @@ plug "adamchristiansen/kakclip" config %{
   kakclip-enable
 }
 
-plug "andreyorst/kaktree" defer kaktree %{
-  define-command -hidden kaktree-show-focus %{ evaluate-commands %sh{
-    if [ "${kak_opt_kaktree__active}" = "true" ]; then
-      if [ "${kak_opt_kaktree__onscreen}" = "true" ]; then
-        printf "%s\n" "kaktree-focus"
-      else
-        printf "%s\n" "kaktree-toggle"
-      fi
-    fi
-  }}
-
-  map global user f :kaktree-show-focus<ret> \
-    -docstring "show and focus file tree"
-  map global user "F" ":kaktree-toggle<ret>" -docstring "toggle file tree"
-
-  set-option global kaktree_dir_icon_close "▸"
-  set-option global kaktree_dir_icon_open  "▾"
-  set-option global kaktree_file_icon      "⠀"
-  set-option global kaktree_indentation 2
-  set-option global kaktree_show_help false
-  set-option global kaktree_show_hidden true
-  set-option global kaktree_side left
-  set-option global kaktree_size 39
-  set-option global kaktree_sort true
-  set-option global kaktree_split horizontal
+plug "andreyorst/fzf.kak" config %{
+  map global user <a-c> ":fzf-cd<ret>" -docstring "change directory"
+  map global user b ":fzf-buffer<ret>" -docstring "change buffer"
+  map global user <a-b> ":fzf-delete-buffer<ret>" -docstring "delete buffer"
+  map global user e ":fzf-vcs<ret>" -docstring "edit file in vcs repo"
+  map global user f ":fzf-file<ret>" -docstring "open file"
+  map global user F ":fzf-file buffile-dir<ret>" -docstring "open file relative to current buffer"
+  map global user g ":fzf-grep<ret>" -docstring "grep file contents recursively"
+  map global user s ":fzf-buffer-search<ret>" -docstring "search in buffer"
+  map global user z ":fzf-mode<ret>" -docstring "fzf user mode"
+} demand fzf %{
+  require-module fzf-buffer
+  require-module fzf-cd
+  require-module fzf-file
+  require-module fzf-grep
+  require-module fzf-search
+  require-module fzf-vcs
 } config %{
-  hook global WinSetOption filetype=kaktree %{
-    remove-highlighter buffer/numbers
-    remove-highlighter buffer/matching
-    remove-highlighter buffer/wrap
-    remove-highlighter buffer/show-whitespaces
+  set-option global fzf_file_command "fd"
+  set-option global fzf_grep_command "rg"
+  set-option global fzf_highlight_command "bat"
 
-    # Hide statusbar
-    set-option buffer modelinefmt ''
-  }
-  kaktree-enable
+  set-option global fzf_preview true
+  set-option global fzf_preview_height '50%'
+  set-option global fzf_preview_pos "top"
+  set-option global fzf_preview_tmux_height '70%'
+  set-option global fzf_preview_width '50%'
+  set-option global fzf_tmux_height '60%'
+  set-option global fzf_tmux_popup false
+
+  set-option global fzf_horizontal_map "ctrl-s"
+  set-option global fzf_vertical_map "ctrl-v"
+  set-option global fzf_window_map "ctrl-w"
 }
 
 plug "andreyorst/smarttab.kak"
