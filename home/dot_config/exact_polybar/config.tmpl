@@ -1,8 +1,8 @@
 {{- $color := include ".gen/color.json" | mustFromJson -}}
 
 [colors]
-background = "#{{ $color.base00.hex.rgb }}"
-foreground = "#{{ $color.base05.hex.rgb }}"
+background = "#{{ $color.bg.hex.rgb }}"
+foreground = "#{{ $color.fg.hex.rgb }}"
 
 [bar/bar]
 width = 100%
@@ -16,7 +16,7 @@ border-top-size = 0
 border-right-size = 0
 border-bottom-size = 100%:-32
 border-left-size = 0
-border-color = "#80{{ $color.base00.hex.rgb }}"
+border-color = "#80{{ $color.bg.hex.rgb }}"
 
 font-0 = {{ .fontName }}:size={{ .fontSize }};1
 

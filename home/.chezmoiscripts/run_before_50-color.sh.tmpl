@@ -4,20 +4,8 @@
 
 set -e
 
-python=""
-if command -v python3 > /dev/null; then
-  python=python3
-elif command -v python2 > /dev/null; then
-  python=python2
-elif command -v python > /dev/null; then
-  python=python
-else
-  echo "Could not find a python in PATH" >&2
-  exit 1
-fi
-
 script="{{ .chezmoi.sourceDir }}/dot_config/exact_color/color.py"
 color_file="{{ .chezmoi.sourceDir }}/.gen/color.json"
 
 mkdir -p "{{ .chezmoi.sourceDir }}/.gen"
-"$python" "$script" "{{ .colorscheme }}" > "$color_file"
+python3 "$script" "{{ .colorscheme }}" "{{ .specialColor }}" > "$color_file"

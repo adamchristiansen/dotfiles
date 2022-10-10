@@ -43,6 +43,24 @@ In addition, some of the `base16` colors are treated in following way:
 It is not necessary for `base08` to be specified as red, however, it will be
 used with _red semantics_.
 
+The following aliases are defined that can be used:
+
+- `bg` → `base00`
+- `black` → `base03`
+- `fg` → `base05`
+- `white` → `base05`
+- `red` → `base08`
+- `orange` → `base09`
+- `yellow` → `base0a`
+- `green` → `base0b`
+- `cyan` → `base0c`
+- `blue` → `base0d`
+- `pink` → `base0e`
+- `purple` → `base0f`
+- `special` → The `specialColor` in the chezmoi data
+
+The `special` color should be used as an accent color.
+
 In addition to the 16 colors above, an additional color called `wall` is
 defined, which is the fallback color for wallpapers.
 
