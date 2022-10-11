@@ -4,11 +4,6 @@ root: {{ .chezmoi.homeDir }}
 startup_window: term
 
 windows:
-  - term:
-      layout: even-horizontal
-      panes:
-        - clear
-        - clear
   - music:
       panes: ncmpcpp
       root: {{ .chezmoi.homeDir }}/Documents/Music
@@ -18,7 +13,7 @@ windows:
         - clear
         - clear
       root: {{ .chezmoi.sourceDir }}
-  - update:
+  - term:
       layout: even-horizontal
       panes:
         - clear
