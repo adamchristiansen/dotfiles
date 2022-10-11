@@ -42,11 +42,13 @@ plug "andreyorst/fzf.kak" config %{
   set-option global fzf_default_opts %sh{ printf "$FZF_DEFAULT_OPTS" }
   set-option global fzf_preview true
   set-option global fzf_preview_height '50%'
-  set-option global fzf_preview_pos "top"
-  set-option global fzf_preview_tmux_height '70%'
   set-option global fzf_preview_width '50%'
-  set-option global fzf_tmux_height '60%'
-  set-option global fzf_tmux_popup false
+  set-option global fzf_preview_pos "right"
+
+  set-option global fzf_preview_tmux_height '70%'
+  set-option global fzf_tmux_height '70%'
+  set-option global fzf_tmux_popup true
+  set-option global fzf_tmux_popup_width '70%'
 
   set-option global fzf_horizontal_map "ctrl-s"
   set-option global fzf_vertical_map "ctrl-v"
