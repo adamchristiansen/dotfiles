@@ -51,7 +51,7 @@ define-command fzf -hidden -params .. %{
       # found, the script will ikely work anyway since ancient unix magic is
       # used to run the script as a shell script for the currently running
       # shell (which is sh).
-      shell="$(type -p sh)"
+      shell="$(command -v sh)"
       if [ -z "$shell" ]; then
         shell="/bin/sh"
       fi
