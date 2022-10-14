@@ -1,3 +1,5 @@
+# Use fzf for interactively making selections.
+
 declare-option str fzf_preview_height '50%'
 declare-option str fzf_preview_width '50%'
 declare-option str fzf_preview_position 'top'
