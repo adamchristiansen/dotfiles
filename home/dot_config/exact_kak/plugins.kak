@@ -13,10 +13,4 @@ evaluate-commands %sh{
 }
 plug "andreyorst/plug.kak" noload
 
-plug "adamchristiansen/kakclip" config %{
-  kakclip-enable
-}
-
 plug "andreyorst/smarttab.kak"
-
-plug "https://gitlab.com/Screwtapello/kakoune-inc-dec"

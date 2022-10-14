@@ -1,3 +1,5 @@
+# A custom minimal modeline.
+
 declare-option -hidden str modeline_modified
 define-command -hidden modeline-update-modified %{
   set-option buffer modeline_modified %sh{
