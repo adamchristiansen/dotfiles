@@ -21,7 +21,7 @@ hook global BufCreate .* %{
 
 hook global BufCreate .* %{
   editorconfig-load
-  autoconfigtab
+  indent-config
 }
 
 hook global InsertCompletionShow .* %{
@@ -33,9 +33,9 @@ hook global InsertCompletionHide .* %{
   unmap window insert <s-tab> <c-p>
 }
 
-source "%val{config}/plugins.kak"
 source "%val{config}/clipboard.kak"
 source "%val{config}/fzf.kak"
+source "%val{config}/indent.kak"
 source "%val{config}/modeline.kak"
 
 map global user c     -docstring 'comment line'                         ':comment-line<ret>'
