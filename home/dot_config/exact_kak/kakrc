@@ -34,6 +34,7 @@ hook global InsertCompletionHide .* %{
 }
 
 source "%val{config}/plugins.kak"
+source "%val{config}/fzf.kak"
 source "%val{config}/modeline.kak"
 
 map global user c -docstring 'comment line' ':comment-line<ret>'
@@ -47,3 +48,10 @@ map global user Y -docstring 'yank entire buffer to clipboard' ':kakclip-yank-bu
 
 map global user i -docstring 'increment numbers' ':inc-dec-modify-numbers + %val{count}<ret>'
 map global user I -docstring 'decrement numbers' ':inc-dec-modify-numbers - %val{count}<ret>'
+
+map global user <a-c> ":fzf-cd<ret>" -docstring "change directory"
+map global user b ":fzf-buffer<ret>" -docstring "change buffer"
+map global user <a-b> ":fzf-buffer-delete<ret>" -docstring "delete buffer"
+map global user f ":fzf-file-git<ret>" -docstring "edit file in git repo"
+map global user F ":fzf-file<ret>" -docstring "open file"
+map global user <a-f> ":fzf-file-relative-to-buffer<ret>" -docstring "open file relative to current buffer"
