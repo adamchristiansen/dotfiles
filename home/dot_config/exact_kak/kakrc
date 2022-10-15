@@ -37,6 +37,7 @@ source "%val{config}/clipboard.kak"
 source "%val{config}/fzf.kak"
 source "%val{config}/indent.kak"
 source "%val{config}/modeline.kak"
+source "%val{config}/tmux.kak"
 
 map global user c     -docstring 'comment line'                         ':comment-line<ret>'
 map global user C     -docstring 'comment block'                        ':comment-block<ret>'
@@ -53,3 +54,8 @@ map global user <a-b> -docstring 'delete buffer'                        ':fzf-bu
 map global user f     -docstring 'edit file in git repository'          ':fzf-file-git<ret>'
 map global user F     -docstring 'open file'                            ':fzf-file<ret>'
 map global user <a-f> -docstring 'open file relative to current buffer' ':fzf-file-relative-to-buffer<ret>'
+
+map global user <a-h> -docstring 'tmux horizontal split'                ':tmux-horizontal<ret>'
+map global user <a-p> -docstring 'tmux popup'                           ':tmux-popup<ret>'
+map global user <a-v> -docstring 'tmux vertical split'                  ':tmux-vertical<ret>'
+map global user <a-w> -docstring 'tmux window'                          ':tmux-window<ret>'
