@@ -129,7 +129,10 @@ This gives access to the following:
     - `b` for the blue component
     - Additionally, for `hex` formats the following are defined:
       - `rgb` is the traditional hex format with 6 hex characters
-      - `bgr` is like `rgb` but with the order of the components reversed
+    - Additionally, for `rgb` formats the following are defined:
+      - `rgb` is `rgb(r, g, b)` where `r`, `g`, `b` are 0 to 255
+    - Additionally, for `dec` formats the following are defined:
+      - `rgb` is `rgb(r, g, b)` where `r`, `g`, `b` are 0 to 1
 
 Here are some examples:
 

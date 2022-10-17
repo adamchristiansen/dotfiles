@@ -56,7 +56,6 @@ class Scheme:
     d = {}
     d['hex'] = {}
     d['hex']['rgb'] = x
-    d['hex']['bgr'] = comp_hex(x)[2] + comp_hex(x)[1] + comp_hex(x)[0]
     d['hex']['r'] = comp_hex(x)[0]
     d['hex']['g'] = comp_hex(x)[1]
     d['hex']['b'] = comp_hex(x)[2]
@@ -64,10 +63,14 @@ class Scheme:
     d['rgb']['r'] = comp_rgb(x)[0]
     d['rgb']['g'] = comp_rgb(x)[1]
     d['rgb']['b'] = comp_rgb(x)[2]
+    d['rgb']['rgb'] = 'rgb({}, {}, {})'.format(
+      d['rgb']['r'], d['rgb']['g'], d['rgb']['b'])
     d['dec'] = {}
     d['dec']['r'] = '{:.09f}'.format(comp_dec(x)[0])
     d['dec']['g'] = '{:.09f}'.format(comp_dec(x)[1])
     d['dec']['b'] = '{:.09f}'.format(comp_dec(x)[2])
+    d['dec']['rgb'] = 'rgb({}, {}, {})'.format(
+      d['dec']['r'], d['dec']['g'], d['dec']['b'])
     return d
 
   def json(self):
