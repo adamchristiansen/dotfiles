@@ -1,0 +1,49 @@
+imports = [
+  "skin.toml",
+]
+
+# The default flags to apply at startup
+default_flags = "gh"
+
+# Disable click to select
+capture_mouse = false
+
+# Use escape to quit if there is nothing else to cancel
+quit_on_last_cancel = true
+
+# Always show the full path on searches
+show_matching_characters_on_path_searches = true
+
+# Hide the selection marker on the left side.
+show_selection_mark = false
+
+# The order to display file metadata.
+cols_order = [
+    "mark",
+    "git",
+    "branch",
+    "permission",
+    "date",
+    "size",
+    "count",
+    "name",
+]
+
+[search-modes]
+"<empty>" = "fuzzy path"
+"/"       = "regex path"
+"e/"      = "exact path"
+# "f/"      = "fuzzy content" # Not supported
+"r/"      = "regex content"
+"ec/"     = "exact content"
+"en/"     = "exact name"
+"ep/"     = "exact path"
+# "fc/"     = "fuzzy content" # Not supported
+"fn/"     = "fuzzy name"
+"fp/"     = "fuzzy path"
+"rc/"     = "regex content"
+"rn/"     = "regex name"
+"rp/"     = "regex path"
+# "tc/"     = "tokens content" # Not supported
+"tn/"     = "tokens name"
+"tp/"     = "tokens path"
