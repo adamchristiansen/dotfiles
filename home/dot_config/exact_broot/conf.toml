@@ -1,4 +1,5 @@
 imports = [
+  "ext-colors.toml",
   "skin.toml",
   "special-paths.toml",
   "local.toml",
