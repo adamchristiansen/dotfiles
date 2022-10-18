@@ -1,0 +1,36 @@
+{{- $color := include ".gen/color.json" | mustFromJson -}}
+{{- $ls := include ".gen/ls_colors.json" | mustFromJson -}}
+
+#!/usr/bin/env python3
+
+import json
+import re
+
+# This pattern matched all LS_COLORS specified as file extensions and extracts
+# the extension from it.
+PATTERN = re.compile(r"^(?:\*\.?)([^.]+)$")
+
+# Black and white must be replaced by an RGB balue because broot always uses
+# #000000 and #ffffff, respectively.
+BLACK = "{{ $color.black.rgb.rgb }}"
+WHITE = "{{ $color.white.rgb.rgb }}"
+
+# Generate the colors from LS_COLORS
+colors = []
+with open("{{ .chezmoi.sourceDir }}/.gen/ls_colors.json") as f:
+  data = json.load(f)
+  for pattern, info in data['data'].items():
+    m = re.search(PATTERN, pattern)
+    if m:
+      color = 'none'
+      if info['fg_name'] is not None:
+        color = info['fg_name']
+      if color == 'black':
+        color = BLACK
+      if color == 'white':
+        color = WHITE
+      colors.append((m[1], color))
+
+print('[ext-colors]')
+for ext, color in sorted(colors):
+  print(f'"{ext.strip()}" = "{color.strip()}"')
