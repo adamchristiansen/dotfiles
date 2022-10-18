@@ -1,5 +1,7 @@
 imports = [
   "skin.toml",
+  "special-paths.toml",
+  "local.toml",
 ]
 
 # The default flags to apply at startup
