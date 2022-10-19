@@ -1,0 +1,65 @@
+[[verbs]]
+invocation = "root"
+key = "alt-/"
+internal = ":focus /"
+
+[[verbs]]
+invocation = "home"
+key = "alt-tab"
+internal = ":focus {{ .chezmoi.homeDir }}"
+
+[[verbs]]
+invocation = "edit"
+shortcut = "e"
+key = "enter"
+apply_to = "file"
+external = "$EDITOR +{line} {file}"
+leave_broot = false
+
+[[verbs]]
+key = "alt-backspace"
+internal = ":up_tree"
+
+[[verbs]]
+key = "alt-j"
+internal = ":line_down"
+
+[[verbs]]
+key = "alt-k"
+internal = ":line_up"
+
+[[verbs]]
+key = "alt-shift-j"
+internal = ":select_last"
+
+[[verbs]]
+key = "alt-shift-k"
+internal = ":select_first"
+
+[[verbs]]
+key = "alt-h"
+internal = ":panel_left"
+
+[[verbs]]
+key = "alt-l"
+internal = ":panel_right"
+
+[[verbs]]
+key = "alt-p"
+internal = ":open_preview"
+
+[[verbs]]
+key = "alt-shift-p"
+internal = ":close_preview"
+
+[[verbs]]
+key = "alt-a"
+internal = ":stage_all_files"
+
+[[verbs]]
+key = "alt-s"
+internal = ":stage"
+
+[[verbs]]
+invocation = "alt-shift-s"
+internal = ":unstage"

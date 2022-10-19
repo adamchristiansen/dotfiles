@@ -2,6 +2,7 @@ imports = [
   "ext-colors.toml",
   "skin.toml",
   "special-paths.toml",
+  "verbs.toml",
   "local.toml",
 ]
 
