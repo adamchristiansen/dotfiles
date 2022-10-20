@@ -3,9 +3,9 @@
 define-command -hidden indent-config %{
   evaluate-commands %sh{
     if [ "$kak_opt_aligntab" = true -o "$kak_opt_indentwidth" -eq 0 ]; then
-      printf "%s" "indent-config-noexpand\n"
+      printf "%s\n" "indent-config-noexpand"
     else
-      printf "%s" "indent-config-expand\n"
+      printf "%s\n" "indent-config-expand"
     fi
   }
 }
