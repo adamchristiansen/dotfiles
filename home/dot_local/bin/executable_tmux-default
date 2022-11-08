@@ -5,8 +5,8 @@
 set -e
 
 if type tmuxinator > /dev/null 2>&1; then
-  tmuxinator start default
+  tmuxinator start main
 else
   cd
-  tmux attach-session -t default || tmux new-session -s default
+  tmux attach-session -t main || tmux new-session -s main
 fi
