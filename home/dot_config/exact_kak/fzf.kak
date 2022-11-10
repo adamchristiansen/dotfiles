@@ -87,6 +87,7 @@ define-command fzf -hidden -params .. %{
       if [ -n "$filter_command" ]; then
         printf "%s | \\\\\n" "$filter_command"
       fi
+      printf "%s | \\\\\n" "LC_ALL=C sort"
       printf "%s" "fzf --border=none --height=100%"
       if [ "$preview" = "true" ]; then
         printf " %s" "--preview 'bat --color=always --style=plain {}'"
