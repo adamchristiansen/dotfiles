@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
+"""
+Reverse the lines of the input.
+"""
+
 import sys
 
 from dotfiles import fn, seq
 
-print(seq(sys.stdin.read().splitlines()).map(fn.rstrip).reverse().join("\n"))
+print(seq(sys.stdin.read().splitlines()).map(fn.rstrip).reverse().join('\n'))

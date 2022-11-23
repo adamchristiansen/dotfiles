@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Query network information.
+"""
+
 import argparse
 import collections
 import re
@@ -41,8 +45,8 @@ def dbm_to_percent(dbm):
 # - `ssid` (string|None): SSID of wireless networks.
 # - `strength` (int|None): Signal strength (in percent) of wireless networks.
 # - `connected` (bool): Whether there is a network connection.
-Interface = collections.namedtuple("Interface",
-  ["device", "type", "ssid", "strength", "connected"])
+Interface = collections.namedtuple('Interface',
+  ['device', 'type', 'ssid', 'strength', 'connected'])
 
 def interfaces():
   """
@@ -53,7 +57,7 @@ def interfaces():
   (list<Interface>): All of the interfaces found.
   """
   # Get the interfaces
-  r = run(["iw", "dev"])
+  r = run(['iw', 'dev'])
   if r.exitcode != 0:
     raise IOError(f"iw exited with {r.exitcode}\nstdout: {r.stdout}\nstderr{r.stderr}")
   # Spearate each interface into individual strings
@@ -66,9 +70,9 @@ def interfaces():
     elif len(line.lstrip()) != len(line):
       continue
     else:
-      int_texts.append("\n".join(lines[mark:i]))
+      int_texts.append('\n'.join(lines[mark:i]))
       mark = i
-  int_texts.append("\n".join(lines[mark:]))
+  int_texts.append('\n'.join(lines[mark:]))
   # Build the interfaces
   ints = []
   for text in int_texts:
@@ -85,9 +89,9 @@ def interfaces():
     # Get the interface type
     m = re.search(r"txpower\s+[.\d]+", text, re.I)
     if m:
-      type = "wireless"
+      type = 'wireless'
     else:
-      type = "wired"
+      type = 'wired'
     # Get the SSID
     m = re.search(r"ssid\s+([\w ]+)$", text, re.I | re.M)
     if m:
@@ -98,7 +102,7 @@ def interfaces():
       dbm = abs(float(m.group(1)))
       strength = dbm_to_percent(dbm)
     # Get connected status
-    ip = run(["ip", "link", "show", device])
+    ip = run(['ip', 'link', 'show', device])
     if ip.exitcode != 0:
       raise IOError(f"ip exited with {ip.exitcode}\nstdout: {ip.stdout}\nstderr{ip.stderr}")
     connected = re.search(r"state[ ]+UP", ip.stdout, re.I) is not None
@@ -115,49 +119,49 @@ def notify_network(i):
 
   - i (Interface): The interface status.
   """
-  wireless = i.type == "wireless"
+  wireless = i.type == 'wireless'
 
   # Build the notification
   summary = i.device
   body = None
   icon = None
-  urgency = "low"
+  urgency = 'low'
 
   if wireless:
     # Wireless
     if not i.connected:
-      icon = "network-wireless-offline"
-      body = "Offline"
-      urgency = "critical"
+      icon = 'network-wireless-offline'
+      body = 'Offline'
+      urgency = 'critical'
     elif i.strength >= 100:
       summary = i.ssid
       body = f"Connected ({i.strength}%)"
-      icon = "network-wireless-signal-excellent"
+      icon = 'network-wireless-signal-excellent'
     elif i.strength >= 70:
       summary = i.ssid
       body = f"Connected ({i.strength}%)"
-      icon = "network-wireless-signal-good"
+      icon = 'network-wireless-signal-good'
     elif i.strength >= 30:
       summary = i.ssid
       body = f"Connected ({i.strength}%)"
-      icon = "network-wireless-signal-ok"
+      icon = 'network-wireless-signal-ok'
     elif i.strength > 0:
       summary = i.ssid
       body = f"Connected ({i.strength}%)"
-      icon = "network-wireless-signal-weak"
+      icon = 'network-wireless-signal-weak'
     else:
       summary = i.ssid
       body = f"Connected ({i.strength}%)"
-      icon = "network-wireless-signal-none"
+      icon = 'network-wireless-signal-none'
   else:
     # Wired
     if not i.connected:
-      icon = "network-offline"
-      body = "Offline"
-      urgency = "critical"
+      icon = 'network-offline'
+      body = 'Offline'
+      urgency = 'critical'
     else:
-      icon = "network-transmit-receive"
-      body = "Connected"
+      icon = 'network-transmit-receive'
+      body = 'Connected'
 
   # Generate a notification
   notify(
@@ -176,13 +180,13 @@ def notify_network(i):
   if i.connected is not None: print(f"  Connected: {i.connected}")
 
 parser = argparse.ArgumentParser(
-  description="Query network state")
-parser.add_argument("--interval",
+  description='Query network state')
+parser.add_argument('--interval',
   type=float, default=3,
-  help="time in seconds to sleep between monitor queries")
-parser.add_argument("--monitor",
-  action="store_true",
-  help="run until manually stopped")
+  help='time in seconds to sleep between monitor queries')
+parser.add_argument('--monitor',
+  action='store_true',
+  help='run until manually stopped')
 args = parser.parse_args()
 
 def show_all():

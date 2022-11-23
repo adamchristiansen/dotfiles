@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Integration with the system clipboard.
+"""
+
 from abc import ABC, abstractmethod
 import argparse
 import sys
@@ -31,90 +35,90 @@ class Clip(ABC):
 class ClipPb(Clip):
   """A clipboard manager using pbcopy and pbpaste on macOS."""
 
-  def clear(self, data=b""):
-    self.run(["pbcopy", "-pboard", "general"], data)
-    self.run(["pbcopy", "-pboard", "ruler"], data)
-    self.run(["pbcopy", "-pboard", "find"], data)
-    self.run(["pbcopy", "-pboard", "font"], data)
+  def clear(self, data=b''):
+    self.run(['pbcopy', '-pboard', 'general'], data)
+    self.run(['pbcopy', '-pboard', 'ruler'], data)
+    self.run(['pbcopy', '-pboard', 'find'], data)
+    self.run(['pbcopy', '-pboard', 'font'], data)
 
   def copy(self, data):
-    self.run(["pbcopy"], data)
+    self.run(['pbcopy'], data)
 
   def paste(self):
-    return self.run(["pbpaste"]).stdout
+    return self.run(['pbpaste']).stdout
 
 class ClipWayland(Clip):
   """A clipboard manager using wl-copy and wl-paste on Wayland."""
 
-  def clear(self, data=b""):
-    self.run(["wl-copy", "--foreground"], data)
-    self.run(["wl-copy", "--foreground", "--primary"], data)
+  def clear(self, data=b''):
+    self.run(['wl-copy', '--foreground'], data)
+    self.run(['wl-copy', '--foreground', '--primary'], data)
 
   def copy(self, data):
-    self.run(["wl-copy", "--foreground"], data)
+    self.run(['wl-copy', '--foreground'], data)
 
   def paste(self):
-    return self.run(["wl-paste"]).stdout
+    return self.run(['wl-paste']).stdout
 
 class ClipXSel(Clip):
   """A clipboard manager using xsel on X sessions."""
 
-  def clear(self, data=b""):
-    self.run(["xsel", "--input", "--primary"], data)
-    self.run(["xsel", "--input", "--secondary"], data)
-    self.run(["xsel", "--input", "--clipboard"], data)
+  def clear(self, data=b''):
+    self.run(['xsel', '--input', '--primary'], data)
+    self.run(['xsel', '--input', '--secondary'], data)
+    self.run(['xsel', '--input', '--clipboard'], data)
 
   def copy(self, data):
-    self.run(["xsel", "--input", "--clipboard"], data)
+    self.run(['xsel', '--input', '--clipboard'], data)
 
   def paste(self):
-    return self.run(["xsel", "--output", "--clipboard"]).stdout
+    return self.run(['xsel', '--output', '--clipboard']).stdout
 
 def detect():
   """Detect a clipboard manager to use."""
-  if plat.has_cmd("pbcopy", "pbpaste"):
+  if plat.has_cmd('pbcopy', 'pbpaste'):
     return ClipPb()
-  elif plat.has_env("WAYLAND_DISPLAY") and plat.has_cmd("wl-copy", "wl-paste"):
+  elif plat.has_env('WAYLAND_DISPLAY') and plat.has_cmd('wl-copy', 'wl-paste'):
     return ClipWayland()
-  elif plat.has_env("DISPLAY") and plat.has_cmd("xsel"):
+  elif plat.has_env('DISPLAY') and plat.has_cmd('xsel'):
     return ClipXSel()
   else:
-    log.fatal("could not find a clipboard manager")
+    log.fatal('could not find a clipboard manager')
 
-parser = argparse.ArgumentParser(description="Manage the system clipboard")
+parser = argparse.ArgumentParser(description='Manage the system clipboard')
 group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument("-x", "--clear",
-  action="store_true",
-  help="Clear all clipboards")
-group.add_argument("-c", "--copy",
-  action="store_true",
-  help="Copy stdin to clipboard")
-group.add_argument("-p", "--paste",
-  action="store_true",
-  help="Paste to stdout from clipboard")
-parser.add_argument("-n", "--notify",
-  action="store_true",
-  help="Trigger a notification")
+group.add_argument('-x', '--clear',
+  action='store_true',
+  help='Clear all clipboards')
+group.add_argument('-c', '--copy',
+  action='store_true',
+  help='Copy stdin to clipboard')
+group.add_argument('-p', '--paste',
+  action='store_true',
+  help='Paste to stdout from clipboard')
+parser.add_argument('-n', '--notify',
+  action='store_true',
+  help='Trigger a notification')
 args = parser.parse_args()
 
 clip = detect()
 
 if args.copy:
-  notify_body = "Copied to clipboard"
-  with open(sys.stdin.fileno(), "rb") as f:
+  notify_body = 'Copied to clipboard'
+  with open(sys.stdin.fileno(), 'rb') as f:
     clip.copy(f.read())
 elif args.paste:
-  notify_body = "Pasted from clipboard"
+  notify_body = 'Pasted from clipboard'
   sys.stdout.write(clip.paste())
 elif args.clear:
-  notify_body = "Cleared clipboard"
+  notify_body = 'Cleared clipboard'
   clip.clear()
 
 if args.notify:
   notify(
-    app="Clipboard",
+    app='Clipboard',
     body=notify_body,
-    icon="edit-cut",
-    urgency="low",
-    tag="clipboard",
+    icon='edit-cut',
+    urgency='low',
+    tag='clipboard',
   )

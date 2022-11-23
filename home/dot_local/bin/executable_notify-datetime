@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 
+"""
+Query the time and data.
+"""
+
 import datetime
 
 from dotfiles import notify
 
 now = datetime.datetime.now()
-time = now.strftime("%H:%M")
-date = now.strftime("%Y %B %d")
+time = now.strftime('%H:%M')
+date = now.strftime('%Y %B %d')
 
 notify(
-  app="Time",
+  app='Time',
   body=f"{time}\n{date}",
-  icon="x-office-calendar",
-  urgency="low",
-  tag="datetime",
+  icon='x-office-calendar',
+  urgency='low',
+  tag='datetime',
 )

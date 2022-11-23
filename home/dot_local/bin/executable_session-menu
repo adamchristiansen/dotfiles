@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Show a menu for actions in the current session.
+"""
+
 from dotfiles import menu, run
 
-opt = menu(["Lock", "Logout", "Reboot", "Shutdown", "Suspend"])
+opt = menu(['Lock', 'Logout', 'Reboot', 'Shutdown', 'Suspend'])
 run(f"session-{opt.lower()}", check=True)

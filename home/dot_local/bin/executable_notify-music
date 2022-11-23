@@ -1,56 +1,60 @@
 #!/usr/bin/env python3
 
+"""
+Query the current song.
+"""
+
 import argparse
 import os
 
 from dotfiles import notify, run
 
 parser = argparse.ArgumentParser(
-  description="Show music informatoin")
-parser.add_argument("--clear",
-  action="store_true",
-  help="clear the playlist")
+  description='Show music informatoin')
+parser.add_argument('--clear',
+  action='store_true',
+  help='clear the playlist')
 args = parser.parse_args()
 
 def clear():
-  run(["mpc", "clear"], check=True)
+  run(['mpc', 'clear'], check=True)
 
 def current_song():
-  mpc_cmd = ["mpc", "current", "-f",
-    "\n".join(map(lambda x: f"%{x}%", ["title", "artist", "album", "file"])),
+  mpc_cmd = ['mpc', 'current', '-f',
+    '\n'.join(map(lambda x: f"%{x}%", ['title', 'artist', 'album', 'file'])),
   ]
   r = run(mpc_cmd, check=True)
   if not r.stdout:
     return None
-  title, artist, album, filepath = r.stdout.split("\n")
-  filepath = os.path.join(os.path.expanduser("~/Music"), filepath)
+  title, artist, album, filepath = r.stdout.split('\n')
+  filepath = os.path.join(os.path.expanduser('~/Music'), filepath)
   dir = os.path.dirname(filepath)
-  exts = ["png", "jpg", "jpeg"]
+  exts = ['png', 'jpg', 'jpeg']
   coverpath = None
   for p in map(lambda ext: os.path.join(dir, f"cover.{ext}"), exts):
     if os.path.exists(p):
       coverpath = p
       break
   return {
-    "title": title,
-    "artist": artist,
-    "album": album,
-    "coverpath": coverpath,
+    'title': title,
+    'artist': artist,
+    'album': album,
+    'coverpath': coverpath,
   }
 
 if args.clear:
   clear()
   c = None
-  body = "Playlist cleared"
+  body = 'Playlist cleared'
 else:
   c = current_song()
   if c is not None:
-    body = "\n".join([c["title"], c["album"], c["artist"]])
+    body = '\n'.join([c['title'], c['album'], c['artist']])
   else:
-    body = "No song playing"
+    body = 'No song playing'
 notify(
-  app="Now Playing ♫",
+  app='Now Playing ♫',
   body=body,
-  icon=c["coverpath"] if c is not None else "media-tape",
-  tag="mpd-now-playing",
+  icon=c['coverpath'] if c is not None else 'media-tape',
+  tag='mpd-now-playing',
 )

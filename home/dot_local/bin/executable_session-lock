@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# Lock the current session.
+
 set -e
 
 if command -v mpc > /dev/null; then

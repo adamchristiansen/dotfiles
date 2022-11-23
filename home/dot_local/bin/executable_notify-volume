@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Manage the system volume.
+"""
+
 import argparse
 import re
 import sys
@@ -34,14 +38,14 @@ def mode(arg):
     return ModeAbs(int(arg))
   elif re.match(r"^[+-]\d+$", arg):
     return ModeRel(int(arg))
-  elif arg.lower() == "up":
+  elif arg.lower() == 'up':
     return ModeRel(+1)
-  elif arg.lower() == "down":
+  elif arg.lower() == 'down':
     return ModeRel(-1)
-  elif arg.lower() == "mute":
+  elif arg.lower() == 'mute':
     return ModeMute()
   else:
-    raise ValueError("unknown mode")
+    raise ValueError('unknown mode')
 
 parser = argparse.ArgumentParser(
   description=textwrap.dedent("""
@@ -55,60 +59,60 @@ parser = argparse.ArgumentParser(
       {name} up    Increment volume by delta
       {name} down  Decrement volume by delta
       {name} mute  Toggle mute/unmute
-  """.format(name=sys.argv[0].split("/")[-1])),
+  """.format(name=sys.argv[0].split('/')[-1])),
   formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument("mode",
+parser.add_argument('mode',
   type=mode,
-  nargs="?",
-  help="the control mode")
-parser.add_argument("--delta",
+  nargs='?',
+  help='the control mode')
+parser.add_argument('--delta',
   type=int, default=5,
-  help="the amount to change the volume")
+  help='the amount to change the volume')
 args = parser.parse_args()
 
 def mixer_run(args):
   """Run a command on the mixer. Only the arguments need to be provided."""
-  if run(["amixer", "get", "Master"]).exitcode == 0:
-    cmd = ["amixer"]
-  elif run(["amixer", "-D", "pulse", "get", "Master"]).exitcode == 0:
-    cmd = ["amixer", "-D", "pulse"]
+  if run(['amixer', 'get', 'Master']).exitcode == 0:
+    cmd = ['amixer']
+  elif run(['amixer', '-D', 'pulse', 'get', 'Master']).exitcode == 0:
+    cmd = ['amixer', '-D', 'pulse']
   if cmd is None:
-    log.fata("could not find mixer command")
+    log.fata('could not find mixer command')
   cmd.extend(args)
   return run(cmd)
 
 def mixer_state(nearest=True):
   """Get the volume percentage and muted state."""
-  _, s, _ = mixer_run(["get", "Master"])
-  mute = "[off]" in s
-  volume = int(re.search("(\d+)%", s).group(1))
+  _, s, _ = mixer_run(['get', 'Master'])
+  mute = '[off]' in s
+  volume = int(re.search('(\d+)%', s).group(1))
   if nearest:
     # Match the volume to the nearest multiple of delta
     volume = clamp(int(args.delta * round(volume / args.delta)), 0, 100)
   return volume, mute
 
 def mixer_set(volume, mute):
-  mixer_run(["set", "Master", f"{volume}%"])
-  mixer_run(["set", "Master", "off" if mute else "on"])
+  mixer_run(['set', 'Master', f"{volume}%"])
+  mixer_run(['set', 'Master', 'off' if mute else 'on'])
 
 def notify_volume(volume, mute):
   text = f"{volume}%" if not mute else f"Mute ({volume}%)"
   if mute:
-    icon = "audio-volume-muted"
+    icon = 'audio-volume-muted'
   else:
     if volume <= 33:
-      icon = "audio-volume-low"
+      icon = 'audio-volume-low'
     elif volume <= 67:
-      icon = "audio-volume-medium"
+      icon = 'audio-volume-medium'
     else:
-      icon = "audio-volume-high"
+      icon = 'audio-volume-high'
   notify(
-    app="Volume",
+    app='Volume',
     summary=text,
     icon=icon,
-    tag="volume",
+    tag='volume',
     progress=volume if not mute else 0,
-    urgency="low"
+    urgency='low'
   )
 
 if args.mode is not None:

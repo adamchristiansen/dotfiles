@@ -21,28 +21,22 @@ import subprocess
 import sys
 
 # The encoding for subprocess communication.
-ENCODING = "utf-8"
+ENCODING = 'utf-8'
 
 class ExitCode:
-  """
-  Program exit status codes.
-  """
+  """Program exit status codes."""
   SUCCESS = 0
   FAILURE = 1
 
 class ItemType(enum.IntEnum):
-  """
-  The Bitwarden item type enumeration.
-  """
+  """The Bitwarden item type enumeration."""
   LOGIN = 1
   SECURE_NOTE = 2
   CARD = 3
   IDENTITY = 4
 
 class UriMatchType(enum.IntEnum):
-  """
-  The Bitwarden URI match type enumeration.
-  """
+  """The Bitwarden URI match type enumeration."""
   DOMAIN = 0
   HOST = 1
   STARTS_WITH = 2
@@ -51,46 +45,34 @@ class UriMatchType(enum.IntEnum):
   NEVER = 5
 
 class FieldType(enum.IntEnum):
-  """
-  The Bitwarden field type enumeration.
-  """
+  """The Bitwarden field type enumeration."""
   TEXT = 0
   HIDDEN = 1
   BOOLEAN = 2
 
 class SecureNoteType(enum.IntEnum):
-  """
-  The Bitwarden secure note type enumeration.
-  """
+  """The Bitwarden secure note type enumeration."""
   GENERIC = 0
 
 class OrgUserType:
-  """
-  The Bitwarden organization user type enumeration.
-  """
+  """The Bitwarden organization user type enumeration."""
   OWNER = 0
   ADMIN = 1
   USER = 2
   MANAGER = 3
 
 class OrgUserStatusType(enum.IntEnum):
-  """
-  The Bitwarden organization user status type enumeration.
-  """
+  """The Bitwarden organization user status type enumeration."""
   INVITED = 0
   ACCEPTED = 1
   CONFIRMED = 2
 
 class BwError(Exception):
-  """
-  An exception for all Bitwarden related errors.
-  """
+  """An exception for all Bitwarden related errors."""
   pass
 
 class FailureError(Exception):
-  """
-  An exception that indicates the operation failed.
-  """
+  """An exception that indicates the operation failed."""
   pass
 
 class Object(object):
@@ -117,14 +99,10 @@ def bigram_similarity(q, p):
   return (2 * w) / norm_size
 
 class Bw:
-  """
-  The Bitwarden client.
-  """
+  """The Bitwarden client."""
 
   def __init__(self):
-    """
-    Create a Bitwarden client.
-    """
+    """Create a Bitwarden client."""
     self.session_key = None
 
   def list_login_items(self, search=None):
@@ -140,35 +118,35 @@ class Bw:
     list<LoginItem>
     """
     if self.session_key is None:
-      raise BwError("session key not set")
-    cmd = ["bw", "list", "items", "--nointeraction",
-         "--session", self.session_key]
+      raise BwError('session key not set')
+    cmd = ['bw', 'list', 'items', '--nointeraction',
+         '--session', self.session_key]
     if search is not None:
-      cmd.extend(["--search", search])
+      cmd.extend(['--search', search])
     try:
       p = subprocess.run(cmd, stdout=subprocess.PIPE,
                  stderr=subprocess.PIPE)
     except FileNotFoundError:
-      raise FailureError("bw not found")
+      raise FailureError('bw not found')
     if p.returncode:
       raise BwError(p.stderr.decode(ENCODING).strip())
     data = json.loads(p.stdout.decode(ENCODING).strip())
     data = filter(lambda x: \
-        x["object"] == "item" and x["type"] == ItemType.LOGIN, data)
+        x['object'] == 'item' and x['type'] == ItemType.LOGIN, data)
     return list(map(LoginItem, data))
 
   def lock(self):
     """
     Lock Bitwarden and destroy session keys.
     """
-    cmd = ["bw", "lock", "--nointeraction", "--raw"]
+    cmd = ['bw', 'lock', '--nointeraction', '--raw']
     if self.session_key is not None:
-      cmd.extend(["--session", self.session_key])
+      cmd.extend(['--session', self.session_key])
     try:
       p = subprocess.run(cmd, stdout=subprocess.PIPE,
                  stderr=subprocess.PIPE)
     except FileNotFoundError:
-      raise FailureError("bw not found")
+      raise FailureError('bw not found')
     if p.returncode:
       raise BwError(p.stderr.decode(ENCODING).strip())
     # Successfully locked
@@ -183,36 +161,32 @@ class Bw:
     (bool) True when successfully synced, false otherwise.
     """
     if self.session_key is None:
-      raise BwError("session key not set")
-    cmd = ["bw", "sync", "--nointeraction", "--session", self.session_key]
+      raise BwError('session key not set')
+    cmd = ['bw', 'sync', '--nointeraction', '--session', self.session_key]
     try:
       p = subprocess.run(cmd, stdout=subprocess.PIPE,
                  stderr=subprocess.PIPE)
     except FileNotFoundError:
-      raise FailureError("bw not found")
+      raise FailureError('bw not found')
     if p.returncode:
       return False
     return True
 
   def unlock(self, password=None):
-    """
-    Unlock Bitwarden and store the session key.
-    """
-    cmd = ["bw", "unlock", "--raw"]
+    """Unlock Bitwarden and store the session key."""
+    cmd = ['bw', 'unlock', '--raw']
     if password is not None:
       cmd.append(password)
     try:
       p = subprocess.run(cmd, stdout=subprocess.PIPE)
     except FileNotFoundError:
-      raise FailureError("bw not found")
+      raise FailureError('bw not found')
     if p.returncode:
       raise BwError(p.stderr.decode(ENCODING).strip())
     self.session_key = p.stdout.decode(ENCODING).strip()
 
 class LoginItem:
-  """
-  Represents a login item from the Bitwarden CLI.
-  """
+  """Represents a login item from the Bitwarden CLI."""
 
   def __init__(self, data):
     """
@@ -220,55 +194,49 @@ class LoginItem:
     to work with.
     """
     self._json = data
-    self.object = data["object"]
-    self.id = data["id"]
-    self.organizationId = data["organizationId"]
-    self.folderId = data["folderId"]
-    self.type = data["type"]
-    self.name = data["name"]
-    self.notes = data["notes"]
-    self.favorite = data["favorite"]
+    self.object = data['object']
+    self.id = data['id']
+    self.organizationId = data['organizationId']
+    self.folderId = data['folderId']
+    self.type = data['type']
+    self.name = data['name']
+    self.notes = data['notes']
+    self.favorite = data['favorite']
     self.login = Object()
     self.login.uris = []
     self.login.username = None
     self.login.password = None
     self.login.totp = None
     self.login.passwordRevisionDate = None
-    if "login" in data:
-      if "uris" in data["login"]:
-        for e in data["login"]["uris"]:
+    if 'login' in data:
+      if 'uris' in data['login']:
+        for e in data['login']['uris']:
           u = Object()
-          u.match = e["match"]
-          u.uri = e["uri"]
+          u.match = e['match']
+          u.uri = e['uri']
           self.login.uris.append(u)
-      self.login.username = data["login"]["username"]
-      self.login.password = data["login"]["password"]
-      self.login.totp = data["login"]["totp"]
-      self.login.passwordRevisionDate = data["login"]["passwordRevisionDate"]
-    self.collectionIds = data["collectionIds"]
-    self.revisionData = data["revisionDate"]
+      self.login.username = data['login']['username']
+      self.login.password = data['login']['password']
+      self.login.totp = data['login']['totp']
+      self.login.passwordRevisionDate = data['login']['passwordRevisionDate']
+    self.collectionIds = data['collectionIds']
+    self.revisionData = data['revisionDate']
 
   @property
   def canonical_uri(self):
-    """
-    The first URI or an empty string if there are no URIs.
-    """
+    """The first URI or an empty string if there are no URIs."""
     if self.login.uris:
       return self.login.uris[0].uri
-    return ""
+    return ''
 
   @property
   def canonical_username(self):
-    """
-    The username or an empty string if there is no username.
-    """
-    return self.login.username if self.login.username else ""
+    """The username or an empty string if there is no username."""
+    return self.login.username if self.login.username else ''
 
   @property
   def json(self):
-    """
-    Get the original item as a JSON string.
-    """
+    """Get the original item as a JSON string."""
     return json.dumps(self._json, indent=2, sort_keys=True)
 
   def fuzzy(self, query):
@@ -300,59 +268,59 @@ def parse_args():
   (argparse.Namespace) The parsed arguments.
   """
   parser = argparse.ArgumentParser(
-      description="Interact with Bitwarden usernames and passwords")
+      description='Interact with Bitwarden usernames and passwords')
 
-  parser.add_argument("--ask-gui",
-      action="store_true",
-      help="Ask for a password with a graphical prompt.")
-
-  group = parser.add_mutually_exclusive_group()
-  group.add_argument("--get",
-      action="store_const",
-      const="get",
-      default="get",
-      dest="mode",
-      help="Use --get mode to search for a selection (default). Conflicts with --rofi.")
-  group.add_argument("--rofi",
-      action="store_const",
-      const="rofi",
-      dest="mode",
-      help="Use rofi mode to make a selection. Conflicts with --get")
-
-  parser.add_argument("--sync",
-      action="store_true",
-      help="Sync the database before performing an operation")
+  parser.add_argument('--ask-gui',
+      action='store_true',
+      help='Ask for a password with a graphical prompt.')
 
   group = parser.add_mutually_exclusive_group()
-  group.add_argument("--password", "-p",
-      action="store_const",
-      const="password",
-      default="password",
-      dest="field",
-      help="Get password (default). Conflicts with --username, --totp, and --json")
-  group.add_argument("--username", "-u",
-      action="store_const",
-      const="username",
-      dest="field",
-      help="Get username. Conflicts with --password, --totp, and --json")
-  group.add_argument("--totp", "-t",
-      action="store_const",
-      const="totp",
-      dest="field",
-      help="Get TOTP. Conflicts with --username, --password, and --json.")
-  group.add_argument("--json",
-      action="store_const",
-      const="json",
-      dest="field",
-      help="Get the entire item as JSON. Conflicts with --username, --password, and --totp.")
+  group.add_argument('--get',
+      action='store_const',
+      const='get',
+      default='get',
+      dest='mode',
+      help='Use --get mode to search for a selection (default). Conflicts with --rofi.')
+  group.add_argument('--rofi',
+      action='store_const',
+      const='rofi',
+      dest='mode',
+      help='Use rofi mode to make a selection. Conflicts with --get')
 
-  parser.add_argument("--fuzzy", "-f",
-      action="store",
-      help="Fuzzy query for guessing best match. In --get mode, fuzzy matching is used to pick the best match candidate and return that (useful without a --search or when a --search returns multiple results). Used for sorting in --rofi mode..")
+  parser.add_argument('--sync',
+      action='store_true',
+      help='Sync the database before performing an operation')
 
-  parser.add_argument("--search", "-s",
-      action="store",
-      help="Use the Bitwarden search function. This acts as a filter. In --get mode, it is an error if there is not exactly 1 search match. By also providing --fuzzy a best guess at the match will be taken")
+  group = parser.add_mutually_exclusive_group()
+  group.add_argument('--password', '-p',
+      action='store_const',
+      const='password',
+      default='password',
+      dest='field',
+      help='Get password (default). Conflicts with --username, --totp, and --json')
+  group.add_argument('--username', '-u',
+      action='store_const',
+      const='username',
+      dest='field',
+      help='Get username. Conflicts with --password, --totp, and --json')
+  group.add_argument('--totp', '-t',
+      action='store_const',
+      const='totp',
+      dest='field',
+      help='Get TOTP. Conflicts with --username, --password, and --json.')
+  group.add_argument('--json',
+      action='store_const',
+      const='json',
+      dest='field',
+      help='Get the entire item as JSON. Conflicts with --username, --password, and --totp.')
+
+  parser.add_argument('--fuzzy', '-f',
+      action='store',
+      help='Fuzzy query for guessing best match. In --get mode, fuzzy matching is used to pick the best match candidate and return that (useful without a --search or when a --search returns multiple results). Used for sorting in --rofi mode..')
+
+  parser.add_argument('--search', '-s',
+      action='store',
+      help='Use the Bitwarden search function. This acts as a filter. In --get mode, it is an error if there is not exactly 1 search match. By also providing --fuzzy a best guess at the match will be taken')
 
   return parser.parse_args()
 
@@ -390,7 +358,7 @@ def rofi_options(items):
   wn  = width(lambda item: item.name)
   wu  = width(lambda item: item.canonical_uri)
   wun = width(lambda item: item.canonical_username)
-  f = "{{:{}}} {{:{}}} {{:{}}}".format(wn, wu, wun)
+  f = f"{{:{wn}}} {{:{wu}}} {{:{wun}}}"
   return [f.format(item.name, item.canonical_uri, item.canonical_username)
       for item in items]
 
@@ -410,25 +378,25 @@ def do_get(bw, field, fuzzy, search):
   if fuzzy is not None:
     items = fuzzy_match(fuzzy, items)
   if not items:
-    raise FailureError("there are no items")
+    raise FailureError('there are no items')
   if len(items) != 1 and fuzzy is None:
     # Cannot make a selection from more than 1 item if fuzzy was not
     # specified
-    raise FailureError("search returned multiple items without fuzzy")
+    raise FailureError('search returned multiple items without fuzzy')
   item = items[0]
 
   # Display information
-  if field == "username":
-    print(item.login.username, end="")
-  elif field == "password":
-    print(item.login.password, end="")
-  elif field == "totp":
-    print(item.login.totp, end="")
-  elif field == "json":
+  if field == 'username':
+    print(item.login.username, end='')
+  elif field == 'password':
+    print(item.login.password, end='')
+  elif field == 'totp':
+    print(item.login.totp, end='')
+  elif field == 'json':
     print(item.json)
   else:
     # This will never get hit
-    raise RuntimeError("unknown field: {}".format(field))
+    raise RuntimeError(f"unknown field: {field}")
 
 def do_rofi(bw, field, fuzzy, search):
   """
@@ -446,37 +414,37 @@ def do_rofi(bw, field, fuzzy, search):
   if fuzzy is not None:
     items = fuzzy_match(fuzzy, items)
   if not items:
-    raise FailureError("there are no items")
+    raise FailureError('there are no items')
 
   # Get an item from rofi
   options = rofi_options(items)
   try:
-    p = subprocess.run(["rofi", "-dmenu", "-i", "-format", "i"],
-      input="\n".join(options).encode(ENCODING),
+    p = subprocess.run(['rofi', '-dmenu', '-i', '-format', 'i'],
+      input='\n'.join(options).encode(ENCODING),
       stdout=subprocess.PIPE)
   except FileNotFoundError:
-    raise FailureError("rofi not found")
+    raise FailureError('rofi not found')
   if p.returncode:
-    raise FailureError("failed to run rofi")
+    raise FailureError('failed to run rofi')
   try:
     index = int(p.stdout.decode(ENCODING).strip())
   except ValueError:
     # Nothing was selected
-    raise FailureError("no rofi selection was made")
+    raise FailureError('no rofi selection was made')
   item = items[index]
 
   # Display information
-  if field == "username":
-    print(item.login.username, end="")
-  elif field == "password":
-    print(item.login.password, end="")
-  elif field == "totp":
-    print(item.login.totp, end="")
-  elif field == "json":
+  if field == 'username':
+    print(item.login.username, end='')
+  elif field == 'password':
+    print(item.login.password, end='')
+  elif field == 'totp':
+    print(item.login.totp, end='')
+  elif field == 'json':
     print(item.json)
   else:
     # This will never get hit
-    raise RuntimeError("unknown field: {}".format(field))
+    raise RuntimeError(f"unknown field: {field}")
 
 def zenity_password():
   """
@@ -487,14 +455,14 @@ def zenity_password():
   (str|None) A string is returned with the password when one is entered
   successfully, otherwise `None` is returned.
   """
-  title="Bitwarden Password Request"
-  prompt="Please enter your Bitwarden master password to unlock a session."
-  cmd = ["zenity", "--entry", "--hide-text",
-       "--title", title, "--text", prompt]
+  title='Bitwarden Password Request'
+  prompt='Please enter your Bitwarden master password to unlock a session.'
+  cmd = ['zenity', '--entry', '--hide-text',
+    '--title', title, '--text', prompt]
   try:
     p = subprocess.run(cmd, stdout=subprocess.PIPE)
   except FileNotFoundError:
-    raise FailureError("zenity not found")
+    raise FailureError('zenity not found')
   if p.returncode:
     return None
   return p.stdout.decode(ENCODING).strip()
@@ -507,13 +475,13 @@ def zenity_error(message):
 
   * message (str): The message to show.
   """
-  title="Bitwarden Error"
-  cmd = ["zenity", "--error", "--title", title, "--text", message]
+  title='Bitwarden Error'
+  cmd = ['zenity', '--error', '--title', title, '--text', message]
   try:
     p = subprocess.run(cmd, stdout=subprocess.PIPE,
                stderr=subprocess.PIPE)
   except FileNotFoundError:
-    raise FailureError("zenity not found")
+    raise FailureError('zenity not found')
 
 def main(bw, args):
   # Prepare the client
@@ -522,25 +490,25 @@ def main(bw, args):
     bw.sync()
 
   # Do the specified operation
-  if args.mode == "get":
+  if args.mode == 'get':
     do_get(bw, args.field, args.fuzzy, args.search)
-  elif args.mode == "rofi":
+  elif args.mode == 'rofi':
     do_rofi(bw, args.field, args.fuzzy, args.search)
   else:
     # This will never get hit
-    raise RuntimeError("unknown mode: {}".format(args.mode))
+    raise RuntimeError(f"unknown mode: {args.mode}")
 
-if __name__ == "__main__":
-  bw = Bw()
-  exit_code = ExitCode.SUCCESS
-  try:
-    args = parse_args()
-    main(bw, args)
-  except (BwError, FailureError) as ex:
-    if args.ask_gui:
-      zenity_error(str(ex))
-    else:
-      print(ex, file=sys.stderr)
-    exit_code = ExitCode.FAILURE
+bw = Bw()
+exit_code = ExitCode.SUCCESS
+try:
+  args = parse_args()
+  main(bw, args)
+except (BwError, FailureError) as ex:
+  if args.ask_gui:
+    zenity_error(str(ex))
+  else:
+    print(ex, file=sys.stderr)
+  exit_code = ExitCode.FAILURE
+finally:
   bw.lock()
-  sys.exit(exit_code)
+sys.exit(exit_code)

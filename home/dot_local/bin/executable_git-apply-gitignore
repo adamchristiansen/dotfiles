@@ -1,5 +1,7 @@
 #/usr/bin/env sh
 
+# Remove all added and committed files that should be ignored.
+
 set -e
 
 SUBDIRECTORY_OK=1

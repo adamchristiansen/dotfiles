@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Look up values from the local sniplets database.
+"""
+
 import argparse
 import pathlib
 
@@ -8,7 +12,7 @@ from dotfiles import menu, xdg
 def snipfiles(dir):
   """Get the absolute paths of all .sniplets files in a directory."""
   f = lambda f: str(f.absolute())
-  return sorted(map(f, pathlib.Path(dir).glob("*.sniplets")))
+  return sorted(map(f, pathlib.Path(dir).glob('*.sniplets')))
 
 class SnipletsDb:
   """Process sniplets into a database."""
@@ -20,9 +24,9 @@ class SnipletsDb:
       with open(snipfile) as f:
         for line in f:
           line = line.strip()
-          if not line or line.startswith("#"):
+          if not line or line.startswith('#'):
             continue
-          parts = tuple(filter(lambda x: x, line.split(" ")))
+          parts = tuple(filter(lambda x: x, line.split(' ')))
           key = tuple(parts[:-1])
           value = parts[-1]
           self._db.append((key, value))
@@ -35,17 +39,17 @@ class SnipletsDb:
   def fuzzy_lines(self):
     """Get the lines to print in a fuzzy finder."""
     width = max(map(lambda x: len(x[1]), self._db))
-    fmt = "{{:{}}}{{}}".format(width + 1)
-    f = lambda kv: fmt.format(kv[1], " ".join(kv[0]))
+    fmt = f"{{:{width + 1}}}{{}}"
+    f = lambda kv: fmt.format(kv[1], ' '.join(kv[0]))
     return list(map(f, self._db))
 
 parser = argparse.ArgumentParser(
-  description="Search for text sniplets")
-parser.add_argument("snipdir", nargs="?", default=xdg.config_home("sniplets"),
-  help="The directory containing the sniplets")
+  description='Search for text sniplets')
+parser.add_argument('snipdir', nargs='?', default=xdg.config_home('sniplets'),
+  help='The directory containing the sniplets')
 args = parser.parse_args()
 
 db = SnipletsDb(args.snipdir)
 lines = db.fuzzy_lines()
 index = menu(lines, index=True)
-print(db[index], end="")
+print(db[index], end='')

@@ -1,5 +1,7 @@
 #/usr/bin/env sh
 
+# Pull and overwrite the local branch.
+
 set -e
 
 SUBDIRECTORY_OK=1
