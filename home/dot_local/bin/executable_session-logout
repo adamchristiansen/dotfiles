@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# Logout from the current session.
+
 set -e
 
 if command -v zenity > /dev/null; then

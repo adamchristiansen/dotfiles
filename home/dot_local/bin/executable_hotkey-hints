@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Show sxhkd hotkey hints.
+"""
+
 from dotfiles import menu, xdg
 
 class Hotkey:
@@ -8,23 +12,23 @@ class Hotkey:
   def __init__(self, hotkey, description):
     self.hotkey = hotkey \
       .lower() \
-      .replace("@space", "space") \
-      .replace("super", "∇") \
-      .replace("ctrl", "C") \
-      .replace("alt", "M") \
-      .replace("shift", "S") \
-      .replace("escape", "E") \
-      .replace("tab", "T") \
-      .replace("return", "R") \
-      .replace("space", "⎵") \
-      .replace(" + ", "-") \
-      .replace("; ", " -> ")
+      .replace('@space', 'space') \
+      .replace('super', '∇') \
+      .replace('ctrl', 'C') \
+      .replace('alt', 'M') \
+      .replace('shift', 'S') \
+      .replace('escape', 'E') \
+      .replace('tab', 'T') \
+      .replace('return', 'R') \
+      .replace('space', '⎵') \
+      .replace(' + ', '-') \
+      .replace('; ', ' -> ')
     self.description = description
 
 class Hints:
   """A collection of hotkey hints."""
 
-  def __init__(self, filename, doc_start="###"):
+  def __init__(self, filename, doc_start='###'):
     """
     Initialize a set of hints in the sxhkdrc located at filename. doc_start is
     the token which starts a documentation comment.
@@ -38,7 +42,7 @@ class Hints:
           seen = True
           description.append(line[len(doc_start):].strip())
         elif seen:
-          hints.append(Hotkey(line.strip(), " ".join(description).strip()))
+          hints.append(Hotkey(line.strip(), ' '.join(description).strip()))
           seen = False
           description = []
     self.hints = sorted(hints, key=lambda x: x.description)
@@ -47,10 +51,10 @@ class Hints:
   def tabular(self):
     """A tabulated list of hotkeys to show."""
     max_length = max(map(lambda h: len(h.hotkey), self.hints))
-    fmt = "{{:{}}}   {{}}".format(max_length)
+    fmt = f"{{:{max_length}}}   {{}}"
     return list(map(
       lambda h: fmt.format(h.hotkey, h.description), self.hints))
 
-sxhkdrc = xdg.config_home("sxhkd", "sxhkdrc")
+sxhkdrc = xdg.config_home('sxhkd', 'sxhkdrc')
 hints = Hints(sxhkdrc).tabular
 menu(hints)

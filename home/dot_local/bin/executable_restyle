@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Format a file according to editorconfig settings.
+"""
+
 from collections import defaultdict, namedtuple
 import configparser
 from dotfiles import run
@@ -8,14 +12,10 @@ import os.path
 import sys
 
 class EditorConfig:
-  """
-  Get the EditorConfig settings for a file.
-  """
+  """Get the EditorConfig settings for a file."""
 
   def __init__(self, filepath):
-    """
-    Create EditorConfig settings for a file path.
-    """
+    """Create EditorConfig settings for a file path."""
     if filepath is None:
       self._data = {}
     else:
@@ -96,13 +96,10 @@ class EditorConfig:
     return self._get('tab_width', int)
 
 class Indent:
-  """
-  Represents an indent of a line.
-  """
+  """Represents an indent of a line."""
+
   def __init__(self, spaces, tabs):
-    """
-    Create an indent from the number of leading spaces and tabs.
-    """
+    """Create an indent from the number of leading spaces and tabs."""
     self.spaces = spaces
     self.tabs = tabs
 
@@ -110,30 +107,22 @@ class Indent:
     return self.spaces and self.tabs
 
 class IndentStyle:
-  """
-  The style of an indent. These match the names used by an EditorConfig.
-  """
+  """The style of an indent. These match the names used by an EditorConfig."""
   SPACE = 'space'
   TAB = 'tab'
 
 class EndOfLine:
-  """
-  The end of line styles. These match the names used by an EditorConfig.
-  """
+  """The end of line styles. These match the names used by an EditorConfig."""
   CR = 'cr'
   LF = 'lf'
   CRLF = 'crlf'
 
 class RestyleError(Exception):
-  """
-  The type of all restyling specific errors.
-  """
+  """The type of all restyling specific errors."""
   pass
 
 class Restyle:
-  """
-  Restyles a file.
-  """
+  """Restyle a file."""
 
   def __init__(self, filepath,
       charset=None,
@@ -219,9 +208,9 @@ class Restyle:
     if self._editorconfig.end_of_line is not None:
       return self._editorconfig.end_of_line
     return sorted([
-      (len(re.findall(r'\r(?!\n)', self.original)), EndOfLine.CR),
-      (len(re.findall(r'(?<!\r)\n', self.original)), EndOfLine.LF),
-      (len(re.findall(r'\r\n', self.original)), EndOfLine.CRLF),
+      (len(re.findall(r"\r(?!\n)", self.original)), EndOfLine.CR),
+      (len(re.findall(r"(?<!\r)\n", self.original)), EndOfLine.LF),
+      (len(re.findall(r"\r\n", self.original)), EndOfLine.CRLF),
     ], reverse=True)[0][1]
 
   @cached_property
@@ -463,9 +452,8 @@ def main():
   else:
     sys.stdout.buffer.write(r.restyle_encode)
 
-if __name__ == '__main__':
-  try:
-    main()
-  except RestyleError as e:
-    print(f"Error: {e}", file=sys.stderr)
-    sys.exit(1)
+try:
+  main()
+except RestyleError as e:
+  print(f"Error: {e}", file=sys.stderr)
+  sys.exit(1)

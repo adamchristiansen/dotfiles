@@ -1,40 +1,44 @@
 #!/usr/bin/env python3
 
+"""
+Manage the screen temperature.
+"""
+
 import argparse
 import sys
 
 from dotfiles import notify, run
 
-CONST_NORMAL = ("Normal", 6500)
-CONST_DUSK   = ("Dusk",   5500)
-CONST_NIGHT  = ("Night",  4500)
-CONST_WITCH  = ("Witch",  3500)
+CONST_NORMAL = ('Normal', 6500)
+CONST_DUSK   = ('Dusk',   5500)
+CONST_NIGHT  = ('Night',  4500)
+CONST_WITCH  = ('Witch',  3500)
 
 parser = argparse.ArgumentParser(
-  description="Set the screen temperature")
+  description='Set the screen temperature')
 group = parser.add_mutually_exclusive_group()
-group.add_argument("-x", "--off",
-  action="store_const", dest="args", const=CONST_NORMAL,
-  help="normal mode (6500K)")
-group.add_argument("-d", "--dusk",
-  action="store_const", dest="args", const=CONST_DUSK,
-  help="dusk mode (5500K)")
-group.add_argument("-n", "--night",
-  action="store_const", dest="args", const=CONST_NIGHT,
-  help="night mode (4500K)")
-group.add_argument("-w", "--witch",
-  action="store_const", dest="args", const=CONST_WITCH,
-  help="witch mode (3500K)")
+group.add_argument('-x', '--off',
+  action='store_const', dest='args', const=CONST_NORMAL,
+  help='normal mode (6500K)')
+group.add_argument('-d', '--dusk',
+  action='store_const', dest='args', const=CONST_DUSK,
+  help='dusk mode (5500K)')
+group.add_argument('-n', '--night',
+  action='store_const', dest='args', const=CONST_NIGHT,
+  help='night mode (4500K)')
+group.add_argument('-w', '--witch',
+  action='store_const', dest='args', const=CONST_WITCH,
+  help='witch mode (3500K)')
 
 args = parser.parse_args()
 mode, temperature = args.args if args.args is not None else CONST_NORMAL
 
-run(["redshift", "-P", "-O", str(temperature)], check=True)
+run(['redshift', '-P', '-O', str(temperature)], check=True)
 
 notify(
-  app="Nightshift",
+  app='Nightshift',
   body=f"{mode} Mode ({temperature}K)",
-  icon="face-cool",
-  urgency="low",
-  tag="nightshift",
+  icon='face-cool',
+  urgency='low',
+  tag='nightshift',
 )

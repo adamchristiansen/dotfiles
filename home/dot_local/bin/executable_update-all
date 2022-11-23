@@ -1,30 +1,34 @@
 #!/usr/bin/env python3
 
+"""
+A meta update manager.
+"""
+
 import argparse
 
 from dotfiles import log, plat, run
 
 parser = argparse.ArgumentParser(
-  description="Install updates automagically.",
+  description='Install updates automagically.',
   formatter_class=argparse.RawDescriptionHelpFormatter)
-parser.add_argument("--clean", "-c",
-  action="store_true",
-  help="clean cached and orphaned packages")
-parser.add_argument("--dry-run", "-n",
-  action="store_true",
-  help="print actions without running anything")
-parser.add_argument("--sudo", "-s",
-  action="store_true",
-  help="run with sudo (where appropriate)")
-parser.add_argument("--update", "-u",
-  action="store_true",
-  help="update package index")
-parser.add_argument("--upgrade", "-U",
-  action="store_true",
-  help="upgrade packages")
-parser.add_argument("--yes", "-y",
-  action="store_true",
-  help="run without asking for confirmation")
+parser.add_argument('--clean', '-c',
+  action='store_true',
+  help='clean cached and orphaned packages')
+parser.add_argument('--dry-run', '-n',
+  action='store_true',
+  help='print actions without running anything')
+parser.add_argument('--sudo', '-s',
+  action='store_true',
+  help='run with sudo (where appropriate)')
+parser.add_argument('--update', '-u',
+  action='store_true',
+  help='update package index')
+parser.add_argument('--upgrade', '-U',
+  action='store_true',
+  help='upgrade packages')
+parser.add_argument('--yes', '-y',
+  action='store_true',
+  help='run without asking for confirmation')
 args = parser.parse_args()
 
 class PackageManager:
@@ -77,11 +81,11 @@ class PackageManager:
     """
     if self.exists():
       if args.update:
-        self.run_command("update", self.command_update)
+        self.run_command('update', self.command_update)
       if args.upgrade:
-        self.run_command("upgrade", self.command_upgrade)
+        self.run_command('upgrade', self.command_upgrade)
       if args.clean:
-        self.run_command("clean", self.command_clean)
+        self.run_command('clean', self.command_clean)
 
   def run_command(self, action_name, command):
     """
@@ -91,10 +95,10 @@ class PackageManager:
     if command is None:
       return
     if args.sudo and self.can_use_sudo:
-      command = ["sudo"] + command
+      command = ['sudo'] + command
     if args.yes and self.yes_flag:
       command = command + [self.yes_flag]
-    command_str = " ".join(command)
+    command_str = ' '.join(command)
     log.info(f"{self.name} {action_name} -> {command_str}")
     if not args.dry_run:
       r = run(command, capture=False)
@@ -104,74 +108,74 @@ class PackageManager:
 # The available package managers. Keep sorted alphabetically by name
 PACKAGE_MANAGERS = [
   PackageManager(
-    name="apt",
-    required_commands=["apt", "apt-get"],
+    name='apt',
+    required_commands=['apt', 'apt-get'],
     required_conditions=[],
-    command_update=["apt", "update"],
-    command_upgrade=["apt", "upgrade"],
-    command_clean=["apt", "autoremove"],
+    command_update=['apt', 'update'],
+    command_upgrade=['apt', 'upgrade'],
+    command_clean=['apt', 'autoremove'],
     can_use_sudo=True,
-    yes_flag="-y"
+    yes_flag='-y'
   ),
   PackageManager(
-    name="brew",
-    required_commands=["brew"],
+    name='brew',
+    required_commands=['brew'],
     required_conditions=[],
-    command_update=["brew", "update"],
-    command_upgrade=["brew", "upgrade"],
-    command_clean=["brew", "cleanup"],
+    command_update=['brew', 'update'],
+    command_upgrade=['brew', 'upgrade'],
+    command_clean=['brew', 'cleanup'],
     can_use_sudo=False,
     yes_flag=None
   ),
   PackageManager(
-    name="cargo",
-    required_commands=["cargo", "cargo-install-upgrade"],
+    name='cargo',
+    required_commands=['cargo', 'cargo-install-upgrade'],
     required_conditions=[],
     command_update=None,
-    command_upgrade=["cargo", "install-upgrade"],
+    command_upgrade=['cargo', 'install-upgrade'],
     command_clean=None,
     can_use_sudo=False,
     yes_flag=None
   ),
   PackageManager(
-    name="chezmoi",
-    required_commands=["chezmoi"],
+    name='chezmoi',
+    required_commands=['chezmoi'],
     required_conditions=[],
     command_update=None,
-    command_upgrade=["chezmoi", "upgrade"],
+    command_upgrade=['chezmoi', 'upgrade'],
     command_clean=None,
     can_use_sudo=False,
     yes_flag=None
   ),
   PackageManager(
-    name="pip",
-    required_commands=["pipupgrade"],
+    name='pip',
+    required_commands=['pipupgrade'],
     required_conditions=[],
     command_update=None,
-    command_upgrade=["pipupgrade", "--latest"],
+    command_upgrade=['pipupgrade', '--latest'],
     command_clean=None,
     can_use_sudo=False,
-    yes_flag="-y"
+    yes_flag='-y'
   ),
   PackageManager(
-    name="rustup",
-    required_commands=["rustup"],
+    name='rustup',
+    required_commands=['rustup'],
     required_conditions=[],
     command_update=None,
-    command_upgrade=["rustup", "update"],
+    command_upgrade=['rustup', 'update'],
     command_clean=None,
     can_use_sudo=False,
     yes_flag=None
   ),
   PackageManager(
-    name="xbps",
-    required_commands=["xbps-install", "xbps-remove"],
+    name='xbps',
+    required_commands=['xbps-install', 'xbps-remove'],
     required_conditions=[],
-    command_update=["xbps-install", "-S"],
-    command_upgrade=["xbps-install", "-u"],
-    command_clean=["xbps-remove", "-oO"],
+    command_update=['xbps-install', '-S'],
+    command_upgrade=['xbps-install', '-u'],
+    command_clean=['xbps-remove', '-oO'],
     can_use_sudo=True,
-    yes_flag="-y"
+    yes_flag='-y'
   ),
 ]
 

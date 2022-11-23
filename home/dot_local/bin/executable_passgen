@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Generate a random password.
+"""
+
 import argparse
 from itertools import zip_longest
 import os
@@ -12,10 +16,10 @@ def make_charset_lookup(chars):
   """
   return lambda index: chars[abs(index) % len(chars)]
 
-LOWER  = "abcdefghijkmnopqrstuvwxyz" # Unambiguous, no l
-UPPER  = "ABCDEFGHJKLMNPQRSTUVWXYZ"  # Unambiguous, no I or O
-NUMBER = "23456789"                  # Unambiguous, no 0 or 1
-SYMBOL = "!#$%&*@^"
+LOWER  = 'abcdefghijkmnopqrstuvwxyz' # Unambiguous, no l
+UPPER  = 'ABCDEFGHJKLMNPQRSTUVWXYZ'  # Unambiguous, no I or O
+NUMBER = '23456789'                  # Unambiguous, no 0 or 1
+SYMBOL = '!#$%&*@^'
 
 CHARSETS = {
   'L': make_charset_lookup(LOWER),
@@ -43,7 +47,7 @@ def type_size(arg):
   if m := re.match(r"^(\d+)$", arg):
     size = (int(m.group(1)), None)
   if size is None or size[0] == 0 or (size[1] is not None and size[1] == 0):
-    raise ValueError("invalid size")
+    raise ValueError('invalid size')
   return size
 
 def randints(n, m=4):
@@ -63,26 +67,26 @@ def make_pattern(size, charset):
   s = [charset * chunk for _ in range(chunks)]
   if extra:
     s.append(charset * extra)
-  return "-".join(s)
+  return '-'.join(s)
 
 def fill(pattern):
   """Fill in a pattern."""
-  return "".join([
+  return ''.join([
     CHARSETS[c](i) if c in CHARSETS else c
     for c, i in zip(pattern, randints(len(pattern)))
   ])
 
 parser = argparse.ArgumentParser(
-  description="Generate a random password.")
-parser.add_argument("size",
-  nargs="?",
+  description='Generate a random password.')
+parser.add_argument('size',
+  nargs='?',
   default=(24, 6),
   type=type_size,
-  help="Set a custom size.")
-parser.add_argument("-c", "--charset",
+  help='Set a custom size.')
+parser.add_argument('-c', '--charset',
   choices=CHARSETS.keys(),
-  default="W",
-  help="Set the character set.")
+  default='W',
+  help='Set the character set.')
 args = parser.parse_args()
 
 print(fill(make_pattern(args.size, args.charset)))

@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
-# Create a slug of the text on that is the concatenation of all command line
-# arguments, or text piped into stdin.
+"""
+Create a slug of the text on that is the concatenation of all command line
+arguments, or text piped into stdin.
+"""
 
 import re
 import sys
 
-FILL = "-"
+FILL = '-'
 
 def slug(s):
-  p = "".join(map(lambda c: c if c.isalnum() else FILL, s.casefold()))
+  p = ''.join(map(lambda c: c if c.isalnum() else FILL, s.casefold()))
   return re.sub(f"({FILL})+", FILL, p).strip(FILL)
 
 if len(sys.argv) > 1:

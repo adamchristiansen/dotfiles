@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Launch a session on replit.com.
+"""
+
 import re
 
 from dotfiles import menu, run
@@ -9,42 +13,42 @@ from dotfiles import menu, run
 # Entries that are `None` can be converted to a slug by making them lowercase
 # and keeping alphanumeric characters.
 LANGUAGES = {
-  "Bash": None,
-  "C": None,
-  "Crystal": None,
-  "C#": "csharp",
-  "C++": "cpp",
-  "Dart": None,
-  "Deno": None,
-  "Elixir": None,
-  "Emacs List (ELisp)": "elisp",
-  "Erlang": None,
-  "F#": "fsharp",
-  "Go": None,
-  "Haskell": None,
-  "Java": None,
-  "JavaScript": "nodejs",
-  "Julia": None,
-  "Kotlin": None,
-  "Lua": None,
-  "Nim": None,
-  "Node.js": None,
-  "Python": "python3",
-  "R": "rlang",
-  "Raku": None,
-  "Reason Node.js": "reason_nodejs",
-  "Ruby": None,
-  "Rust": None,
-  "Scala": None,
-  "Swift": None,
-  "Tcl": None,
-  "TypeScript": None,
+  'Bash': None,
+  'C': None,
+  'Crystal': None,
+  'C#': 'csharp',
+  'C++': 'cpp',
+  'Dart': None,
+  'Deno': None,
+  'Elixir': None,
+  'Emacs List (ELisp)': 'elisp',
+  'Erlang': None,
+  'F#': 'fsharp',
+  'Go': None,
+  'Haskell': None,
+  'Java': None,
+  'JavaScript': 'nodejs',
+  'Julia': None,
+  'Kotlin': None,
+  'Lua': None,
+  'Nim': None,
+  'Node.js': None,
+  'Python': 'python3',
+  'R': 'rlang',
+  'Raku': None,
+  'Reason Node.js': 'reason_nodejs',
+  'Ruby': None,
+  'Rust': None,
+  'Scala': None,
+  'Swift': None,
+  'Tcl': None,
+  'TypeScript': None,
 }
 
 def language(name):
   if LANGUAGES[name] is not None:
     return LANGUAGES[name]
-  return re.sub(r"[^a-z0-9]+", "", name.lower())
+  return re.sub(r"[^a-z0-9]+", '', name.lower())
 
 name = menu(sorted(LANGUAGES.keys()))
-run(["xdg-open", f"https://replit.com/languages/{language(name)}"])
+run(['xdg-open', f"https://replit.com/languages/{language(name)}"])

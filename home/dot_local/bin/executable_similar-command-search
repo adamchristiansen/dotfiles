@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Search the PATH for similar commands.
+"""
+
 import argparse
 import itertools
 import os
@@ -7,14 +11,14 @@ from os.path import expanduser, isdir, join, pathsep
 
 from dotfiles import exit
 
-p = argparse.ArgumentParser(description="Look up similar commands")
-p.add_argument("query", type=str, help="the query string")
-p.add_argument("--count", type=int, default=1,
-         help="the maximum number of results to output (default: 1)")
+p = argparse.ArgumentParser(description='Look up similar commands')
+p.add_argument('query', type=str, help='the query string')
+p.add_argument('--count', type=int, default=1,
+         help='the maximum number of results to output (default: 1)')
 args = p.parse_args()
 
 def list_executables():
-  paths = os.environ["PATH"].split(pathsep)
+  paths = os.environ['PATH'].split(pathsep)
   executables = []
   for path in filter(isdir, paths):
     for f in os.listdir(path):

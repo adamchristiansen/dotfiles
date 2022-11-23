@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Magically generate abbreviations for shells.
+"""
+
 import collections
 import os
 import pathlib
@@ -8,7 +12,7 @@ import sys
 
 from dotfiles import fs, log, plat, xdg
 
-ABBR_FILE = xdg.config_home("magicshell", "abbreviations")
+ABBR_FILE = xdg.config_home('magicshell', 'abbreviations')
 
 ABBR_REGEXES = [
   re.compile(r"^alias\s+(\w+)=\'((?:\\.|[^\'\\])*)\'$"),
@@ -30,7 +34,7 @@ def replacement(value, quote_replace, subshell_outer, subshell_inner):
   """Replace quotes and subshell delimiters."""
   def replace(m):
     s = m[0][2:-1] # Strip the '$(' and ')' from the start and end
-    s = s.replace("$(", subshell_inner[0]).replace(")", subshell_inner[1])
+    s = s.replace('$(', subshell_inner[0]).replace(')', subshell_inner[1])
     s = subshell_outer[0] + s + subshell_outer[1]
     return s
   return re.sub(SUBSHELL_REGEX, replace, value.replace("'", quote_replace))
@@ -39,7 +43,7 @@ def abbr_lines(abbr_file=ABBR_FILE):
   """Get the non-comment and non-empty lines from an abbreviations file."""
   lines = fs.read_file(abbr_file).splitlines()
   lines = map(lambda x: x.strip(), lines)
-  lines = filter(lambda x: x and not x.startswith("#"), lines)
+  lines = filter(lambda x: x and not x.startswith('#'), lines)
   return lines
 
 class Abbr(plat.magicshell):
@@ -67,15 +71,15 @@ class Abbr(plat.magicshell):
   def magic_posix(self):
     return self._map(
       f=lambda k, v: f"alias {k}=$'{v}'",
-      quote_replace="\'\"\'\"\'",
-      subshell_outer=("$(", ")"),
-      subshell_inner=("$(", ")"))
+      quote_replace='\'\"\'\"\'',
+      subshell_outer=('$(', ')'),
+      subshell_inner=('$(', ')'))
 
   def magic_csh(self):
     return self._map(
       f=lambda k, v: f"abbr -ga {k} {v}",
       quote_replace="'",
       subshell_outer=("'(", ")'"),
-      subshell_inner=("(", ")"))
+      subshell_inner=('(', ')'))
 
 print(Abbr().magic())

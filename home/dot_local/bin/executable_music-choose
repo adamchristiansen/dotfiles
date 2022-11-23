@@ -11,10 +11,10 @@ from dotfiles import menu, run
 
 # The delimeter to use between tags of a song. Note that mpc uses # to escape
 # characters.
-TAG_DELIM = "#|#|#|"
+TAG_DELIM = '#|#|#|'
 
 # The delimiter between fields when displaying the song
-SEL_DELIM = "  ▸  "
+SEL_DELIM = '  ▸  '
 
 class Song:
   """Represents the metadata of a song."""
@@ -35,17 +35,17 @@ class Songs:
     but can be set to search only the queue.
     """
     r = run(
-      ["mpc", "playlist" if queue else "listall", "-f",
-        "%album%" + TAG_DELIM +
-        "%albumartist%" + TAG_DELIM +
-        "%artist%" + TAG_DELIM +
-        "%file%" + TAG_DELIM +
-        "%title%" + TAG_DELIM +
-        "%track%"],
+      ['mpc', 'playlist' if queue else 'listall', '-f',
+        '%album%' + TAG_DELIM +
+        '%albumartist%' + TAG_DELIM +
+        '%artist%' + TAG_DELIM +
+        '%file%' + TAG_DELIM +
+        '%title%' + TAG_DELIM +
+        '%track%'],
       check=True)
     self._songs = []
-    for i, line in enumerate(r.stdout.split("\n")):
-      fields = line.split(TAG_DELIM.replace("#", ""))
+    for i, line in enumerate(r.stdout.split('\n')):
+      fields = line.split(TAG_DELIM.replace('#', ''))
       self._songs.append(Song(*fields, i + 1))
 
   def options(self, *keys):
@@ -69,22 +69,22 @@ class Songs:
 
 def mpc_play_songs(song_list):
   """Play all of the songs in the list in the order that they appear."""
-  r = run(["mpc", "playlist"], check=True)
-  count = len(r.stdout.split("\n")) if r.stdout else 0
+  r = run(['mpc', 'playlist'], check=True)
+  count = len(r.stdout.split('\n')) if r.stdout else 0
   for song in song_list:
-    run(["mpc", "add", song.filename], check=True)
+    run(['mpc', 'add', song.filename], check=True)
   mpc_play_queue(count)
 
 def mpc_play_queue(index):
   """Play the song at the index in the queue. Note that this starts at 1. """
-  run(["mpc", "play", str(index + 1)], check=True)
+  run(['mpc', 'play', str(index + 1)], check=True)
 
 parser = argparse.ArgumentParser(
-  description="Choose a song to play")
-parser.add_argument("keys", type=str, nargs="+",
-  help="the song tags to search on")
-parser.add_argument("--queue", action="store_true",
-  help="only consider the queue")
+  description='Choose a song to play')
+parser.add_argument('keys', type=str, nargs='+',
+  help='the song tags to search on')
+parser.add_argument('--queue', action='store_true',
+  help='only consider the queue')
 args = parser.parse_args()
 
 songs = Songs(queue=args.queue)

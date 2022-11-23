@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Magically start SSH for shells.
+"""
+
 import argparse
 import collections
 import os
@@ -8,10 +12,10 @@ import re
 
 from dotfiles import fs, log, plat, run, xdg
 
-SSH_DIR = xdg.home(".ssh")
-ENV_FILE = xdg.home(".ssh", "environment")
+SSH_DIR = xdg.home('.ssh')
+ENV_FILE = xdg.home('.ssh', 'environment')
 
-Env = collections.namedtuple("Env", ["pid", "socket"])
+Env = collections.namedtuple('Env', ['pid', 'socket'])
 
 class Agent(plat.magicshell):
   def __init__(self):
@@ -32,44 +36,44 @@ class Agent(plat.magicshell):
     """Read SSH agent environment variables from a file."""
     text = fs.read_file(ENV_FILE)
     self._env_vars = dict(re.findall(r"([A-Z_]+)=(.*?);", text, re.DOTALL))
-    self.pid = int(self._env_vars["SSH_AGENT_PID"])
-    self.socket = self._env_vars["SSH_AUTH_SOCK"]
+    self.pid = int(self._env_vars['SSH_AGENT_PID'])
+    self.socket = self._env_vars['SSH_AUTH_SOCK']
 
   def _write_env_file(self):
     """Write the SSH environment file."""
-    r = run(["ssh-agent", "-s"], check=True)
+    r = run(['ssh-agent', '-s'], check=True)
     fs.write_file(ENV_FILE, r.stdout)
 
   def add_keys(self):
     """Add all keys in SSH directory."""
-    for pub_key in pathlib.Path(SSH_DIR).glob("*.pub"):
+    for pub_key in pathlib.Path(SSH_DIR).glob('*.pub'):
       priv_key = re.sub(r"\.pub$", "", str(pub_key))
       {{ if eq .chezmoi.os "darwin" -}}
-      run(["ssh-add", "-K", priv_key], check=True, append_env=self._env_vars)
+      run(['ssh-add', '-K', priv_key], check=True, append_env=self._env_vars)
       {{- else -}}
-      run(["ssh-add", priv_key], check=True, append_env=self._env_vars)
+      run(['ssh-add', priv_key], check=True, append_env=self._env_vars)
       {{- end }}
 
   def magic_posix(self):
-    return "\n".join([
+    return '\n'.join([
       f"export SSH_AGENT_PID='{self.pid}'",
       f"export SSH_AUTH_SOCK='{self.socket}'",
     ])
 
   def magic_csh(self):
-    return "\n".join([
+    return '\n'.join([
       f"setenv SSH_AGENT_PID '{self.pid}'",
       f"setenv SSH_AUTH_SOCK '{self.socket}'"
     ])
 
-parser = argparse.ArgumentParser(description="Automagically manage ssh-agent")
+parser = argparse.ArgumentParser(description='Automagically manage ssh-agent')
 group = parser.add_mutually_exclusive_group()
-group.add_argument("-N", "--no-keys",
-  action="store_true",
-  help="do not add any keys")
-group.add_argument("-L", "--force-add-keys",
-  action="store_true",
-  help="force add all keys (this can be slow)")
+group.add_argument('-N', '--no-keys',
+  action='store_true',
+  help='do not add any keys')
+group.add_argument('-L', '--force-add-keys',
+  action='store_true',
+  help='force add all keys (this can be slow)')
 args = parser.parse_args()
 
 agent = Agent()
