@@ -1,10 +1,18 @@
 # A custom minimal modeline.
 
+declare-option -hidden str modeline_mode ''
+hook global ModeChange .*:.*:insert %{
+  set-option buffer modeline_mode '● '
+}
+hook global ModeChange .*:insert:.* %{
+  set-option buffer modeline_mode ''
+}
+
 declare-option -hidden str modeline_modified
 define-command -hidden modeline-update-modified %{
   set-option buffer modeline_modified %sh{
     if [ "$kak_modified" = 'true' ]; then
-      printf "%s \n" "●"
+      printf "%s \n" ""
     else
       printf "\n"
     fi
@@ -54,7 +62,7 @@ define-command -hidden modeline-setup-hooks %{
 declare-option -hidden bool modeline_enabled true
 define-command -docstring "enable modeline" modeline-enable %{
   set-option global modeline_enabled true
-  set-option global modelinefmt '{StatusLineValue}%opt{modeline_modified}{StatusLineInfo}%opt{modeline_readonly}%val{bufname} 視%opt{modeline_selections} ﳗ %val{cursor_line}:%val{cursor_char_column} 歷%val{client}‧%val{session}'
+  set-option global modelinefmt '{StatusLineValue}%opt{modeline_mode}{StatusLineInfo}%opt{modeline_modified}{StatusLineInfo}%opt{modeline_readonly}%val{bufname} 視%opt{modeline_selections} ﳗ %val{cursor_line}:%val{cursor_char_column} 歷%val{client}‧%val{session}'
   modeline-setup-hooks
 }
 define-command -docstring "disable modeline" modeline-disable %{
