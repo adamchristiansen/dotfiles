@@ -20,6 +20,7 @@ define-command fzf -hidden -params .. %{
   evaluate-commands %sh{
     # Parse the arguments to the command
     directory="$PWD"
+    header=''
     items_command='ls'
     filter_command=''
     preview='false'
@@ -29,6 +30,7 @@ define-command fzf -hidden -params .. %{
     while [ $# -gt 0 ]; do
       case $1 in
         -directory)   directory="$2" ;;
+        -header)      header="$2" ;;
         -items)       items_command="$2" ;;
         -filter)      filter_command="$2" ;;
         -preview)     preview="$2" ;;
@@ -89,6 +91,9 @@ define-command fzf -hidden -params .. %{
       fi
       printf "%s | \\\\\n" "LC_ALL=C sort"
       printf "%s" "fzf --border=none --height=100%"
+      if [ -n "$header" ]; then
+        printf " %s" "--header '$header' --header-first"
+      fi
       if [ "$preview" = "true" ]; then
         printf " %s" "--preview 'bat --color=always --style=plain {}'"
         printf " %s" "--preview-window=$preview_window"
@@ -158,6 +163,7 @@ define-command fzf-buffer -hidden %{
     done
     printf "fzf"
     printf " -directory %%{%s}"   "$PWD"
+    printf " -header %%{%s}"      "Change Buffer"
     printf " -items %%{%s}"       "printf '%s\n' '$buffers'"
     printf " -filter %%{%s}"      "grep -vE '^\*.*\*\$'"
     printf " -preview %%{%s}"     "true"
@@ -176,6 +182,7 @@ define-command fzf-buffer-delete -hidden %{
     done
     printf "fzf"
     printf " -directory %%{%s}"   "$PWD"
+    printf " -header %%{%s}"      "Delete Buffers"
     printf " -items %%{%s}"       "printf '%s\n' '$buffers'"
     printf " -filter %%{%s}"      "grep -vE '^\*.*\*\$'"
     printf " -preview %%{%s}"     "true"
@@ -190,6 +197,7 @@ define-command fzf-cd -hidden %{
     d="$PWD/.."
     printf "fzf"
     printf " -directory %%{%s}"   "$d"
+    printf " -header %%{%s}"      "Change Directory"
     printf " -items %%{%s}"       "fd --strip-cwd-prefix --hidden --type d"
     printf " -filter %%{%s}"      ""
     printf " -preview %%{%s}"     "false"
@@ -203,6 +211,7 @@ define-command fzf-file -hidden %{
   evaluate-commands %sh{
     printf "fzf"
     printf " -directory %%{%s}"   "$PWD"
+    printf " -header %%{%s}"      "Open a File"
     printf " -items %%{%s}"       "fd --strip-cwd-prefix --hidden --type f"
     printf " -filter %%{%s}"      ""
     printf " -preview %%{%s}"     "true"
@@ -218,6 +227,7 @@ define-command fzf-file-git -hidden %{
       root="$(git rev-parse --show-toplevel)"
       printf "fzf"
       printf " -directory %%{%s}"   "$root"
+      printf " -header %%{%s}"      "Open a File"
       printf " -items %%{%s}"       "fd --strip-cwd-prefix --hidden --type f"
       printf " -filter %%{%s}"      ""
       printf " -preview %%{%s}"     "true"
@@ -235,6 +245,7 @@ define-command fzf-file-relative-to-buffer -hidden %{
     d="$(dirname "$kak_buffile")"
     printf "fzf"
     printf " -directory %%{%s}"   "$d"
+    printf " -header %%{%s}"      "Open a File"
     printf " -items %%{%s}"       "fd --strip-cwd-prefix --hidden --type f"
     printf " -filter %%{%s}"      ""
     printf " -preview %%{%s}"     "true"
