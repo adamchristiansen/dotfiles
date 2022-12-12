@@ -2,7 +2,7 @@
 
 declare-option -hidden str modeline_mode ''
 hook global ModeChange .*:.*:insert %{
-  set-option buffer modeline_mode '● '
+  set-option buffer modeline_mode '• '
 }
 hook global ModeChange .*:insert:.* %{
   set-option buffer modeline_mode ''
