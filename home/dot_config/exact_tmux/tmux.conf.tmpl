@@ -128,7 +128,7 @@ set -g status-style fg="#{{ $color.black.hex.rgb }}",bg=default
 set -g status-justify absolute-centre
 set -g status-position bottom
 set -g status-left ""
-set -g status-right "#{?client_prefix,#[fg=#{{ $color.special.hex.rgb }}]● ,}#{?pane_synchronized,#[fg=#{{ $color.special.hex.rgb }}] ,}#[fg=#{{ $color.black.hex.rgb }}]歷#S"
+set -g status-right "#{?client_prefix,#[fg=#{{ $color.special.hex.rgb }}]• ,}#{?pane_synchronized,#[fg=#{{ $color.special.hex.rgb }}] ,}#[fg=#{{ $color.black.hex.rgb }}]歷#S"
 set -g window-status-format "#[fg=#{{ $color.black.hex.rgb }}] #W#{?window_zoomed_flag, ,} "
 set -g window-status-current-format "#[fg=#{{ $color.special.hex.rgb }}] #W#{?window_zoomed_flag, ,} "
 set -g window-status-current-style none
