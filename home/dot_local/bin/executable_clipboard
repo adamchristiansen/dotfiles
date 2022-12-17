@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 import argparse
 import sys
 
-from dotfiles import log, notify, plat, run
+from dotfiles import log, notify, plat, run, xdg
 
 class Clip(ABC):
   """The interface the a clipboard manager must conform to."""
@@ -63,16 +63,20 @@ class ClipWayland(Clip):
 class ClipXSel(Clip):
   """A clipboard manager using xsel on X sessions."""
 
+  @property
+  def _log(self):
+    return xdg.cache_home('xsel.log')
+
   def clear(self, data=b''):
-    self.run(['xsel', '--input', '--primary'], data)
-    self.run(['xsel', '--input', '--secondary'], data)
-    self.run(['xsel', '--input', '--clipboard'], data)
+    self.run(['xsel', '--input', '--primary', '--logfile', self._log], data)
+    self.run(['xsel', '--input', '--secondary', '--logfile', self._log], data)
+    self.run(['xsel', '--input', '--clipboard', '--logfile', self._log], data)
 
   def copy(self, data):
-    self.run(['xsel', '--input', '--clipboard'], data)
+    self.run(['xsel', '--input', '--clipboard', '--logfile', self._log], data)
 
   def paste(self):
-    return self.run(['xsel', '--output', '--clipboard']).stdout
+    return self.run(['xsel', '--output', '--clipboard', '--logfile', self._log]).stdout
 
 def detect():
   """Detect a clipboard manager to use."""
