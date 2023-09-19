@@ -34,6 +34,7 @@ hook global InsertCompletionHide .* %{
 }
 
 source "%val{config}/clipboard.kak"
+source "%val{config}/filetype.kak"
 source "%val{config}/fzf.kak"
 source "%val{config}/indent.kak"
 source "%val{config}/modeline.kak"
