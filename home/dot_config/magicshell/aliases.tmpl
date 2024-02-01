@@ -15,10 +15,10 @@ alias a=tmux-default
 alias e='{{- .editor -}}'
 alias f=broot
 alias F=ranger
-alias l=exa
-alias la='exa --git -a'
-alias ll='exa --git -al'
-alias lt="exa --git -alT --ignore-glob='.git'"
+alias l=eza
+alias la='eza --git -a'
+alias ll='eza --git -al'
+alias lt="eza --git -alT --ignore-glob='.git'"
 {{- if eq .chezmoi.os "darwin" }}
 alias o='open'
 {{- else if eq .chezmoi.os "linux" }}
