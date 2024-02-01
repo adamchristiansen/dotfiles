@@ -1,78 +1,14 @@
-{{- if (eq .chezmoi.os "linux") -}}
-{{- if (eq .chezmoi.osRelease.id "void") -}}
+{{- if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "void") -}}
 
 #!/usr/bin/env sh
 
+# The following hashes are included in this script so that it is only run when
+# the contents of the files change and thus the contents of this script change.
+# packages.yml hash: {{ include ".chezmoidata/packages.yml" | sha256sum }}
+
 set -e
 
-# Install xbps packages
-packages="
-  alacritty
-  alsa-utils
-  atool
-  bash
-  bat
-  broot
-  bspwm
-  chrony
-  cronie
-  curl
-  dunst
-  editorconfig
-  eza
-  fd
-  fish-shell
-  fzf
-  gcc
-  git
-  gnome-keyring
-  hsetroot
-  ImageMagick
-  kakoune
-  kid3
-  lightdm
-  lightdm-gtk3-greeter
-  make
-  mpc
-  mpd
-  mpv
-  ncmpcpp
-  nerd-fonts
-  numix-themes
-  papirus-icon-theme
-  pdf.js
-  picom
-  polybar
-  python3
-  qutebrowser
-  ranger
-  redshift
-  ripgrep
-  rofi
-  ruby-tmuxinator
-  screen
-  scrot
-  seahorse
-  sxhkd
-  sxiv
-  tmux
-  w3m-img
-  wicd
-  wicd-gtk
-  wmname
-  xdg-utils
-  xdotool
-  xfce4
-  xprop
-  xsel
-  xset
-  xsetroot
-  zathura
-  zathura-pdf-mupdf
-  zenity
-"
+sudo xbps-install -Su
+{{- range .packages.linux.void.xbps }} {{ . | quote }}{{ end -}}
 
-sudo xbps-install -Su $packages
-
-{{- end -}}
 {{- end -}}
