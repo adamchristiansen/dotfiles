@@ -1,0 +1,1 @@
+export MPLCONFIGDIR=$XDG_CONFIG_HOME/matplotlib
