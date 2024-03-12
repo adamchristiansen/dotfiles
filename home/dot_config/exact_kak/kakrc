@@ -10,20 +10,13 @@ set-option global ui_options \
 set-option global startup_info_version 99999999 # Disable startup message
 
 colorscheme significance
-hook global BufCreate .* %{
-  add-highlighter buffer/ number-lines \
-    -relative -hlcursor -separator '  ' -min-digits 4
-  add-highlighter buffer/ show-matching
-  add-highlighter buffer/ show-whitespaces \
-    -lf ' ' -spc ' ' -nbsp '~' -tab '›' -tabpad '·'
-  add-highlighter buffer/trailing-whitespaces regex "(\h+)$" 1:Error
-}
 
 hook global BufCreate .* %{
   editorconfig-load
   indent-config
 }
 
+# Use tab controls in completions.
 hook global InsertCompletionShow .* %{
   map window insert <tab> <c-n>
   map window insert <s-tab> <c-p>
@@ -35,6 +28,7 @@ hook global InsertCompletionHide .* %{
 
 source "%val{config}/clipboard.kak"
 source "%val{config}/filetype.kak"
+source "%val{config}/highlight.kak"
 source "%val{config}/fzf.kak"
 source "%val{config}/indent.kak"
 source "%val{config}/modeline.kak"
@@ -42,6 +36,8 @@ source "%val{config}/tmux.kak"
 
 map global user c     -docstring 'comment line'                         ':comment-line<ret>'
 map global user C     -docstring 'comment block'                        ':comment-block<ret>'
+
+map global user w     -docstring 'wrap lines'                           ':highlight-wrap-toggle<ret>'
 
 map global user p     -docstring 'paste from clipboard after'           ':clipboard-paste-after<ret>'
 map global user P     -docstring 'paste from clipboard before'          ':clipboard-paste-before<ret>'
