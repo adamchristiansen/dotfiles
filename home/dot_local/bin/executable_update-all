@@ -148,16 +148,6 @@ PACKAGE_MANAGERS = [
     yes_flag=None
   ),
   PackageManager(
-    name='pip',
-    required_commands=['pipupgrade'],
-    required_conditions=[],
-    command_update=None,
-    command_upgrade=['pipupgrade', '--latest'],
-    command_clean=None,
-    can_use_sudo=False,
-    yes_flag='-y'
-  ),
-  PackageManager(
     name='rustup',
     required_commands=['rustup'],
     required_conditions=[],
