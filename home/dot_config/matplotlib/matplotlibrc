@@ -414,8 +414,7 @@ legend.columnspacing: 2.0  # column separation
 # Errorbar Plots
 #==============================================================================
 
-# errorbar.capsize: 0 # length of end cap on error bars in pixels
-
+errorbar.capsize: 2 # length of end cap on error bars in pixels
 
 #==============================================================================
 # Histogram Plots
