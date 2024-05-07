@@ -42,7 +42,6 @@ def type_size(arg):
   """
   size = None
   if m := re.match(r"^(\d+)x(\d+)$", arg):
-    print(m.group(1))
     size = (int(m.group(1)), int(m.group(2)))
   if m := re.match(r"^(\d+)$", arg):
     size = (int(m.group(1)), None)
