@@ -5,7 +5,7 @@
 Install [Fisher](https://github.com/jorgebucaran/fisher) using:
 
 ```curl
-curl -sL https://git.io/fisher | source && fisher update
+curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 ```
 
 This assumes that the `fish_plugins` file has already been installed on the
