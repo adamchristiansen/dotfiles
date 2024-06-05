@@ -1,0 +1,14 @@
+{{- if eq .chezmoi.os "darwin" -}}
+
+#!/usr/bin/env sh
+
+# macOS settings.
+
+# Prevent writing .DS_Store files on external drives and network devices.
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
+# Prevent the last login message when a shell starts.
+touch ~/.hushlogin
+
+{{- end -}}
