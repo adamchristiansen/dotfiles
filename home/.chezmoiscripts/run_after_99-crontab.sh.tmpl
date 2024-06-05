@@ -1,3 +1,5 @@
+{{- if (eq .chezmoi.os "linux") -}}
+
 #!/usr/bin/env sh
 
 # Apply a new crontab.
@@ -11,3 +13,5 @@ fi
 export EDITOR="$HOME/.config/crontab/crontab-apply"
 export VISUAL="$EDITOR"
 crontab -e > /dev/null 2>&1
+
+{{- end -}}
