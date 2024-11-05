@@ -48,12 +48,6 @@ super + Tab; s
 super + Tab; w
   "$HOME/.local/bin/wallpaper-changer"
 
-### Copy password, username, or TOTP to clipboard
-super + Tab; p; {p,u,t}
-  set -e; \
-  x=$("$HOME/.local/bin/bw-query" --sync {-p,-u,-t} --rofi --ask-gui); \
-  printf "$x" | "$HOME/.local/bin/clipboard" --copy --notify
-
 ### Clear the clipboard
 super + Tab; x
   "$HOME/.local/bin/clipboard" --clear --notify
