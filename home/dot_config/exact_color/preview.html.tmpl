@@ -1,4 +1,4 @@
-{{- $color := include ".gen/color.json" | mustFromJson -}}
+{{- $color := includeTemplate "color.json" . | mustFromJson -}}
 
 <!DOCTYPE html>
 <html>

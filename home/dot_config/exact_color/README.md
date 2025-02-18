@@ -111,7 +111,7 @@ full color scheme definition. To access these values from a `chezmoi` template,
 include the following line in the template file:
 
 ```
-{{- $color := include ".gen/color.json" | mustFromJson -}}
+{{- $color := includeTemplate "color.json" . | mustFromJson -}}
 ```
 
 This gives access to the following:
