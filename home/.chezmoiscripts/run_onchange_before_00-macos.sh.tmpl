@@ -2,7 +2,11 @@
 
 #!/usr/bin/env sh
 
-# macOS settings.
+# The following hashes are included in this script so that it is only run when
+# the contents of the files change and thus the contents of this script change.
+# packages.yml hash: {{ include ".chezmoidata/packages.toml" | sha256sum }}
+
+set -e
 
 # Prevent writing .DS_Store files on external drives and network devices.
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
