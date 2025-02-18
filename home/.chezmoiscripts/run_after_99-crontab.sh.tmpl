@@ -1,4 +1,5 @@
 {{- if (eq .chezmoi.os "linux") -}}
+{{- if lookPath "crontab" -}}
 
 #!/usr/bin/env sh
 
@@ -6,12 +7,9 @@
 
 set -e
 
-if ! type crontab > /dev/null 2>&1; then
-  exit
-fi
-
 export EDITOR="$HOME/.config/crontab/crontab-apply"
 export VISUAL="$EDITOR"
 crontab -e > /dev/null 2>&1
 
+{{- end -}}
 {{- end -}}

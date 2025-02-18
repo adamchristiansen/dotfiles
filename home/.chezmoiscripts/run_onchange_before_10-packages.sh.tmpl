@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# The following hashes are included in this script so that it is only run when
+# the contents of the files change and thus the contents of this script change.
+# packages.toml hash: {{ include ".chezmoidata/packages.toml" | sha256sum }}
+
+set -e
+
+{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "void") }}
+sudo xbps-install -Su {{ quoteList .packages.voidlinux.xbps | join " " }}
+{{ end }}
+
+{{ if and (eq .chezmoi.os "darwin") (lookPath "brew") }}
+brew install {{ quoteList .packages.macos.brew | join " " }}
+{{ end }}
