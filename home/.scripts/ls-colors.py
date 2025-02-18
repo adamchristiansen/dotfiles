@@ -470,7 +470,4 @@ LS.color(unimportant, [
   '*~', '.hushlogin', '.sudo_as_admin_successful',
 ])
 
-p = pathlib.Path('{{ .chezmoi.sourceDir }}/.gen/ls_colors.json')
-p.parent.mkdir(parents=True, exist_ok=True)
-with open(p, 'w') as f:
-  json.dump(LS.colors(), f, indent=2, sort_keys=True)
+print(json.dumps(LS.colors(), indent=2, sort_keys=True))

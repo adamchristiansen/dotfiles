@@ -1,0 +1,3 @@
+{{/* Produce the `ls` color theme as JSON data. */}}
+{{- $script := list .chezmoi.sourceDir ".scripts" "ls-colors.py" | join .chezmoi.pathSeparator -}}
+{{- output "python3" $script -}}
