@@ -1,6 +1,4 @@
 [special-paths]
 "**/.git" = "no-enter"
-"/Users/adam/.cache" = "no-enter"
-"/Users/adam/ProtonDrive" = "no-enter"
-"/home/adam/.cache" = "no-enter"
-"/home/adam/ProtonDrive" = "no-enter"
+"{{- .chezmoi.homeDir -}}/.cache" = "no-enter"
+"{{- .chezmoi.homeDir -}}/ProtonDrive" = "no-enter"
