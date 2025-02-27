@@ -4,85 +4,180 @@ import argparse
 import json
 import os
 
-# Maps a name to base color for names colors.
-NAME_TO_BASE = {
-  'bg':     0x00,
-  'black':  0x03,
-  'fg':     0x05,
-  'white':  0x05,
-  'red':    0x08,
-  'orange': 0x09,
-  'yellow': 0x0a,
-  'green':  0x0b,
-  'cyan':   0x0c,
-  'blue':   0x0d,
-  'pink':   0x0e,
-  'purple': 0x0f,
+# Maps a name to base color for named colors.
+NAMES = {
+  'bg':     'base00',
+  'black':  'base03',
+  'fg':     'base05',
+  'white':  'base05',
+  'red':    'base08',
+  'orange': 'base09',
+  'yellow': 'base0a',
+  'green':  'base0b',
+  'cyan':   'base0c',
+  'blue':   'base0d',
+  'pink':   'base0e',
+  'purple': 'base0f',
 }
 
-def indent(text, n=2):
-  """Indent some text with the specified number of spaces."""
-  return '\n'.join(map(lambda line: 2 * ' ' + line, text.split('\n')))
+class Color:
+  def __init__(self, hex):
+    hex = hex.lower()
+    assert len(hex) == 6 and set(hex) <= set('0123456789abcdef')
+    self._hex = hex
 
-def comp_hex(x):
-  """Get the components of a hex RGB color as strings (00 to ff)."""
-  return x[0:2], x[2:4], x[4:6]
+  @property
+  def hex_rgb(self):
+    return self._hex
+  @property
+  def hex_r(self):
+    return self._hex[0:2]
+  @property
+  def hex_g(self):
+    return self._hex[2:4]
+  @property
+  def hex_b(self):
+    return self._hex[4:6]
 
-def comp_rgb(x):
-  """Get the components of a hex RGB color as integers (0 to 255)."""
-  return int(x[0:2], 16), int(x[2:4], 16), int(x[4:6], 16)
+  @property
+  def rgb(self):
+    return f"rgb({self.r}, {self.g}, {self.b})"
+  @property
+  def r(self):
+    return int(self.hex_r, 16)
+  @property
+  def g(self):
+    return int(self.hex_g, 16)
+  @property
+  def b(self):
+    return int(self.hex_b, 16)
 
-def comp_dec(x):
-  """Get the components of a hex RGB color as floats (0.0 to 1.0)."""
-  return list(map(lambda x: float(x) / 255, comp_rgb(x)))
+  @property
+  def dec_rgb(self):
+    return f"rgb({self.dec_r}, {self.dec_g}, {self.dec_b})"
+  @property
+  def dec_r(self):
+    return round(self.r / 255, 9)
+  @property
+  def dec_g(self):
+    return round(self.g / 255, 9)
+  @property
+  def dec_b(self):
+    return round(self.b / 255, 9)
+
+  def blend(self, scale):
+    assert -1 <= scale <= 1
+    r, g, b = self.dec_r, self.dec_g, self.dec_b
+    if scale < 0:
+      scale = abs(scale)
+      r = (1 - scale) * r
+      g = (1 - scale) * g
+      b = (1 - scale) * b
+    else:
+      r = (1 - scale) * r + scale
+      g = (1 - scale) * g + scale
+      b = (1 - scale) * b + scale
+    c = lambda x: int(round(255 * x))
+    return Color(f"{c(r):02x}{c(g):02x}{c(b):02x}")
+
+  def blend_to(self, color, scale):
+    assert 0 <= scale <= 1
+    r, g, b = self.dec_r, self.dec_g, self.dec_b
+    cr, cg, cb = color.dec_r, color.dec_g, color.dec_b
+    r = (1 - scale) * r + scale * cr
+    g = (1 - scale) * g + scale * cg
+    b = (1 - scale) * b + scale * cb
+    c = lambda x: int(round(255 * x))
+    return Color(f"{c(r):02x}{c(g):02x}{c(b):02x}")
+
+  def json(self):
+    return {
+      'hex': {
+        'rgb': self.hex_rgb,
+        'r': self.hex_r,
+        'g': self.hex_g,
+        'b': self.hex_b,
+      },
+      'rgb': {
+        'rgb': self.rgb,
+        'r': str(self.r),
+        'g': str(self.g),
+        'b': str(self.b),
+      },
+      'dec': {
+        'rgb': self.dec_rgb,
+        'r': str(self.dec_r),
+        'g': str(self.dec_g),
+        'b': str(self.dec_b),
+      },
+    }
 
 class Scheme:
-  """Generate a chezmoi color scheme."""
-
   def __init__(self, filename, special):
-    """Load color information from a file."""
     # Load the data from a file
     with open(filename) as f:
       data = json.load(f)
-    # Fill the instance data
+
+    # Theme.
     self._theme = data['theme']
-    self._base = list(map(lambda base: data[base],
-      sorted(filter(lambda c: c.startswith('base'), data.keys()))))
-    self._wall = data['wall']
+    assert self._theme in ['light', 'dark']
+
+    # Base colors.
+    #
+    # These are parallel arrays of basename and color.
+    self._bases = sorted([k for k in data.keys() if k.startswith('base')])
+    self._base_colors = [Color(data[base]) for base in self._bases]
+    assert self._bases == [f"base{i:02x}" for i in range(16)]
+
+    # Wall color.
+    self._wall = Color(data['wall'])
+
+    # Blending.
+    self._bg_blend      = float(data['bg_blend'])
+    self._soft_bg_blend = float(data['soft_bg_blend'])
+    self._soft_fg_blend = float(data['soft_fg_blend'])
+    self._fg_blend      = float(data['fg_blend'])
+    assert 0 <= self._bg_blend <= 1
+    assert 0 <= self._soft_bg_blend <= 1
+    assert 0 <= self._soft_fg_blend <= 1
+    assert 0 <= self._fg_blend <= 1
+
+    # Special color name.
+    assert special in NAMES.keys()
     self._special = special
 
-  def _json_one(self, x):
-    """Generate the JSON for one color from a hex RGB string."""
-    d = {}
-    d['hex'] = {}
-    d['hex']['rgb'] = x
-    d['hex']['r'] = comp_hex(x)[0]
-    d['hex']['g'] = comp_hex(x)[1]
-    d['hex']['b'] = comp_hex(x)[2]
-    d['rgb'] = {}
-    d['rgb']['r'] = comp_rgb(x)[0]
-    d['rgb']['g'] = comp_rgb(x)[1]
-    d['rgb']['b'] = comp_rgb(x)[2]
-    d['rgb']['rgb'] = 'rgb({}, {}, {})'.format(
-      d['rgb']['r'], d['rgb']['g'], d['rgb']['b'])
-    d['dec'] = {}
-    d['dec']['r'] = '{:.09f}'.format(comp_dec(x)[0])
-    d['dec']['g'] = '{:.09f}'.format(comp_dec(x)[1])
-    d['dec']['b'] = '{:.09f}'.format(comp_dec(x)[2])
-    d['dec']['rgb'] = 'rgb({}, {}, {})'.format(
-      d['dec']['r'], d['dec']['g'], d['dec']['b'])
-    return d
-
   def json(self):
-    """Generate the JSON for the entire scheme."""
     d = {}
     d['theme'] = self._theme
-    for i in range(16):
-      d['base{:02x}'.format(i)] = self._json_one(self._base[i])
-    for name, i in NAME_TO_BASE.items():
-      d[name] = d['base{:02x}'.format(i)]
+    c = {} # Maps color name to `Color` object.
+    # Base colors.
+    for base, color in zip(self._bases, self._base_colors):
+      c[base] = color
+      d[base] = color.json()
+      # d[f"{base}_bg"] = color.blend_to(bg, self._bg_blend).json()
+    # Named colors.
+    for name, base in NAMES.items():
+      c[name] = c[base]
+      d[name] = d[base]
+    # Special color.
+    c['special'] = c[self._special]
     d['special'] = d[self._special]
-    d['wall'] = self._json_one(self._wall)
+    # Wall color.
+    c['wall'] = self._wall
+    d['wall'] = self._wall.json()
+    # Blend colors.
+    bg = c[NAMES['bg']]
+    fg = c[NAMES['fg']]
+    for name in list(c.keys()):
+      color = c[name]
+      c[f"{name}_bg"]      = color.blend_to(bg, self._bg_blend)
+      c[f"{name}_soft_bg"] = color.blend_to(bg, self._soft_bg_blend)
+      c[f"{name}_soft_fg"] = color.blend_to(fg, self._soft_fg_blend)
+      c[f"{name}_fg"]      = color.blend_to(fg, self._fg_blend)
+      d[f"{name}_bg"]      = c[f"{name}_bg"].json()
+      d[f"{name}_soft_bg"] = c[f"{name}_soft_bg"].json()
+      d[f"{name}_soft_fg"] = c[f"{name}_soft_fg"].json()
+      d[f"{name}_fg"]      = c[f"{name}_fg"].json()
     return json.dumps(d, indent=2, sort_keys=True)
 
 parser = argparse.ArgumentParser(description='Generate color schemes')
