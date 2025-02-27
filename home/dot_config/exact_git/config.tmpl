@@ -1,16 +1,27 @@
+[include]
+path = user
+
+{{ if lookPath "delta" }}
+[include]
+path = delta
+{{ end }}
+
 [alias]
 # Delete branches that no longer exist on the remote.
 delete-gone = ! "git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" { print $1 }' | xargs -r git branch -D"
-
-[include]
-path = user
 
 [core]
 excludesfile = ~/.config/git/ignore
 ignorecase = false
 
+[grep]
+linenumber = true
+
 [init]
 defaultBranch = main
+
+[merge]
+conflictstyle = zdiff3
 
 [pull]
 ff = only
