@@ -64,6 +64,13 @@ The `special` color should be used as an accent color.
 In addition to the 16 colors above, an additional color called `wall` is
 defined, which is the fallback color for wallpapers.
 
+Every color also has a background and foreground variants with specific suffixes on the name.
+
+- `_bg`: Strongly blended toward `base00` (i.e., `bg`).
+- `_soft_bg`: Weakly blended toward `base00` (i.e., `bg`).
+- `_soft_fg`: Weakly blended toward `base05` (i.e., `fg`).
+- `_fg`: Strongly blended toward `base05` (i.e., `fg`).
+
 
 
 ## Generating Colors
@@ -91,7 +98,11 @@ following JSON:
   "base0d": "xxxxxx",
   "base0e": "xxxxxx",
   "base0f": "xxxxxx",
-  "wall": "xxxxxx"
+  "wall": "xxxxxx",
+  "bg_blend": blend,
+  "bg_soft_blend": blend,
+  "fg_soft_blend": blend,
+  "fg_blend": blend,
 }
 ```
 
@@ -101,6 +112,12 @@ where
   for additional context on how the colors should be applied. Use `dark` for
   themes with a `dark` beckground and vice versa.
 - `xxxxxx` is a color specified in hexadecimal RGB (without a leading `#`).
+- `blend` is a number in [0, 1].
+
+For blending, the setting indicates how much each color is blended with a
+reference to produce a color variant. When the blend is 0, then the original
+color is kept, and when the blend is 1, then the reference color is taken. A
+fractional blending is a linear interpolation in RGB space between the colors.
 
 
 

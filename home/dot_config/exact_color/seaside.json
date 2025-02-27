@@ -16,5 +16,9 @@
   "base0d": "96abc0",
   "base0e": "d9bdc5",
   "base0f": "9087a1",
-  "wall": "8c9daa"
+  "wall": "8c9daa",
+  "bg_blend": 0.85,
+  "soft_bg_blend": 0.70,
+  "soft_fg_blend": 0.70,
+  "fg_blend": 0.85
 }
