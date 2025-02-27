@@ -1,0 +1,78 @@
+{{- if lookPath "delta" -}}
+
+{{- $color := includeTemplate "color.json" . | mustFromJson -}}
+
+[core]
+pager = delta
+
+[interactive]
+diffFilter = delta --color-only
+
+[delta]
+features = blame commit file grep hunk hyperlinks line-numbers merge plus-minus whitespace
+navigate = true
+right-arrow = "⟶  "
+syntax-theme = base16
+tabs = 4
+
+[delta "blame"]
+blame-format = "{timestamp:<10} {author:<17} {commit:<8} "
+blame-palette = {{/* */ -}}
+  "#{{- $color.yellow_bg.hex.rgb -}}" {{/* */ -}}
+  "#{{- $color.cyan_bg.hex.rgb -}}"   {{/* */ -}}
+  "#{{- $color.purple_bg.hex.rgb -}}" {{/* */ -}}
+  "#{{- $color.green_bg.hex.rgb -}}"  {{/* */ -}}
+  "#{{- $color.red_bg.hex.rgb -}}"
+blame-separator-format = "{n:>4}"
+blame-timestamp-output-format = "%Y-%m-%d"
+
+[delta "commit"]
+commit-style = raw
+commit-decoration-style = bold yellow ol ul
+
+[delta "file"]
+file-decoration-style = magenta bold box ul
+file-style = magenta bold
+
+[delta "grep"]
+grep-file-style = magenta
+grep-line-number-style = green
+grep-output-type = ripgrep
+
+[delta "hunk"]
+hunk-header-decoration-style = yellow
+hunk-header-file-style = magenta
+hunk-header-line-number-style = green
+hunk-header-style = file line-number syntax
+
+[delta "hyperlinks"]
+hyperlinks = false
+
+[delta "line-numbers"]
+line-numbers = true
+line-numbers-left-format = " {nm:>4} "
+line-numbers-left-style = black
+line-numbers-minus-style = red
+line-numbers-plus-style = green
+line-numbers-right-format = "{np:>4} "
+line-numbers-right-style = black
+line-numbers-zero-style = black
+
+[delta "merge"]
+merge-conflict-begin-symbol = "⟨"
+merge-conflict-end-symbol = "⟩"
+merge-conflict-ours-diff-header-decoration-style = blue box
+merge-conflict-ours-diff-header-style = blue
+merge-conflict-theirs-diff-header-decoration-style = magenta box
+merge-conflict-theirs-diff-header-style = magenta
+
+[delta "plus-minus"]
+minus-emph-style = normal "#{{ $color.red_soft_bg.hex.rgb }}"
+minus-style = syntax "#{{ $color.red_bg.hex.rgb }}"
+plus-emph-style = normal "#{{ $color.green_soft_bg.hex.rgb }}"
+plus-style = syntax "#{{ $color.green_bg.hex.rgb }}"
+keep-plus-minus-markers = false
+
+[delta "whitespace"]
+whitespace-error-style = magenta reverse
+{{- end -}}
