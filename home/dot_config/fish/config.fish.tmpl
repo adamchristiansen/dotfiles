@@ -1,25 +1,25 @@
-# Set the umask
+# Set the umask.
 umask {{ .umask }}
 
-# Source and export environment variables
+# Source and export environment variables.
 $HOME/.local/bin/magic-enviro | source
 
-# Abbreviations
+# Abbreviations.
 magic-abbr | source
 
-# Aliases
+# Aliases.
 magic-alias | source
 
-# Start SSH agent
+# Start SSH agent.
 magic-ssh | source
 
-# https://github.com/decors/fish-colored-man
+# https://github.com/decors/fish-colored-man.
 set -U man_blink     red --bold
 set -U man_bold      green --bold
 set -U man_standout  yellow --bold
 set -U man_underline cyan --underline
 
-# Shell colors
+# Shell colors.
 set -U fish_color_autosuggestion  black
 set -U fish_color_cancel          --reverse
 set -U fish_color_command         --bold
@@ -44,5 +44,13 @@ set -U fish_color_status          red
 set -U fish_color_user            yellow --bold
 set -U fish_color_valid_path      --underline
 
-# Start the vi bindings
+# Set the cursor shape.
+set -U fish_cursor_default block
+set -U fish_cursor_external block
+set -U fish_cursor_insert block
+set -U fish_cursor_replace underscore
+set -U fish_cursor_replace_one underscore
+set -U fish_cursor_visual block
+
+# Start the vi bindings.
 fish_vi_key_bindings insert
