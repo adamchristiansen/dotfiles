@@ -11,11 +11,7 @@
 # - Subshells should use POSIX `$(...)` syntax. When parsed by another shell,
 #   the syntax will be converted appropriately.
 
-alias cdp='cd ..'
-alias cdpp='cd ../..'
-alias cdppp='cd ../../..'
-alias cdpppp='cd ../../../..'
-alias cdppppp='cd ../../../../..'
+# Chezmoi.
 alias cza='chezmoi apply'
 alias czaf='chezmoi apply --force'
 alias czcd='cd $(chezmoi source-path)'
@@ -28,61 +24,87 @@ alias czgs='chezmoi git -- status --short'
 alias czgsu='chezmoi git -- status --short -u'
 alias czs='chezmoi status'
 alias czu='chezmoi update'
+
+# Git.
+# git add.
 alias ga='git add'
-alias gaa='git add -A .'
-alias gap='git add -p'
-alias gau='git add -u'
-alias gb='git branch'
-alias gbd='git branch --delete'
-alias gbl='git blame'
+alias gaa='git add --all'
+alias gap='git add --patch'
+alias gau='git add --update'
+# git bisect.
+alias gbis='git bisect start'
+alias gbisb='git bisect bad'
+alias gbisg='git bisect good'
+alias gbisl='git bisect log'
+alias gbisn='git bisect new'
+alias gbiso='git bisect old'
+alias gbisr='git bisect reset'
+alias gbiss='git bisect skip'
+alias gbisv='git bisect visualize'
+# git blame.
+alias gblame='git blame'
+# git branch.
+alias gbr='git branch'
+alias gbrd='git branch --delete'
+# git clean.
+alias gclean='git clean -fdXn'
+# git commit.
 alias gc='git commit'
 alias gca='git commit --amend --date=now'
 alias gcan='git commit --amend --no-edit --date=now'
-alias gcl='git clean -fdXn'
+# git diff.
 alias gd='git diff'
 alias gds='git diff --staged'
+# git fetch.
 alias gf='git fetch'
 alias gfp='git fetch --prune'
+# git grep.
 alias gg='git grep'
-alias gl1='git log -1'
-alias gl2='git log -2'
-alias gl3='git log -3'
-alias gl4='git log -4'
-alias gl5='git log -5'
-alias gl6='git log -6'
-alias gl7='git log -7'
-alias gl8='git log -8'
-alias gl9='git log -9'
+# git log.
 alias gl='git log'
 alias glg='git log --graph --oneline'
-alias gp='git push'
+# git pull.
 alias gpl='git pull'
 alias gplf='git pull --no-rebase --ff-only'
 alias gplm='git pull --no-rebase --ff'
 alias gplr='git pull --rebase'
-alias gpsu='git push --set-upstream origin'
-alias gr='git rebase'
-alias gre='git restore'
+# git push.
+alias gp='git push'
+alias gps='git push --set-upstream origin'
+# git rebase.
+alias greb='git rebase'
+alias grebh='git rebase -i HEAD~'
+alias grebi='git rebase -i'
+alias grebr='git rebase -i --root'
+# git reset.
 alias grh='git reset HEAD'
-alias gri='git rebase -i'
-alias grih='git rebase -i HEAD~'
-alias grpo='git remote prune origin'
-alias grr='git rebase -i --root'
-alias gs='git status --short'
-alias gst='git stash'
-alias gsta='git stash apply'
-alias gstd='git stash drop'
-alias gstp='git stash pop'
-alias gsu='git status --short -u'
-alias gsw='git switch'
+# git restore.
+alias gr='git restore'
+# git stash.
+alias gstash='git stash'
+alias gstasha='git stash apply'
+alias gstashd='git stash drop'
+alias gstashp='git stash pop'
+# git status.
+alias g='git status --short'
+alias gu='git status --short --untracked-files'
+# git switch.
+alias gs='git switch'
+
+# Make.
 alias m=make
+
+# tmux.
 alias mux=tmuxinator
+alias muxa='tmux attach-session'
 alias muxc='tmuxinator start -n $(slugcwd) code'
 alias muxd='tmuxinator start -n $(slugcwd) default'
+alias muxl='tmux list-sessions'
+alias muxn='tmux new -s'
 alias muxn='tmuxinator start -n $(slugcwd)'
-alias rq="rg --no-ignore --hidden --follow --glob '!.git/*'"
-alias ta='tmux attach-session'
-alias tat='tmux attach-session -t'
-alias tl='tmux list-sessions'
-alias tn='tmux new -s'
+alias muxt='tmux attach-session -t'
+
+{{ if lookPath "zathura" -}}
+# Zathura.
 alias zat='zathura --fork'
+{{- end }}
