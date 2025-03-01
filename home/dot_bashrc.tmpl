@@ -2,7 +2,7 @@
 umask {{ .umask }}
 
 # Source and export environment variables
-eval "$($HOME/.local/bin/magic-enviro)"
+eval "$($HOME/.local/dotbin/magic-enviro)"
 
 # If not running interactively, don't do anything more
 [[ $- != *i* ]] && return
