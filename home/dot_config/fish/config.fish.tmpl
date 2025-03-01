@@ -4,6 +4,11 @@ umask {{ .umask }}
 # Source and export environment variables.
 $HOME/.local/dotbin/magic-enviro | source
 
+# Search all subdirectories in the functions directory for Fish functions.
+set fish_function_path \
+  (path resolve $__fish_config_dir/functions/*/) \
+  $fish_function_path
+
 # Abbreviations.
 magic-abbr | source
 
