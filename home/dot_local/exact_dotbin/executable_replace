@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+# A simple utility to replace text in a stream.
+
+set -e
+
+pattern="$1"
+replacement="$2"
+
+rg --passthru --replace "$replacement" -- "$pattern"
