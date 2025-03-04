@@ -1,0 +1,29 @@
+{{- $color := includeTemplate "color.json" . | mustFromJson -}}
+
+clipboard-read = allow
+clipboard-write = allow
+
+command = {{ includeTemplate "shell" . }}
+
+font-family = {{ .fontName }}
+{{/* Convert between pt and dpi. */ -}}
+font-size = {{ add .fontSize 3 }}
+
+cursor-click-to-move = false
+cursor-style = block
+cursor-style-blink = false
+
+# Remove default keybindings.
+keybind=clear
+
+macos-option-as-alt = true
+
+mouse-hide-while-typing = true
+
+theme = uuu
+
+title = ""
+
+window-padding-balance = true
+window-padding-x = {{ .dimPadding }}
+window-padding-y = {{ .dimPadding }}
