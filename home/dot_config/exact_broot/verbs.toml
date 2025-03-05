@@ -6,7 +6,7 @@ internal = ":focus /"
 [[verbs]]
 invocation = "home"
 key = "alt-tab"
-internal = ":focus {{ .chezmoi.homeDir }}"
+internal = ":focus ~"
 
 [[verbs]]
 invocation = "edit"
@@ -14,6 +14,11 @@ shortcut = "e"
 key = "enter"
 apply_to = "file"
 external = "$EDITOR +{line} {file}"
+leave_broot = false
+
+[[verbs]]
+invocation = "touch {filename}"
+external = "touch {directory}/{filename}"
 leave_broot = false
 
 [[verbs]]
@@ -61,5 +66,5 @@ key = "alt-s"
 internal = ":stage"
 
 [[verbs]]
-invocation = "alt-shift-s"
+key = "alt-shift-s"
 internal = ":unstage"

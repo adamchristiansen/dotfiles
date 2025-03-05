@@ -1,4 +1,4 @@
 [special-paths]
-"**/.git" = "no-enter"
-"{{- .chezmoi.homeDir -}}/.cache" = "no-enter"
-"{{- .chezmoi.homeDir -}}/ProtonDrive" = "no-enter"
+"**/.git" = { show = "always", list = "never" }
+"{{- .chezmoi.homeDir -}}/.cache" = { show = "always", list = "never" }
+"{{- .chezmoi.homeDir -}}/ProtonDrive" = { list = "never" }
