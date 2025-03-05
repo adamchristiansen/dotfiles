@@ -1,20 +1,17 @@
 **/README.md
 
-{{ if ne .chezmoi.os "darwin" }}
-.config/iterm2
-{{ end }}
-
 {{ if ne .chezmoi.os "linux" }}
-.config/autostart
 .config/alacritty
+.config/autostart
 .config/bspwm
 .config/dunst
+.config/mimeapps.list
 .config/picom
 .config/polybar
 .config/rofi
 .config/sxhkd
-.config/wallpaper
 .config/user-dirs.*
+.config/wallpaper
 .config/xfce4
 .config/zathura
 .local/dotbin/hotkey-*
