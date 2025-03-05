@@ -50,13 +50,20 @@ keybind = ctrl+shift+t>r=reset_font_size
 
 macos-option-as-alt = true
 
+macos-icon = custom-style
+macos-icon-frame = aluminum
+macos-icon-ghost-color = #{{- $color.fg.hex.rgb }}
+macos-icon-screen-color = #{{- $color.bg.hex.rgb }}
+
 mouse-hide-while-typing = true
 
 theme = significance
 
 title = ""
 
+{{ if ne .chezmoi.os "darwin" -}}
 window-decoration = none
+{{- end }}
 window-padding-balance = true
 window-padding-x = {{ .dimPadding }}
 window-padding-y = {{ .dimPadding }}
