@@ -17,7 +17,7 @@ parser.add_argument('-m', '--monitor',
 args = parser.parse_args()
 
 def show(newline=True):
-  lines, cols = os.get_terminal_size()
+  cols, lines = os.get_terminal_size()
   print(f"\r{9 * ' '}", end='')
   print(f"\r{cols} × {lines}", end='\n' if newline else '')
 
