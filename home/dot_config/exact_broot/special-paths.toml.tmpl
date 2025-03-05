@@ -5,9 +5,28 @@
 [special-paths]
 "**/.git" = {{ $collapse }}
 "~/.cache" = {{ $collapse }}
-"~/.local/share" = {{ $collapse }}
+"~/.local" = {{ $collapse }}
 "~/.ssh" = {{ $collapse_to_prevent_accidents }}
+
+{{ if eq .chezmoi.os "linux" -}}
+# Linux.
+"~/.Private" = {{ $collapse }}
+"~/.dbus" = {{ $collapse }}
+"~/.ecryptfs" = {{ $collapse }}
+"~/.gnupg" = {{ $collapse }}
+"~/.java" = {{ $collapse }}
+"~/.jssc" = {{ $collapse }}
+"~/.launchpadlib" = {{ $collapse }}
+"~/.mozilla" = {{ $collapse }}
+"~/.oracle_jre_usage" = {{ $collapse }}
+"~/.pki" = {{ $collapse }}
+"~/.rustup" = {{ $collapse }}
+"~/.swt" = {{ $collapse }}
+"~/.w3m" = {{ $collapse }}
+{{- end }}
+
 {{ if eq .chezmoi.os "darwin" -}}
+# macOS.
 ".DS_Store" = {{ $hide }}
 ".localized" = {{ $hide }}
 "~/.Trash" = {{ $hide }}
