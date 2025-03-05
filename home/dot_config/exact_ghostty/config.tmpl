@@ -6,6 +6,7 @@ clipboard-write = allow
 command = {{ includeTemplate "shell" . }}
 
 font-family = {{ .fontName }}
+font-feature = calt, dlig, liga
 {{/* Convert between pt and dpi. */ -}}
 font-size = {{ add .fontSize 3 }}
 
