@@ -1,4 +1,20 @@
+{{- $collapse := "{ show = \"default\", list = \"never\", sum = \"default\" }" -}}
+{{- $collapse_to_prevent_accidents := $collapse -}}
+{{- $hide := "{ show = \"never\" }" -}}
+
 [special-paths]
-"**/.git" = { show = "always", list = "never" }
-"{{- .chezmoi.homeDir -}}/.cache" = { show = "always", list = "never" }
-"{{- .chezmoi.homeDir -}}/ProtonDrive" = { list = "never" }
+"**/.git" = {{ $collapse }}
+"~/.cache" = {{ $collapse }}
+"~/.local/share" = {{ $collapse }}
+"~/.ssh" = {{ $collapse_to_prevent_accidents }}
+{{ if eq .chezmoi.os "darwin" -}}
+".DS_Store" = {{ $hide }}
+".localized" = {{ $hide }}
+"~/.Trash" = {{ $hide }}
+"~/Library" = {{ $collapse }}
+"~/Movies/TV" = {{ $collapse }}
+"~/Music/Music" = {{ $collapse }}
+"~/Pictures/Photo Booth Library" = {{ $collapse }}
+"~/Pictures/Photos Library.photoslibrary" = {{ $collapse }}
+"~/ProtonDrive" = {{ $collapse }}
+{{- end }}

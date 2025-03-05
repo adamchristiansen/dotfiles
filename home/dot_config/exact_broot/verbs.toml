@@ -5,6 +5,7 @@ internal = ":focus /"
 
 [[verbs]]
 invocation = "home"
+shortcut = "~"
 key = "alt-tab"
 internal = ":focus ~"
 
