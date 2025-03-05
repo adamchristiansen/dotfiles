@@ -14,16 +14,49 @@ cursor-style = block
 cursor-style-blink = false
 
 # Remove default keybindings.
-keybind=clear
+keybind = clear
+# Window controls.
+{{ if eq .chezmoi.os "darwin" -}}
+# These are necessary on macOS because they are blocked by `keybind = clear`.
+# On Linux this is not a problem since the window manager will handle it.
+keybind = super+q=quit
+keybind = super+shift+f=toggle_fullscreen
+keybind = super+w=close_surface
+{{- end }}
+# Config.
+{{ if eq .chezmoi.os "darwin" -}}
+keybind = all:super+shift+,=reload_config
+{{- else -}}
+keybind = all:ctrl+shift+,=reload_config
+{{- end }}
+# Clipboard.
+{{ if eq .chezmoi.os "darwin" -}}
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+{{- else -}}
+keybind = ctrl+shift+c=copy_to_clipboard
+keybind = ctrl+shift+v=paste_from_clipboard
+{{- end }}
+# Font size.
+{{ if eq .chezmoi.os "darwin" -}}
+keybind = super+shift+t>d=decrease_font_size:1
+keybind = super+shift+t>i=increase_font_size:1
+keybind = super+shift+t>r=reset_font_size
+{{- else -}}
+keybind = ctrl+shift+t>d=decrease_font_size:1
+keybind = ctrl+shift+t>i=increase_font_size:1
+keybind = ctrl+shift+t>r=reset_font_size
+{{- end }}
 
 macos-option-as-alt = true
 
 mouse-hide-while-typing = true
 
-theme = uuu
+theme = significance
 
 title = ""
 
+window-decoration = none
 window-padding-balance = true
 window-padding-x = {{ .dimPadding }}
 window-padding-y = {{ .dimPadding }}
