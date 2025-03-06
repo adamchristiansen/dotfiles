@@ -1,4 +1,3 @@
-
 # Home Configuration
 
 These are user configurations that are automatically installed in the home
