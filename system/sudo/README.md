@@ -5,6 +5,7 @@ This is used to add a custom `sudo` lecture. Run
 ```sh
 sh install-lecture.sh
 ```
+
 to install it, then use `visudo` and set the following options
 
 ```
