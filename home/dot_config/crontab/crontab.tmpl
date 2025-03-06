@@ -6,7 +6,7 @@
 #  │   │   │   │   │
 #  *   *   *   *   *    /usr/bin/echo sample crontab entry
 
-{{ $local := (joinPath (env "XDG_CONFIG_HOME") "crontab" "crontab.local") }}
+{{ $local := joinPath .chezmoi.homeDir ".config" "crontab" "crontab.local" }}
 {{ if stat $local }}
 {{ include $local }}
 {{ end }}

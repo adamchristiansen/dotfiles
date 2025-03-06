@@ -1,1 +1,1 @@
-export MPLCONFIGDIR=$XDG_CONFIG_HOME/matplotlib
+export MPLCONFIGDIR="$XDG_CONFIG_HOME/matplotlib"

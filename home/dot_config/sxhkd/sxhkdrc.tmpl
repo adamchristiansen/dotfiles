@@ -143,7 +143,7 @@ super + alt + a; p
 ### Make sxhkd and bspwm reload its configuration files
 super + Escape
   pkill -USR1 -x sxhkd; \
-  "$XDG_CONFIG_HOME/bspwm/bspwmrc"
+  "{{ .chezmoi.homeDir }}/.config/bspwm/bspwmrc"
 
 ### Quit bspwm normally
 super + ctrl + alt + shift + Escape
@@ -173,7 +173,7 @@ super + shift + r
 
 ### Show desktop information
 super + d
-  "$XDG_CONFIG_HOME/bspwm/bspwm-info"
+  "{{ .chezmoi.homeDir }}/.config/bspwm/bspwm-info"
 
 #------------------------------------------------------------------------------
 # BSPWM State and Flags
@@ -306,7 +306,7 @@ super + ctrl + {1-9}
 super + ctrl + Escape
   bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
 
-{{ $local := (joinPath (env "XDG_CONFIG_HOME") "sxhkd" "sxhkd.local") }}
+{{ $local := joinPath .chezmoi.homeDir ".config" "sxhkd" "sxhkd.local" }}
 {{ if stat $local }}
 {{ include $local }}
 {{ end }}
