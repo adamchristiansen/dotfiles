@@ -1,6 +1,6 @@
 {{- $color := includeTemplate "color.json" . | mustFromJson -}}
 
-#!/usr/bin/env sh
+#!/bin/sh
 
 # Start the hotkey daemon
 if ! pgrep sxhkd; then
