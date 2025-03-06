@@ -14,12 +14,12 @@ invocation = "edit"
 shortcut = "e"
 key = "enter"
 apply_to = "file"
-external = "$EDITOR +{line} {file}"
+external = "$EDITOR +{line} -- {file}"
 leave_broot = false
 
 [[verbs]]
 invocation = "touch {filename}"
-external = "touch {directory}/{filename}"
+external = "touch -- {directory}/{filename}"
 leave_broot = false
 
 [[verbs]]
