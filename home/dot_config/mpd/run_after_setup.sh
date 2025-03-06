@@ -1,6 +1,6 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 set -e
 
-# Create the required directories
+# Create the required directories.
 mkdir -p "$HOME/.cache/mpd"

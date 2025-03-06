@@ -1,31 +1,15 @@
-#!/usr/bin/env python3
+#!/bin/sh
 
-"""
-Show the terminal dimensions on screen.
-"""
+# Show the dimensions of a terminal.
 
-import argparse
-import os
-import time
+set -e
 
-from dotfiles import keymonitor
-
-parser = argparse.ArgumentParser(description='Show terminal dimensions')
-parser.add_argument('-m', '--monitor',
-  action='store_true',
-  help='monitor the terminal dimensions')
-args = parser.parse_args()
-
-def show(newline=True):
-  cols, lines = os.get_terminal_size()
-  print(f"\r{9 * ' '}", end='')
-  print(f"\r{cols} × {lines}", end='\n' if newline else '')
-
-if args.monitor:
-  with keymonitor() as km:
-    while km.get() is None:
-      show(newline=False)
-      time.sleep(0.1)
-    show()
-else:
-  show(newline=True)
+if [ "$#" -eq 0 ]; then
+  printf "$(tput cols) × $(tput lines)\n"
+else
+  # Monitor mode that continuously outputs the size.
+  while true; do
+    printf "\r            \r$(tput cols) × $(tput lines)"
+    sleep 0.1
+  done
+fi
