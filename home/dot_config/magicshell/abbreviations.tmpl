@@ -104,7 +104,7 @@ alias muxn='tmux new -s'
 alias muxn='tmuxinator start -n $(slugcwd)'
 alias muxt='tmux attach-session -t'
 
-{{ if lookPath "zathura" -}}
+{{ if lookPath "zathura" }}
 # Zathura.
 alias zat='zathura --fork'
-{{- end }}
+{{ end }}

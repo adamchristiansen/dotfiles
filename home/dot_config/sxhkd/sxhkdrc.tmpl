@@ -306,8 +306,7 @@ super + ctrl + {1-9}
 super + ctrl + Escape
   bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
 
-{{- $local := (joinPath (env "XDG_CONFIG_HOME") "sxhkd" "sxhkd.local") -}}
-{{- if stat $local }}
-
-{{ include $local -}}
-{{- end -}}
+{{ $local := (joinPath (env "XDG_CONFIG_HOME") "sxhkd" "sxhkd.local") }}
+{{ if stat $local }}
+{{ include $local }}
+{{ end }}

@@ -5,39 +5,39 @@ live_config_reload = true
 
 [bell]
 animation = "EaseOutExpo"
-color = "#{{- $color.fg.hex.rgb -}}"
+color = "#{{ $color.fg.hex.rgb }}"
 duration = 0
 
 [colors]
 draw_bold_text_with_bright_colors = true
 
 [colors.bright]
-black = "#{{- $color.black.hex.rgb -}}"
-blue = "#{{- $color.blue.hex.rgb -}}"
-cyan = "#{{- $color.cyan.hex.rgb -}}"
-green = "#{{- $color.green.hex.rgb -}}"
-magenta = "#{{- $color.pink.hex.rgb -}}"
-red = "#{{- $color.red.hex.rgb -}}"
-white = "#{{- $color.white.hex.rgb -}}"
-yellow = "#{{- $color.yellow.hex.rgb -}}"
+black = "#{{ $color.black.hex.rgb }}"
+blue = "#{{ $color.blue.hex.rgb }}"
+cyan = "#{{ $color.cyan.hex.rgb }}"
+green = "#{{ $color.green.hex.rgb }}"
+magenta = "#{{ $color.pink.hex.rgb }}"
+red = "#{{ $color.red.hex.rgb }}"
+white = "#{{ $color.white.hex.rgb }}"
+yellow = "#{{ $color.yellow.hex.rgb }}"
 
 [colors.cursor]
-cursor = "#{{- $color.fg.hex.rgb -}}"
-text = "#{{- $color.bg.hex.rgb -}}"
+cursor = "#{{ $color.fg.hex.rgb }}"
+text = "#{{ $color.bg.hex.rgb }}"
 
 [colors.normal]
-black = "#{{- $color.black.hex.rgb -}}"
-blue = "#{{- $color.blue.hex.rgb -}}"
-cyan = "#{{- $color.cyan.hex.rgb -}}"
-green = "#{{- $color.green.hex.rgb -}}"
-magenta = "#{{- $color.pink.hex.rgb -}}"
-red = "#{{- $color.red.hex.rgb -}}"
-white = "#{{- $color.white.hex.rgb -}}"
-yellow = "#{{- $color.yellow.hex.rgb -}}"
+black = "#{{ $color.black.hex.rgb }}"
+blue = "#{{ $color.blue.hex.rgb }}"
+cyan = "#{{ $color.cyan.hex.rgb }}"
+green = "#{{ $color.green.hex.rgb }}"
+magenta = "#{{ $color.pink.hex.rgb }}"
+red = "#{{ $color.red.hex.rgb }}"
+white = "#{{ $color.white.hex.rgb }}"
+yellow = "#{{ $color.yellow.hex.rgb }}"
 
 [colors.primary]
-background = "#{{- $color.bg.hex.rgb -}}"
-foreground = "#{{- $color.fg.hex.rgb -}}"
+background = "#{{ $color.bg.hex.rgb }}"
+foreground = "#{{ $color.fg.hex.rgb }}"
 
 [cursor]
 style = "Block"
@@ -58,7 +58,7 @@ x = 0
 y = 0
 
 [font.normal]
-family = "{{- .fontName -}}"
+family = "{{ .fontName }}"
 
 [font.offset]
 x = 0
@@ -594,7 +594,7 @@ save_to_clipboard = false
 semantic_escape_chars = ",│`|:\"' ()[]{}<>"
 
 [terminal.shell]
-program = "{{- includeTemplate "shell" . -}}"
+program = "{{ includeTemplate "shell" . }}"
 
 [window]
 decorations = "full"

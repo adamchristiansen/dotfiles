@@ -48,11 +48,11 @@ class Agent(plat.magicshell):
     """Add all keys in SSH directory."""
     for pub_key in pathlib.Path(SSH_DIR).glob('*.pub'):
       priv_key = re.sub(r"\.pub$", "", str(pub_key))
-      {{ if eq .chezmoi.os "darwin" -}}
+      {{ if eq .chezmoi.os "darwin" }}
       run(['ssh-add', '-K', priv_key], check=True, append_env=self._env_vars)
-      {{- else -}}
+      {{ else }}
       run(['ssh-add', priv_key], check=True, append_env=self._env_vars)
-      {{- end }}
+      {{ end }}
 
   def magic_posix(self):
     return '\n'.join([
