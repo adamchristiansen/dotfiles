@@ -19,13 +19,13 @@ format = "<b>%a</b> %s\n%b"
 
 # Frame
 frame_width = 0
-frame_color = "#{{- $color.black.hex.rgb -}}"
+frame_color = "#{{ $color.black.hex.rgb }}"
 
 # Geometry
 width = 320
 height = 200
 origin = top-right
-offset = {{ div .dimGap 2 -}}x{{- div .dimGap 2 }}
+offset = {{ div .dimGap 2 }}x{{ div .dimGap 2 }}
 padding = {{ .dimPadding }}
 horizontal_padding = {{ .dimPadding }}
 
@@ -65,19 +65,19 @@ sticky_history = false
 word_wrap = true
 
 [urgency_low]
-background = "#{{- $color.fg.hex.rgb -}}"
-foreground = "#{{- $color.bg.hex.rgb -}}"
-highlight  = "#{{- $color.black.hex.rgb -}}"
+background = "#{{ $color.fg.hex.rgb }}"
+foreground = "#{{ $color.bg.hex.rgb }}"
+highlight  = "#{{ $color.black.hex.rgb }}"
 timeout    = 5
 
 [urgency_normal]
-background = "#{{- $color.fg.hex.rgb -}}"
-foreground = "#{{- $color.bg.hex.rgb -}}"
-highlight  = "#{{- $color.black.hex.rgb -}}"
+background = "#{{ $color.fg.hex.rgb }}"
+foreground = "#{{ $color.bg.hex.rgb }}"
+highlight  = "#{{ $color.black.hex.rgb }}"
 timeout    = 5
 
 [urgency_critical]
-background = "#{{- $color.red.hex.rgb -}}"
-foreground = "#{{- $color.bg.hex.rgb -}}"
-highlight  = "#{{- $color.black.hex.rgb -}}"
+background = "#{{ $color.red.hex.rgb }}"
+foreground = "#{{ $color.bg.hex.rgb }}"
+highlight  = "#{{ $color.black.hex.rgb }}"
 timeout    = 0

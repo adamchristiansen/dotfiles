@@ -7,30 +7,30 @@
 # These options describe the girara interface
 
 set n-completion-items      10
-set completion-bg           "#{{- $color.bg.hex.rgb -}}"
-set completion-fg           "#{{- $color.cyan.hex.rgb -}}"
-set completion-group-bg     "#{{- $color.bg.hex.rgb -}}"
-set completion-group-fg     "#{{- $color.cyan.hex.rgb -}}"
-set completion-highlight-bg "#{{- $color.bg.hex.rgb -}}"
-set completion-highlight-fg "#{{- $color.fg.hex.rgb -}}"
-set default-bg              "#{{- $color.bg.hex.rgb -}}"
-set default-fg              "#{{- $color.fg.hex.rgb -}}"
+set completion-bg           "#{{ $color.bg.hex.rgb }}"
+set completion-fg           "#{{ $color.cyan.hex.rgb }}"
+set completion-group-bg     "#{{ $color.bg.hex.rgb }}"
+set completion-group-fg     "#{{ $color.cyan.hex.rgb }}"
+set completion-highlight-bg "#{{ $color.bg.hex.rgb }}"
+set completion-highlight-fg "#{{ $color.fg.hex.rgb }}"
+set default-bg              "#{{ $color.bg.hex.rgb }}"
+set default-fg              "#{{ $color.fg.hex.rgb }}"
 set exec-command            # None
-set font                    "{{- .fontName }} {{ .fontSize -}}"
+set font                    "{{ .fontName }} {{ .fontSize }}"
 set guioptions              s
-set inputbar-bg             "#{{- $color.bg.hex.rgb -}}"
-set inputbar-fg             "#{{- $color.fg.hex.rgb -}}"
-set notification-bg         "#{{- $color.bg.hex.rgb -}}"
-set notification-fg         "#{{- $color.fg.hex.rgb -}}"
-set notification-error-bg   "#{{- $color.red.hex.rgb -}}"
-set notification-error-fg   "#{{- $color.fg.hex.rgb -}}"
-set notification-warning-bg "#{{- $color.yellow.hex.rgb -}}"
-set notification-warning-fg "#{{- $color.fg.hex.rgb -}}"
+set inputbar-bg             "#{{ $color.bg.hex.rgb }}"
+set inputbar-fg             "#{{ $color.fg.hex.rgb }}"
+set notification-bg         "#{{ $color.bg.hex.rgb }}"
+set notification-fg         "#{{ $color.fg.hex.rgb }}"
+set notification-error-bg   "#{{ $color.red.hex.rgb }}"
+set notification-error-fg   "#{{ $color.fg.hex.rgb }}"
+set notification-warning-bg "#{{ $color.yellow.hex.rgb }}"
+set notification-warning-fg "#{{ $color.fg.hex.rgb }}"
 #set show-scrollbars        (deprecated, use `guioptions` instead)
 #set show-h-scrollbar       (deprecated, use `guioptions` instead)
 #set show-v-scrollbar       (deprecated, use `guioptions` instead)
-set statusbar-bg            "#{{- $color.base01.hex.rgb -}}"
-set statusbar-fg            "#{{- $color.base04.hex.rgb -}}"
+set statusbar-bg            "#{{ $color.base01.hex.rgb }}"
+set statusbar-fg            "#{{ $color.base04.hex.rgb }}"
 set statusbar-h-padding     2
 set statusbar-v-padding     2
 set window-height           600
@@ -46,8 +46,8 @@ set abort-clear-search     true
 set adjust-open            best-fit
 set advance-pages-per-row  false
 set incremental-search     true
-set highlight-color        "#{{- $color.pink.hex.rgb -}}"
-set highlight-active-color "#{{- $color.fg.hex.rgb -}}"
+set highlight-color        "#{{ $color.pink.hex.rgb }}"
+set highlight-active-color "#{{ $color.fg.hex.rgb }}"
 set highlight-transparency 0.5
 set page-padding           1
 set page-cache-size        15
@@ -55,11 +55,11 @@ set pages-per-row          1
 set first-page-column      1
 set recolor                false
 set recolor-keephue        false
-set recolor-darkcolor      "#{{- $color.fg.hex.rgb -}}"
-set recolor-lightcolor     "#{{- $color.bg.hex.rgb -}}"
+set recolor-darkcolor      "#{{ $color.fg.hex.rgb }}"
+set recolor-lightcolor     "#{{ $color.bg.hex.rgb }}"
 set render-loading         true
-set render-loading-bg      "#{{- $color.bg.hex.rgb -}}"
-set render-loading-fg      "#{{- $color.fg.hex.rgb -}}"
+set render-loading-bg      "#{{ $color.bg.hex.rgb }}"
+set render-loading-fg      "#{{ $color.fg.hex.rgb }}"
 set scroll-hstep           -1
 set scroll-step            40
 set scroll-full-overlap    0.1

@@ -16,11 +16,11 @@ alias l=eza
 alias la='eza --git -a'
 alias ll='eza --git -al'
 alias lt="eza --git -alT --ignore-glob='.git'"
-{{- if eq .chezmoi.os "darwin" }}
+{{ if eq .chezmoi.os "darwin" }}
 alias o='open'
-{{- else if eq .chezmoi.os "linux" }}
+{{ else if eq .chezmoi.os "linux" }}
 alias o='xdg-open'
-{{- end }}
+{{ end }}
 alias pp='clipboard --paste'
 alias yc='clipboard --clear'
 alias yy='clipboard --copy'

@@ -16,7 +16,7 @@ WHITE = "{{ $color.white.rgb.rgb }}"
 
 # Generate the colors from LS_COLORS
 colors = []
-data = json.loads('''{{- includeTemplate "ls-colors.json" . -}}''')
+data = json.loads('''{{ includeTemplate "ls-colors.json" . }}''')
 for pattern, info in data['data'].items():
   m = re.search(PATTERN, pattern)
   if m:

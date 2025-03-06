@@ -1,10 +1,10 @@
 {{- $color := includeTemplate "color.json" . | mustFromJson -}}
 
 * {
-  background: #{{- $color.base07.hex.rgb -}};
-  background-alt: #{{- $color.base06.hex.rgb -}};
-  foreground: #{{- $color.base00.hex.rgb -}};
-  foreground-alt: #{{- $color.base03.hex.rgb -}};
-  accent: #{{- $color.special.hex.rgb -}};
-  border: #{{- $color.fg.hex.rgb -}};
+  background: #{{ $color.base07.hex.rgb }};
+  background-alt: #{{ $color.base06.hex.rgb }};
+  foreground: #{{ $color.base00.hex.rgb }};
+  foreground-alt: #{{ $color.base03.hex.rgb }};
+  accent: #{{ $color.special.hex.rgb }};
+  border: #{{ $color.fg.hex.rgb }};
 }

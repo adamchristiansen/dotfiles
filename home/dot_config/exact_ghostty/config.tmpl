@@ -7,7 +7,7 @@ command = {{ includeTemplate "shell" . }}
 
 font-family = {{ .fontName }}
 font-feature = calt, dlig, liga
-{{/* Convert between pt and dpi. */ -}}
+{{/* Convert between pt and dpi. */}}
 font-size = {{ add .fontSize 3 }}
 
 cursor-click-to-move = false
@@ -17,44 +17,44 @@ cursor-style-blink = false
 # Remove default keybindings.
 keybind = clear
 # Window controls.
-{{ if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" }}
 # These are necessary on macOS because they are blocked by `keybind = clear`.
 # On Linux this is not a problem since the window manager will handle it.
 keybind = super+q=quit
 keybind = super+shift+f=toggle_fullscreen
 keybind = super+w=close_surface
-{{- end }}
+{{ end }}
 # Config.
-{{ if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" }}
 keybind = all:super+shift+,=reload_config
-{{- else -}}
+{{ else }}
 keybind = all:ctrl+shift+,=reload_config
-{{- end }}
+{{ end }}
 # Clipboard.
-{{ if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" }}
 keybind = super+c=copy_to_clipboard
 keybind = super+v=paste_from_clipboard
-{{- else -}}
+{{ else }}
 keybind = ctrl+shift+c=copy_to_clipboard
 keybind = ctrl+shift+v=paste_from_clipboard
-{{- end }}
+{{ end }}
 # Font size.
-{{ if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" }}
 keybind = super+shift+t>d=decrease_font_size:1
 keybind = super+shift+t>i=increase_font_size:1
 keybind = super+shift+t>r=reset_font_size
-{{- else -}}
+{{ else }}
 keybind = ctrl+shift+t>d=decrease_font_size:1
 keybind = ctrl+shift+t>i=increase_font_size:1
 keybind = ctrl+shift+t>r=reset_font_size
-{{- end }}
+{{ end }}
 
 macos-option-as-alt = true
 
 macos-icon = custom-style
 macos-icon-frame = aluminum
-macos-icon-ghost-color = #{{- $color.fg.hex.rgb }}
-macos-icon-screen-color = #{{- $color.bg.hex.rgb }}
+macos-icon-ghost-color = #{{ $color.fg.hex.rgb }}
+macos-icon-screen-color = #{{ $color.bg.hex.rgb }}
 
 mouse-hide-while-typing = true
 
@@ -62,9 +62,9 @@ theme = significance
 
 title = ""
 
-{{ if ne .chezmoi.os "darwin" -}}
+{{ if ne .chezmoi.os "darwin" }}
 window-decoration = none
-{{- end }}
+{{ end }}
 window-padding-balance = true
 window-padding-x = {{ .dimPadding }}
 window-padding-y = {{ .dimPadding }}

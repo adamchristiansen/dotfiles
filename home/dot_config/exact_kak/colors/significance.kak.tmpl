@@ -1,6 +1,6 @@
 {{- $color := includeTemplate "color.json" . | mustFromJson -}}
 
-# Base16 colors
+# Base16 colors.
 declare-option -hidden str base00 "rgb:{{ $color.base00.hex.rgb }}"
 declare-option -hidden str base01 "rgb:{{ $color.base01.hex.rgb }}"
 declare-option -hidden str base02 "rgb:{{ $color.base02.hex.rgb }}"
@@ -18,7 +18,7 @@ declare-option -hidden str base0d "rgb:{{ $color.base0d.hex.rgb }}"
 declare-option -hidden str base0e "rgb:{{ $color.base0e.hex.rgb }}"
 declare-option -hidden str base0f "rgb:{{ $color.base0f.hex.rgb }}"
 
-# Code
+# Code.
 face global value         "%opt{base08}"
 face global type          "%opt{base0a}"
 face global variable      "%opt{base08}"
@@ -33,7 +33,7 @@ face global documentation "%opt{base0c}"
 face global meta          "%opt{base0a}"
 face global builtin       default+b
 
-# Markup
+# Markup.
 face global title  blue
 face global header cyan
 face global mono   green
@@ -42,7 +42,7 @@ face global link   cyan
 face global bullet cyan
 face global list   yellow
 
-# Builtin
+# Builtin.
 face global Default            default,default
 face global PrimarySelection   "%opt{base05},%opt{base02}"
 face global SecondarySelection black,blue+fg

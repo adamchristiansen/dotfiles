@@ -9,7 +9,7 @@ set -e
 # hsetroot does not return non-zero on failure so set the fallback background
 # color first which will always succeed, then try to overwrite it with the
 # image.
-hsetroot -solid "#{{- $color.wall.hex.rgb -}}"
+hsetroot -solid "#{{ $color.wall.hex.rgb }}"
 
 # Try to find a wallpaper
 wallpaper_dir="$XDG_STATE_HOME/wallpaper"

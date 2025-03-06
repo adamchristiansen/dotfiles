@@ -1,3 +1,3 @@
 {{- $ls := includeTemplate "ls-colors.json" . | mustFromJson -}}
 
-export LS_COLORS='{{- $ls.ls_colors -}}'
+export LS_COLORS='{{ $ls.ls_colors }}'
