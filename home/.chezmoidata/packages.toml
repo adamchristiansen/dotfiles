@@ -16,6 +16,8 @@ brew = [
   "git",
   "git-delta",
   "kakoune",
+  "mpd",
+  "ncmpcpp",
   "ranger",
   "ripgrep",
   "tmuxinator",
