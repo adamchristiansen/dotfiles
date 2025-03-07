@@ -143,7 +143,7 @@ super + alt + a; p
 ### Make sxhkd and bspwm reload its configuration files
 super + Escape
   pkill -USR1 -x sxhkd; \
-  "{{ .chezmoi.homeDir }}/.config/bspwm/bspwmrc"
+  "$HOME/.config/bspwm/bspwmrc"
 
 ### Quit bspwm normally
 super + ctrl + alt + shift + Escape
@@ -173,7 +173,7 @@ super + shift + r
 
 ### Show desktop information
 super + d
-  "{{ .chezmoi.homeDir }}/.config/bspwm/bspwm-info"
+  "$HOME/.config/bspwm/bspwm-info"
 
 #------------------------------------------------------------------------------
 # BSPWM State and Flags
