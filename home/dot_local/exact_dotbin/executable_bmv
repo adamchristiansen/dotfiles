@@ -1,0 +1,243 @@
+#!/usr/bin/env python3
+
+"""
+Bulk move files in a directory.
+
+The idea is to do the following:
+
+1. Get all files in the current working directory.
+2. Show the names to the user who can edit this file with new names destination
+   names.
+3. Verify that the user did not add any source names and that the new names do
+   not have any conflicts.
+4. Generate a moving strategy for the user to confirm. This moves all files to
+   intermediate locations in the case that some of the new filenames overwrite
+   old ones in the list.
+5. Perform the move.
+"""
+
+import argparse
+import hashlib
+import os
+import tempfile
+
+from dotfiles import log, run, exit
+
+class FileMapping:
+  """
+  A mapping from old to new filenames.
+  """
+
+  def __init__(self, filenames):
+    self._mapping = {filename: filename for filename in filenames}
+
+  def lines(self):
+    width = max(map(lambda old_name: len(old_name), self._mapping.keys()))
+    fmt = f"{{:<{width}}} -> {{}}"
+    lines = []
+    for old_name in sorted(self._mapping.keys()):
+      lines.append(fmt.format(old_name, self._mapping[old_name]))
+    return lines
+
+  def update_lines(self, lines):
+    old_seen = set()
+    for line in lines:
+      line = line.strip()
+      if len(line) == 0 or line.startswith('#'):
+        continue
+      try:
+        old_name, new_name = line.split('->', 1)
+      except:
+        log.fatal(f"Expected a single `->` to separate source and destination filenames.")
+      old_name, new_name = old_name.strip(), new_name.strip()
+      if old_name.lower() in old_seen:
+        log.fatal(f"Source filename `{old_name}` was specified more than once (case insensitive).")
+      if old_name not in self._mapping:
+        log.fatal(f"Source filename `{old_name}` was added and was not in the original list.")
+      self._mapping[old_name] = new_name
+      old_seen.add(old_name.lower())
+
+  def rename_strategy(self):
+    # Check that there are not two files that are renamed to the same name
+    # (case insensitive, because some filesystems are case-insensitive or
+    # case-preserving).
+    new_names = set()
+    for new_name in self._mapping.values():
+      lower = new_name.lower()
+      if lower in new_names:
+        log.fatal(f"Multiple files were renamed to `{new_name}` (case insensitive).")
+      new_names.add(lower)
+    # It is now safe to build the strategy.
+    strategy = Strategy()
+    for old_name, new_name in self._mapping.items():
+      if old_name == new_name:
+        strategy.add_unchanged(old_name)
+        continue
+      # The intermediate file contains a hash of the move operation which
+      # should be random enough to never cause issues.
+      h = hashlib.md5(old_name.encode('utf-8') + new_name.encode('utf-8')).hexdigest()
+      strategy.add_step(old_name, f"{old_name}__bmv-{h}", new_name)
+    return strategy
+
+class Strategy:
+  """
+  Build up a moving strategy.
+
+  Steps are a 3-tuple consisting of old name, intermediate name, and new name.
+  This represents two separate moves.
+
+  Unchanged files are ones that do not need to be moved because the user never
+  modifed their name.
+  """
+
+  def __init__(self):
+    self._steps = []
+    self._unchanged = []
+
+  def add_step(self, old, intermediate, new):
+    self._steps.append((old, intermediate, new))
+
+  def add_unchanged(self, old):
+    self._unchanged.append(old)
+
+  def _hash(self, salt=None):
+    hasher = hashlib.md5()
+    for step in self._steps:
+      for part in step:
+        hasher.update(part.encode('utf-8'))
+    for unchanged in self._unchanged:
+      hasher.update(unchanged.encode('utf-8'))
+    hasher.update(salt.encode('utf-8'))
+    return hasher.hexdigest()
+
+  def summary(self):
+    cancel_fingerprint = self._hash('cancel')
+    edit_fingerprint = self._hash('edit')
+    lines = [
+      '# This is a summary of actions that will be taken.',
+      '#',
+      '# Changes to this file are not reflected in the moves.',
+      '#',
+      f"# Uncomment to cancel. ({cancel_fingerprint})",
+      f"# Uncomment to edit.   ({edit_fingerprint})",
+    ]
+    if self._steps:
+      lines.extend([
+        '',
+        '# Moves',
+        '#' + 78 * '─',
+        '',
+      ])
+      for old, _, new in self._steps:
+        lines.append(f"move {old} -> {new}")
+    if self._unchanged:
+      lines.extend([
+        '',
+        '# Unchanged',
+        '#' + 78 * '─',
+        '',
+      ])
+      for unchanged in self._unchanged:
+        lines.append(f"unchanged {unchanged}")
+    if self._steps:
+      lines.extend([
+        '',
+        '# Plan',
+        '#' + 78 * '─',
+        '',
+      ])
+      for old, intermediate, _ in self._steps:
+        lines.append(f"intermediate {old} -> {intermediate}")
+      for _, intermediate, new in self._steps:
+        lines.append(f"finalize     {intermediate} -> {new}")
+    return StrategySummary(
+      summary='\n'.join(lines).rstrip(),
+      cancel_fingerprint=cancel_fingerprint,
+      edit_fingerprint=edit_fingerprint,
+    )
+
+  def execute(self):
+    for old, intermediate, _ in self._steps:
+      os.rename(old, intermediate)
+    for _, intermediate, new in self._steps:
+      os.rename(intermediate, new)
+
+class StrategySummary:
+  def __init__(self, summary, cancel_fingerprint, edit_fingerprint):
+    self.summary = summary
+    self.cancel_fingerprint = cancel_fingerprint
+    self.edit_fingerprint = edit_fingerprint
+
+def cwd_filenames():
+  """
+  Discover all filenames in the current working directory (not directories).
+  """
+  return sorted([f for f in os.listdir('.') if os.path.isfile(f)])
+
+def update_mapping(mapping):
+  """
+  Get the new filenames from the user.
+  """
+  with tempfile.NamedTemporaryFile('w', suffix='.bmv', delete_on_close=False) as fp:
+    # Populate the file with the mapping.
+    fp.write('\n'.join(mapping.lines()))
+    fp.close()
+    # Launch the editor for the user to rename files.
+    r = run([os.getenv('EDITOR', default='vi'), fp.name], capture=False)
+    if r.exitcode != 0:
+      exit.failure(r.exitcode)
+    with open(fp.name, 'r') as fp:
+      lines = fp.readlines()
+    # Build up the renamed files and the renaming strategy.
+    return mapping.update_lines(lines)
+
+def confirm_moves(strategy):
+  """
+  Confirm the moving strategy with the user.
+  """
+  with tempfile.NamedTemporaryFile('w', suffix='.bmv', delete_on_close=False) as fp:
+    # Populate the file with the summary.
+    summary = strategy.summary()
+    fp.write(summary.summary)
+    fp.close()
+    # Launch the editor for the user to rename files.
+    r = run([os.getenv('EDITOR', default='vi'), fp.name], capture=False)
+    if r.exitcode != 0:
+      exit.failure(r.exitcode)
+    # Test if editing or cancel was chosen.
+    with open(fp.name, 'r') as fp:
+      content = fp.readlines()
+    # lines = list(filter(lambda line: not line.startswith('#'), content))
+    def contains(text):
+      uncommmented = filter(lambda line: not line.startswith('#'), content)
+      return any(map(lambda line: text in line, uncommmented))
+    if contains(summary.edit_fingerprint):
+      # Edit was selected so the changes are unconfirmed.
+      return False
+    if contains(summary.cancel_fingerprint):
+      # Cancel was selected so exit the process.
+      exit.failure()
+    return True
+
+def main():
+  parser = argparse.ArgumentParser(
+    description='Bulk move all files in a directory')
+  parser.add_argument('filenames', nargs='*')
+  args = parser.parse_args()
+  if args.filenames:
+    filenames = args.filenames
+    for filename in filenames:
+      if not os.path.isfile(filename):
+        log.fatal(f"File `{filename}` does not exist.")
+  else:
+    filenames = cwd_filenames()
+  mapping = FileMapping(filenames)
+  while True:
+    update_mapping(mapping)
+    strategy = mapping.rename_strategy()
+    if confirm_moves(strategy):
+      break
+  strategy.execute()
+
+if __name__ == '__main__':
+  main()
