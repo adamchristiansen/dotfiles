@@ -23,6 +23,13 @@ external = "touch -- {directory}/{filename}"
 leave_broot = false
 
 [[verbs]]
+invocation = "bmv"
+apply_to = "directory"
+working_dir = "{directory}"
+external = "bmv"
+leave_broot = false
+
+[[verbs]]
 key = "alt-backspace"
 internal = ":up_tree"
 
