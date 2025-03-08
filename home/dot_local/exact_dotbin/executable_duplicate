@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import re
+import shutil
+import textwrap
+
+from dotfiles import log
+
+def duplicate(path):
+  # Preconditions.
+  if not os.path.exists(path):
+    log.fatal(f"Path `{path}` does not exist.")
+  # Determine new name.
+  new_path = find_new_path(path)
+  # Copy the path.
+  try:
+    if os.path.isdir(path):
+      shutil.copytree(path, new_path)
+    else:
+      shutil.copy2(path, new_path)
+  except Exception as e:
+    log.fatal(str(e))
+
+def find_new_path(path):
+  # Remove all trailing `/` to simplify processing.
+  path = path.rstrip('/')
+  while True:
+    path = next_path(path)
+    if not os.path.exists(path):
+      return path
+
+def next_path(path):
+  dirname, basename = os.path.split(path)
+  # The leading `.` is ignored for hidden paths because it complicates the
+  # procesing of file extensions. It is simply removed and then added back at
+  # the end.
+  hidden = False
+  if basename.startswith('.'):
+    hidden = True
+    basename = basename[1:]
+  # Determine the new basename.
+  if '.' in basename:
+    stem, ext = basename.split('.', 1)
+  else:
+    stem, ext = basename, None
+  if re.search(r'^.*?\(\d+\)$', stem) is not None:
+    new_stem = re.sub(r'\((\d+)\)$', lambda m: f"({int(m[1]) + 1})", stem)
+  else:
+    new_stem = f"{stem} (1)"
+  # Rebuild the file name with extension.
+  if ext is not None:
+    new_basename = f"{new_stem}.{ext}"
+  else:
+    new_basename = new_stem
+  # Add the `.` back to hidden names.
+  if hidden:
+    new_basename = f".{new_basename}"
+  return os.path.join(dirname, new_basename)
+
+def main():
+  parser = argparse.ArgumentParser(
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    description=textwrap.dedent('''
+    Duplicate a file or directory recursively.
+
+    Works like `cp` except the output is not specified. The program determines
+    appropriate name. For example, `data.tar.gz` gets duplicated to
+    `data (1).tar.gz` and `data (1).tar.gz` gets duplicated to
+    `data (2).tar.gz`.
+
+    Permissions and other metadata are copied with according to `shutil.copy2`.
+    ''').strip(),
+  )
+  parser.add_argument('paths', nargs='+', help='paths to duplicate')
+  args = parser.parse_args()
+  for path in args.paths:
+    duplicate(path)
+
+if __name__ == '__main__':
+  main()

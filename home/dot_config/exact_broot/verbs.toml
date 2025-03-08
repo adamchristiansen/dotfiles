@@ -23,6 +23,12 @@ external = "touch -- {directory}/{filename}"
 leave_broot = false
 
 [[verbs]]
+invocation = "duplicate"
+shortcut = "dup"
+external = "duplicate -- {file}"
+leave_broot = false
+
+[[verbs]]
 invocation = "bmv"
 apply_to = "directory"
 working_dir = "{directory}"
