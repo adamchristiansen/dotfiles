@@ -12,7 +12,7 @@ def clear_dir(dir_path):
 
 def cp(src, dest):
   """Copy a file or directory to a new location."""
-  shutil.copy(src, dest)
+  shutil.copy2(src, dest)
 
 def exists(path, kind="any"):
   """Test that a path exists."""
