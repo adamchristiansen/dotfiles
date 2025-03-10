@@ -1,6 +1,5 @@
 from . import color
 from . import exit
-from . import fn
 from . import fs
 from . import log
 from .menu import menu
