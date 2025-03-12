@@ -45,11 +45,11 @@ face global list   yellow
 # Builtin.
 face global Default            default,default
 face global PrimarySelection   "%opt{base05},%opt{base02}"
-face global SecondarySelection black,blue+fg
+face global SecondarySelection "%opt{base05},%opt{base02}"
 face global PrimaryCursor      default,default+afgr
-face global SecondaryCursor    default,default+afgr
-face global PrimaryCursorEol   black,cyan+fg
-face global SecondaryCursorEol black,cyan+fg
+face global SecondaryCursor    cyan,default+afgr
+face global PrimaryCursorEol   default,default+afgr
+face global SecondaryCursorEol cyan,default+afgr
 face global LineNumbers        "%opt{base03},default"
 face global LineNumbersWrapped "%opt{base02},default"
 face global LineNumberCursor   "%opt{base09},default"
@@ -57,6 +57,7 @@ face global MenuForeground     "%opt{base01},%opt{base09}"
 face global MenuBackground     "%opt{base05},%opt{base01}"
 face global MenuInfo           cyan
 face global Information        "%opt{base05},%opt{base01}"
+face global InlineInformation  "%opt{base05},%opt{base01}"
 face global Error              black,red
 face global DiagnosticError    red
 face global DiagnosticWarning  yellow
@@ -67,6 +68,6 @@ face global StatusLineValue    "%opt{base09},default"
 face global StatusCursor       black,cyan
 face global Prompt             yellow,default
 face global MatchingChar       default,default+b
-face global Whitespace         default,default+fd
+face global Whitespace         black,default+f
 face global WrapMarker         "%opt{base02},default"
 face global BufferPadding      "%opt{base03},default"

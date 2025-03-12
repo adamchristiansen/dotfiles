@@ -6,7 +6,7 @@ hook global BufCreate .* %{
     -relative -hlcursor -separator '  ' -min-digits 4
   add-highlighter buffer/ show-matching
   add-highlighter buffer/ show-whitespaces \
-    -lf ' ' -spc ' ' -nbsp '~' -tab '›' -tabpad '·' -indent '╎'
+    -lf ' ' -spc ' ' -nbsp '~' -tab '›' -tabpad '·' -indent '┊'
   add-highlighter buffer/trailing-whitespaces regex "(\h+)$" 1:Error
 }
 
