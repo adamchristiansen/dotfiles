@@ -35,6 +35,24 @@ source "%val{config}/indent.kak"
 source "%val{config}/modeline.kak"
 source "%val{config}/tmux.kak"
 
+# Disable arrow key navigation.
+map global insert <down>    ''
+map global insert <left>    ''
+map global insert <right>   ''
+map global insert <up>      ''
+map global insert <s-down>  ''
+map global insert <s-left>  ''
+map global insert <s-right> ''
+map global insert <s-up>    ''
+map global normal <down>    ''
+map global normal <left>    ''
+map global normal <right>   ''
+map global normal <up>      ''
+map global normal <s-down>  ''
+map global normal <s-left>  ''
+map global normal <s-right> ''
+map global normal <s-up>    ''
+
 map global user c     -docstring 'comment line'                         ':comment-line<ret>'
 map global user C     -docstring 'comment block'                        ':comment-block<ret>'
 
