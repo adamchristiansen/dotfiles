@@ -1,5 +1,8 @@
 {{- $color := includeTemplate "color.json" . | mustFromJson -}}
 
+# Disable all mouse interaction.
+set -g mouse off
+
 # Make colors work properly
 set -g default-terminal "screen-256color"
 set -ga terminal-overrides ",*256col*:Tc" # True color
