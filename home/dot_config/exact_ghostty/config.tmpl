@@ -40,13 +40,13 @@ keybind = ctrl+shift+v=paste_from_clipboard
 {{ end }}
 # Font size.
 {{ if eq .chezmoi.os "darwin" }}
-keybind = super+shift+t>d=decrease_font_size:1
-keybind = super+shift+t>i=increase_font_size:1
-keybind = super+shift+t>r=reset_font_size
+keybind = super+-=decrease_font_size:1
+keybind = super+shift+equal=increase_font_size:1
+keybind = super+equal=reset_font_size
 {{ else }}
-keybind = ctrl+shift+t>d=decrease_font_size:1
-keybind = ctrl+shift+t>i=increase_font_size:1
-keybind = ctrl+shift+t>r=reset_font_size
+keybind = ctrl+-=decrease_font_size:1
+keybind = ctrl+shift+equal=increase_font_size:1
+keybind = ctrl+equal=reset_font_size
 {{ end }}
 
 macos-option-as-alt = true
