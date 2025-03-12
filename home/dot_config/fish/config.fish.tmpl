@@ -2,11 +2,11 @@
 umask {{ .umask }}
 
 # Source and export environment variables.
-$HOME/.local/dotbin/magic-enviro | source
+$HOME/.local/bin-dotfiles/magic-enviro | source
 
-# Search all subdirectories in the functions directory for Fish functions.
+# Add the custom dotfiles functions into the path.
 set fish_function_path \
-  (path resolve $__fish_config_dir/functions/*/) \
+  (path resolve $__fish_config_dir/functions-dotfiles) \
   $fish_function_path
 
 # Abbreviations.

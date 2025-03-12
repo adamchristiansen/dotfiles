@@ -24,11 +24,11 @@ super + @space
 
 ### Show a session menu
 super + shift + s
-  "$HOME/.local/dotbin/session-menu"
+  "$HOME/.local/bin-dotfiles/session-menu"
 
 ### Lock the screen
 ctrl + alt + l
-  "$HOME/.local/dotbin/session-lock"
+  "$HOME/.local/bin-dotfiles/session-lock"
 
 #------------------------------------------------------------------------------
 # Utilities
@@ -36,25 +36,25 @@ ctrl + alt + l
 
 ### Show hotkey hints
 super + Tab; h
-  "$HOME/.local/dotbin/hotkey-hints"
+  "$HOME/.local/bin-dotfiles/hotkey-hints"
 
 ### Show sniplets
 super + Tab; s
   set -e; \
-  x=$("$HOME/.local/dotbin/sniplets"); \
-  printf "$x" | "$HOME/.local/dotbin/clipboard" --copy --notify
+  x=$("$HOME/.local/bin-dotfiles/sniplets"); \
+  printf "$x" | "$HOME/.local/bin-dotfiles/clipboard" --copy --notify
 
 ### Change the desktop wallpaper
 super + Tab; w
-  "$HOME/.local/dotbin/wallpaper-changer"
+  "$HOME/.local/bin-dotfiles/wallpaper-changer"
 
 ### Clear the clipboard
 super + Tab; x
-  "$HOME/.local/dotbin/clipboard" --clear --notify
+  "$HOME/.local/bin-dotfiles/clipboard" --clear --notify
 
 ### Set the display temperature to dusk, night, witch, or normal mode
 super + Tab; t; {d,n,w,x}
-  "$HOME/.local/dotbin/nightshift" -{d,n,w,x}
+  "$HOME/.local/bin-dotfiles/nightshift" -{d,n,w,x}
 
 ### Toggle the status bar
 super + b
@@ -66,19 +66,19 @@ super + b
 
 ### Show music information
 super + Tab; n; m
-  "$HOME/.local/dotbin/notify-music"
+  "$HOME/.local/bin-dotfiles/notify-music"
 
 ### Show network information
 super + Tab; n; n
-  "$HOME/.local/dotbin/notify-network"
+  "$HOME/.local/bin-dotfiles/notify-network"
 
 ### Show current time
 super + Tab; n; t
-  "$HOME/.local/dotbin/notify-datetime"
+  "$HOME/.local/bin-dotfiles/notify-datetime"
 
 ### Show volume
 super + Tab; n; v
-  "$HOME/.local/dotbin/notify-volume"
+  "$HOME/.local/bin-dotfiles/notify-volume"
 
 ### Clear notifications
 super + Tab; space
@@ -90,31 +90,31 @@ super + Tab; space
 
 ### Mute volume
 super + a; a
-  "$HOME/.local/dotbin/notify-volume" mute
+  "$HOME/.local/bin-dotfiles/notify-volume" mute
 
 ### Decrease the volume
 super + a; s
-  "$HOME/.local/dotbin/notify-volume" down
+  "$HOME/.local/bin-dotfiles/notify-volume" down
 
 ### Increase the volume
 super + a; d
-  "$HOME/.local/dotbin/notify-volume" up
+  "$HOME/.local/bin-dotfiles/notify-volume" up
 
 ### Set the volume to a value out of 10
 super + a; {1-9,0}
-  "$HOME/.local/dotbin/notify-volume" {1-9,10}0
+  "$HOME/.local/bin-dotfiles/notify-volume" {1-9,10}0
 
 ### Choose an album to play
 super + a; c; a
-  "$HOME/.local/dotbin/music-choose" albumartist album
+  "$HOME/.local/bin-dotfiles/music-choose" albumartist album
 
 ### Choose a song to play
 super + a; c; s
-  "$HOME/.local/dotbin/music-choose" albumartist album title
+  "$HOME/.local/bin-dotfiles/music-choose" albumartist album title
 
 ### Choose a song to play from the music queue
 super + a; c; q
-  "$HOME/.local/dotbin/music-choose" --queue index albumartist album title
+  "$HOME/.local/bin-dotfiles/music-choose" --queue index albumartist album title
 
 ### Play the previous song in the music queue
 super + a; b
@@ -130,7 +130,7 @@ super + a; p
 
 ### Clear the music queue
 super + a; x
-  "$HOME/.local/dotbin/notify-music" --clear
+  "$HOME/.local/bin-dotfiles/notify-music" --clear
 
 ### Pause video player
 super + alt + a; p
