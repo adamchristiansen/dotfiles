@@ -57,7 +57,7 @@ The following aliases are defined that can be used:
 - `blue` → `base0d`
 - `pink` → `base0e`
 - `purple` → `base0f`
-- `special` → The `specialColor` in the chezmoi data
+- `special` → The `.color.special` in the chezmoi data
 
 The `special` color should be used as an accent color.
 

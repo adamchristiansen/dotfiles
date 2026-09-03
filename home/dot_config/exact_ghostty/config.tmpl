@@ -5,10 +5,10 @@ clipboard-write = allow
 
 command = {{ includeTemplate "shell" . }}
 
-font-family = {{ .fontName }}
+font-family = {{ .font.name }}
 font-feature = calt, dlig, liga
 {{/* Convert between pt and dpi. */}}
-font-size = {{ add .fontSize 3 }}
+font-size = {{ add .font.size 3 }}
 
 cursor-click-to-move = false
 cursor-style = block
@@ -66,5 +66,5 @@ title = ""
 window-decoration = none
 {{ end }}
 window-padding-balance = true
-window-padding-x = {{ .dimPadding }}
-window-padding-y = {{ .dimPadding }}
+window-padding-x = {{ .dimension.padding }}
+window-padding-y = {{ .dimension.padding }}

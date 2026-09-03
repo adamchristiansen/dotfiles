@@ -4,7 +4,7 @@
 # The notifications follow keyboard focus
 follow = keyboard
 
-font = {{ .fontName }} {{ .fontSize }}
+font = {{ .font.name }} {{ .font.size }}
 
 # The following format specifiers can be used:
 # %a appname
@@ -25,9 +25,9 @@ frame_color = "#{{ $color.black.hex.rgb }}"
 width = 320
 height = 200
 origin = top-right
-offset = {{ div .dimGap 2 }}x{{ div .dimGap 2 }}
-padding = {{ .dimPadding }}
-horizontal_padding = {{ .dimPadding }}
+offset = {{ div .dimension.gap 2 }}x{{ div .dimension.gap 2 }}
+padding = {{ .dimension.padding }}
+horizontal_padding = {{ .dimension.padding }}
 
 # Icon
 enable_recursive_icon_lookup = true
