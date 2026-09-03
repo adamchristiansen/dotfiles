@@ -8,8 +8,9 @@
 {{- $fontSize := promptIntOnce . "font.size" "font size (pt)" 11 -}}
 {{- $gitEmail := promptStringOnce . "git.email" "git email" -}}
 {{- $gitName := promptStringOnce . "git.name" "git author name" -}}
-{{- $obsidianBackupDir := promptStringOnce . "obsidian.backupDir" "Obsidian backup directory (absolute path)" "" -}}
-{{- $obsidianVaultDir := promptStringOnce . "obsidian.vaultDir" "Obsidian vault directory (absolute path)" "" -}}
+{{- $musicLibraryDir := promptStringOnce . "music.libraryDir" "path to music library" -}}
+{{- $obsidianBackupDir := promptStringOnce . "obsidian.backupDir" "Obsidian backup directory (absolute path)" -}}
+{{- $obsidianVaultDir := promptStringOnce . "obsidian.vaultDir" "Obsidian vault directory (absolute path)" -}}
 {{- $shell := promptStringOnce . "shell" "shell" "bash" -}}
 {{- $umask := promptStringOnce . "umask" "umask" "022" | trunc -3 -}}
 
@@ -38,6 +39,9 @@ size = {{ $fontSize }}
 [data.git]
 email = {{ $gitEmail | quote }}
 name = {{ $gitName | quote }}
+
+[data.music]
+libraryDir = {{ $musicLibraryDir | quote }}
 
 [data.obsidian]
 backupDir = {{ $obsidianBackupDir | quote }}
