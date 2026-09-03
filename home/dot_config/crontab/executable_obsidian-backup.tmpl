@@ -1,0 +1,44 @@
+{{- if .obsidian.enabled -}}
+
+#!/bin/sh
+#
+# Zip the contents of my Obsidian vault and move the archive to a backup location
+# (e.g., synced cloud storage directory).
+
+set -eu
+
+VAULT_DIR={{- .obsidian.vaultDir | quote }}
+BACKUP_DIR={{- .obsidian.backupDir | quote }}
+TIMESTAMP="$(date -u '+%Y-%m-%dT%H%M%S')"
+HOSTNAME="$(uname -n)"
+ZIP_NAME="$TIMESTAMP--$(basename "$VAULT_DIR")--$HOSTNAME.zip"
+LOG_FILE="$BACKUP_DIR/backup.log"
+
+log() {
+    msg="[$(date -u '+%Y-%m-%dT%H:%M:%S') $HOSTNAME] $*"
+    echo "$msg" >&2
+    [ -d "$BACKUP_DIR" ] && echo "$msg" >> "$LOG_FILE"
+}
+
+if [ ! -d "$VAULT_DIR" ]; then
+    log "ERROR: Source directory '$VAULT_DIR' not found."
+    exit 1
+fi
+
+if [ ! -d "$BACKUP_DIR" ]; then
+    log "ERROR: Backup directory '$BACKUP_DIR' does not exist."
+    exit 1
+fi
+
+if [ ! -x "$(command -v zip)" ]; then
+    log "ERROR: 'zip' not found in PATH."
+    exit 1
+fi
+
+log "Starting backup on host: $HOSTNAME."
+log "Archiving: '$VAULT_DIR'."
+(cd "$VAULT_DIR" && zip -qr "$BACKUP_DIR/$ZIP_NAME" . -x '**/.DS_Store')
+SIZE=$(du -h "$BACKUP_DIR/$ZIP_NAME" | cut -f1)
+log "OK: Created: $BACKUP_DIR/$ZIP_NAME ($SIZE)."
+
+{{- end -}}

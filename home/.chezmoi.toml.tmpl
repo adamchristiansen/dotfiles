@@ -7,6 +7,8 @@
 {{- $fontSize := promptIntOnce . "fontSize" "font size (pt)" 11 -}}
 {{- $gitEmail := promptStringOnce . "gitEmail" "git email" -}}
 {{- $gitName := promptStringOnce . "gitName" "git author name" -}}
+{{- $obsidianBackupDir := promptStringOnce . "obsidianBackupDir" "Obsidian backup directory (absolute path)" "" -}}
+{{- $obsidianVaultDir := promptStringOnce . "obsidianVaultDir" "Obsidian vault directory (absolute path)" "" -}}
 {{- $shell := promptStringOnce . "shell" "shell" "bash" -}}
 {{- $specialColor := promptStringOnce . "specialColor" "special color" "orange" -}}
 {{- $umask := promptStringOnce . "umask" "umask" "022" | trunc -3 -}}
@@ -25,6 +27,11 @@ fontName = {{ $fontName | quote }}
 fontSize = {{ $fontSize }}
 gitEmail = {{ $gitEmail | quote }}
 gitName = {{ $gitName | quote }}
+obsidian = {
+    backupDir = {{ $obsidianBackupDir | quote }},
+    enabled = {{ or (ne $obsidianBackupDir "") (ne $obsidianVaultDir "") }},
+    vaultDir = {{ $obsidianVaultDir | quote }},
+}
 shell = {{ $shell | quote }}
 specialColor = {{ $specialColor | quote }}
 umask = {{ printf "0%s" $umask | quote }}
