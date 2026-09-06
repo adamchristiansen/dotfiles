@@ -1,0 +1,537 @@
+#!/usr/bin/env python3
+
+"""
+Cronlet - a periodic job runner.
+
+Overview
+--------
+Cronlet is meant to be invoked repeatedly from a user crontab (typically once
+per minute). It keeps no daemon alive: each time it runs, it checks per-job
+stamp files in its spool directory and executes only those jobs whose
+interval has elapsed since the last run. Overdue jobs run once on the next
+invocation - missed intervals are collapsed, never replayed.
+
+Mutual exclusion
+----------------
+While a job is executing, a "running" marker file sits in the spool holding
+the job's PID and start time. Any other Cronlet invocation that finds a
+running marker with a live PID skips that job (logged as SKIP). When the job
+finishes - successfully, unsuccessfully, or timed out - the marker is
+removed and the stamp is updated, marking the job done.
+
+If Cronlet itself dies mid-job (leaving a marker behind), the next
+invocation notices and clears the stale marker before deciding whether to
+run. Markers are pinned to the exact process via the kernel's per-process
+starttime counter and the current boot's boot_id, so recycled PIDs and
+pre-reboot leftovers are recognised and cleared rather than blocking the
+job. The marker, not a process lock, is the source of truth for "job in
+flight": two Cronlet invocations may run different jobs concurrently, but
+never the same one.
+
+Timeouts
+--------
+Every job gets the same timeout (--timeout, default 60 seconds). Jobs run
+in their own process session so that on timeout the whole process group
+receives SIGKILL - children and grandchildren included. A timed-out job
+counts as failed and is still stamped, so it is not retried within the
+same interval.
+
+Layout
+------
+Jobs are ordinary executable scripts (any interpreter, any language) placed
+in period subdirectories of the jobs root:
+
+    <jobs>/minutely/<script>
+    <jobs>/hourly/<script>
+    <jobs>/daily/<script>
+    <jobs>/weekly/<script>
+    <jobs>/monthly/<script>
+
+Runtime state lives in the spool directory:
+
+    <spool>/<period>.<name>.stamp    UTC timestamp of last run attempt
+    <spool>/<period>.<name>.running  PID + identity + start time while in flight
+    <spool>/cronlet.log              log, capped at --max-log-lines
+
+Default paths follow the XDG convention and can be overridden on the command
+line. Everything runs with ordinary user privileges; no root, no system
+cron, no daemon.
+
+Logging
+-------
+Messages go to stderr (so cron's MAILTO picks up failures) and to the log
+file. --max-log-lines caps the log; once per invocation the oldest lines
+beyond the cap are discarded via an atomic rewrite, so a crash mid-trim
+cannot lose the log. Setting --max-log-lines 0 disables the log file
+entirely: output goes to stderr only, and no log file is created or touched.
+
+Stamp format
+------------
+Each stamp holds one UTC timestamp of the form ``YYYY-MM-DDTHH:MM:SSZ``
+(explicit zero-offset UTC), e.g. ``2026-09-05T17:00:00Z``. For ``monthly``
+jobs, due-ness compares calendar year/month rather than elapsed time,
+matching anacron semantics.
+
+Exit status
+-----------
+    0  success (including "nothing was due" and "job already running")
+    1  at least one job failed or timed out
+    2  configuration error (missing jobs root or period directories)
+"""
+
+import argparse
+import os
+import signal
+import subprocess
+import sys
+import tempfile
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+# Default locations, overridable via --spool / --jobs.
+DEFAULT_SPOOL = Path("~/.local/state/cronlet").expanduser()
+DEFAULT_JOBS = Path("~/.config/cronlet").expanduser()
+
+# Recognised periods and their minimum inter-run interval. "monthly" has no
+# entry here: it is special-cased as a calendar-month comparison.
+PERIODS = {
+    "minutely": timedelta(minutes=1),
+    "hourly": timedelta(hours=1),
+    "daily": timedelta(days=1),
+    "weekly": timedelta(weeks=1),
+}
+
+# Global job timeout in seconds, overridable via --timeout.
+DEFAULT_TIMEOUT = 60.0
+
+# Timestamp format used in stamps and log lines: UTC, explicit Z suffix.
+STAMP_FMT = "%Y-%m-%dT%H:%M:%SZ"
+
+def utcnow():
+    """Return the current time as a timezone-aware UTC datetime."""
+    return datetime.now(timezone.utc)
+
+def fmt_utc(dt):
+    """Format a datetime as a canonical UTC stamp string."""
+    return dt.strftime(STAMP_FMT)
+
+def _rewrite_trimmed(logfile, keep):
+    """Atomically rewrite `logfile`, keeping only its newest `keep` lines.
+
+    If the file already has `keep` lines or fewer, nothing happens. The
+    replacement is a staged temp file moved over the original, so a crash
+    mid-trim cannot lose the log.
+    """
+    with open(logfile, "r") as rf:
+        lines = rf.readlines()
+    if len(lines) <= keep:
+        return
+    fd, tmpname = tempfile.mkstemp(
+        dir=str(logfile.parent), prefix=".log.", suffix=".tmp"
+    )
+    try:
+        with os.fdopen(fd, "w") as tf:
+            tf.writelines(lines[-keep:] if keep else [])
+        os.chmod(tmpname, 0o600)
+        os.replace(tmpname, logfile)
+    except BaseException:
+        try:
+            os.unlink(tmpname)  # only ever our own leftover temp file
+        except OSError:
+            pass
+        raise
+
+def make_logger(logfile, max_lines):
+    """Build a logger writing to stderr, plus a capped log file if enabled.
+
+    Each message is timestamped in UTC and emitted to stderr. When
+    `max_lines` is greater than zero, messages are also appended to
+    `logfile`, which is trimmed to at most `max_lines` lines once per
+    invocation (atomic rewrite, discarding only the oldest excess lines).
+    When `max_lines` is zero, logging is console-only: the log file is not
+    read, written, or created.
+    """
+    if max_lines <= 0:
+        def log(msg):
+            print(f"{fmt_utc(utcnow())} {msg}", file=sys.stderr)
+
+        return log
+
+    # Trim any overflow left by earlier runs before we start appending.
+    try:
+        _rewrite_trimmed(logfile, max_lines)
+    except FileNotFoundError:
+        pass  # no log yet; the first log() below creates it
+
+    def log(msg):
+        line = f"{fmt_utc(utcnow())} {msg}"
+        print(line, file=sys.stderr)
+        with open(logfile, "a") as fh:
+            fh.write(line + "\n")
+
+    return log
+
+def discover_jobs(jobs_root, periods, log):
+    """Find executable job scripts under the jobs root.
+
+    Returns a sorted list of (period, script_path) pairs. Raises SystemExit(2)
+    if the jobs root or any period directory is missing - Cronlet fails fast
+    rather than silently doing nothing or fabricating directories. Hidden
+    files and non-executable entries are skipped (the latter with a warning).
+    """
+    if not jobs_root.is_dir():
+        log(f"ERROR: jobs root {jobs_root} does not exist")
+        raise SystemExit(2)
+    jobs = []
+    for period in periods:
+        pdir = jobs_root / period
+        if not pdir.is_dir():
+            log(f"ERROR: job directory {pdir} does not exist")
+            raise SystemExit(2)
+        for entry in sorted(pdir.iterdir()):
+            if entry.name.startswith(".") or not entry.is_file():
+                continue
+            if not os.access(entry, os.X_OK):
+                log(f"WARN: skipping non-executable {entry}")
+                continue
+            jobs.append((period, entry))
+    return jobs
+
+def load_stamp(path, log):
+    """Read a stamp file, returning a UTC datetime or None.
+
+    A missing file means "never run" (due). Corrupt stamps are treated as
+    overdue, so a botched manual edit can never permanently suppress a job.
+    """
+    try:
+        raw = path.read_text().strip()
+        return datetime.strptime(raw, STAMP_FMT).replace(tzinfo=timezone.utc)
+    except FileNotFoundError:
+        return None
+    except ValueError:
+        log(f"WARN: corrupt stamp {path}, treating job as overdue")
+        return None
+
+def save_stamp(path, now):
+    """Atomically record `now` as a job's last-run time in UTC.
+
+    The stamp is staged in a temporary file and moved into place, so readers
+    never observe a partially written stamp. Restricted to owner-only
+    permissions, consistent with user-level state.
+    """
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(fmt_utc(now) + "\n")
+    os.chmod(tmp, 0o600)
+    os.replace(tmp, path)
+
+def is_due(period, stamp, now):
+    """Decide whether a job must run, given its last-run stamp.
+
+    Monthly jobs are due whenever the calendar month has changed since the
+    stamp; all other periods use a simple elapsed-time check.
+    """
+    if stamp is None:
+        return True
+    if period == "monthly":
+        return (now.year, now.month) != (stamp.year, stamp.month)
+    return now - stamp >= PERIODS[period]
+
+def pid_alive(pid):
+    """Return True if a process with `pid` exists (signal-0 probe)."""
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True  # exists but belongs to another user
+    except OSError:
+        return True  # unknown condition; assume alive to stay conservative
+    return True
+
+def _boot_id():
+    """Return a unique ID for the current boot, or None if unavailable.
+
+    Read from /proc/sys/kernel/random/boot_id (Linux). The kernel generates
+    a fresh UUID at every boot, so a marker recording a different boot_id
+    cannot possibly refer to a live process.
+    """
+    try:
+        return Path("/proc/sys/kernel/random/boot_id").read_text().strip()
+    except OSError:
+        return None
+
+def _proc_start_ticks(pid):
+    """Return the kernel starttime counter (stat field 22) of `pid`.
+
+    This value ticks monotonically per process since boot, so two distinct
+    processes sharing a recycled PID will almost never carry the same value.
+    Returns None if the process does not exist or /proc is unusable.
+    """
+    try:
+        stat = Path(f"/proc/{pid}/stat").read_text()
+    except OSError:
+        return None
+    try:
+        # comm (field 2) may contain spaces and parentheses, so parse
+        # everything after the final ')' and index relative to field 3.
+        fields = stat[stat.rindex(")") + 2:].split()
+        return int(fields[19])  # field 22 overall minus fields 1-2 offset
+    except (ValueError, IndexError):
+        return None
+
+def write_marker(marker, pid):
+    """Atomically record that a job has started.
+
+    The marker stores the job's PID, its kernel starttime counter, and the
+    boot_id of the current boot. Together these pin the marker to one exact
+    process on one exact boot: later invocations can tell a dead process
+    (PID gone), a recycled PID (starttime differs), and a pre-reboot
+    leftover (boot_id differs) apart from a genuinely running job.
+    """
+    lines = [str(pid)]
+    ticks = _proc_start_ticks(pid)
+    if ticks is not None:
+        lines.append(str(ticks))
+    boot = _boot_id()
+    if boot is not None:
+        lines.append(boot)
+    lines.append(fmt_utc(utcnow()))
+
+    tmp = marker.with_suffix(".tmp")
+    tmp.write_text("\n".join(lines) + "\n")
+    os.chmod(tmp, 0o600)
+    os.replace(tmp, marker)
+
+def clear_marker(marker):
+    """Mark a job done by removing its running marker, if any.
+
+    Used on every exit path (success, failure, timeout) so a finished job is
+    never left looking in-flight. Never raises on a missing file.
+    """
+    try:
+        marker.unlink()
+    except FileNotFoundError:
+        pass
+
+def job_in_flight(marker, log):
+    """Return True if the marker still refers to the exact live job process.
+
+    A marker is stale (cleared here, job becomes runnable again) when:
+      * its boot_id differs from the current boot (machine rebooted), or
+      * the recorded PID no longer exists, or
+      * the PID exists but carries a different starttime counter (recycled
+        PID belonging to an unrelated process), or
+      * its contents are unparseable (corrupted manually or truncated).
+    Only a marker verified against the exact live process keeps a job
+    blocked. If /proc is unavailable, the code conservatively falls back
+    to a signal-0 liveness probe.
+    """
+    try:
+        raw = marker.read_text().splitlines()
+        pid = int(raw[0])
+    except FileNotFoundError:
+        return False
+    except (ValueError, IndexError):
+        log(f"WARN: corrupt running marker {marker}; removing it")
+        clear_marker(marker)
+        return False
+
+    # Tolerant parse of the optional newer fields (start ticks, boot_id),
+    # so markers written by any earlier version remain interpretable.
+    start_ticks = None
+    marker_boot = None
+    idx = 1
+    if len(raw) > idx and raw[idx]:
+        try:
+            start_ticks = int(raw[idx])
+            idx += 1
+        except ValueError:
+            pass
+    if len(raw) > idx and raw[idx]:
+        marker_boot = raw[idx]
+
+    boot = _boot_id()
+    if marker_boot and boot and marker_boot != boot:
+        log("INFO: clearing running marker left from before a reboot")
+        clear_marker(marker)
+        return False
+
+    ticks = _proc_start_ticks(pid)
+    if ticks is None:
+        # Either the process is gone, or /proc is unusable. On Linux the
+        # first is implied; cross-platform, confirm with a signal probe.
+        if not pid_alive(pid):
+            log(f"INFO: clearing stale running marker for dead PID {pid}")
+            clear_marker(marker)
+            return False
+        return True  # exists but identity unverifiable; stay conservative
+    if start_ticks is not None and ticks != start_ticks:
+        log(f"INFO: clearing running marker for recycled PID {pid}")
+        clear_marker(marker)
+        return False
+    return True
+
+def kill_process_group(pid):
+    """SIGKILL an entire process group, ignoring an already-dead group."""
+    try:
+        os.killpg(pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass  # group already gone; nothing to do
+
+def run_job(period, script, spool, timeout, log):
+    """Run a single job if it is due and not in flight; stamp when done.
+
+    Mutual exclusion: while the job runs, a marker file with the job's
+    identity (PID, kernel starttime counter, boot_id) blocks other Cronlet
+    invocations from starting it. The job is launched in its own session
+    (process group) so a timeout can SIGKILL the whole tree.
+
+    The stamp is updated even on failure or timeout: like anacron, Cronlet
+    does not retry a failing job within the same interval.
+
+    Returns 0 on success, "not due", or "already running"; 1 on failure.
+    """
+    stamp_path = spool / f"{period}.{script.name}.stamp"
+    marker = spool / f"{period}.{script.name}.running"
+
+    if job_in_flight(marker, log):
+        log(f"SKIP {period}/{script.name}: already running")
+        return 0
+    if not is_due(period, load_stamp(stamp_path, log), utcnow()):
+        return 0
+
+    log(f"RUN  {period}/{script.name}")
+    try:
+        proc = subprocess.Popen(
+            [str(script)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            start_new_session=True,  # job becomes its own process-group lead
+        )
+    except OSError as exc:
+        log(f"FAIL {period}/{script.name}: {exc}")
+        return 1
+
+    # Record "started" only after the process exists, so the marker's PID
+    # always refers to something real.
+    write_marker(marker, proc.pid)
+
+    try:
+        out, _ = proc.communicate(timeout=timeout)
+        timed_out = False
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        kill_process_group(proc.pid)
+        out, _ = proc.communicate()  # reap; the process is dead or dying
+        log(f"TIME {period}/{script.name}: exceeded {timeout:.0f}s, killed")
+
+    # Done: whatever the outcome, the job is no longer in flight.
+    clear_marker(marker)
+
+    stripped = (out or "").strip()
+    if stripped:
+        for line in stripped.splitlines():
+            log(f"OUT  [{period}/{script.name}] {line}")
+
+    save_stamp(stamp_path, utcnow())
+    if timed_out or proc.returncode != 0:
+        reason = ("timed out" if timed_out
+                  else f"exit status {proc.returncode}")
+        log(f"FAIL {period}/{script.name}: {reason}")
+        return 1
+    log(f"DONE {period}/{script.name}")
+    return 0
+
+def parse_selection(requested, jobs, log):
+    """Resolve --run-now arguments to concrete jobs.
+
+    Accepts "all", bare job names (matching any period), or qualified
+    "period/name" forms. Raises SystemExit(2) if any argument matches
+    nothing.
+    """
+    if requested == ["all"]:
+        return jobs
+    wanted = set()
+    for item in requested:
+        period, _, name = item.partition("/")
+        matches = [
+            (p, s) for p, s in jobs
+            if s.name == name and (not period or p == period)
+        ]
+        if not matches:
+            log(f"ERROR: no job matching '{item}'")
+            raise SystemExit(2)
+        wanted.update(matches)
+    return sorted(wanted, key=lambda j: (j[0], j[1].name))
+
+def main():
+    """Parse arguments, discover jobs, then list or run what is due."""
+    ap = argparse.ArgumentParser(
+        description="Periodic job runner for user crontabs",
+    )
+    ap.add_argument("--spool", type=Path, default=DEFAULT_SPOOL,
+                    help=f"state directory for stamps/markers/log "
+                         f"(default: {DEFAULT_SPOOL})")
+    ap.add_argument("--jobs", type=Path, default=DEFAULT_JOBS,
+                    help=f"jobs root containing minutely/, hourly/, daily/, weekly/, "
+                         f"monthly/ (default: {DEFAULT_JOBS})")
+    ap.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT,
+                    metavar="SECONDS",
+                    help=f"kill jobs running longer than this "
+                         f"(default: {DEFAULT_TIMEOUT:.0f})")
+    ap.add_argument("--max-log-lines", type=int, default=10000,
+                    help="keep at most this many lines in the log; 0 "
+                         "disables the log file entirely (default: 10000)")
+    ap.add_argument("--run-now", nargs="+", metavar="JOB",
+                    help='force-run now: "all", bare names, or '
+                         '"period/name"')
+    ap.add_argument("--list", action="store_true",
+                    help="list jobs and their status, then exit")
+    args = ap.parse_args()
+
+    args.spool.mkdir(parents=True, exist_ok=True)
+    logfile = args.spool / "cronlet.log"
+    log = make_logger(logfile, args.max_log_lines)
+
+    try:
+        jobs = discover_jobs(args.jobs, PERIODS.keys(), log)
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 2
+
+    if args.list:
+        now = utcnow()
+        for period, script in jobs:
+            marker = args.spool / f"{period}.{script.name}.running"
+            stamp = load_stamp(
+                args.spool / f"{period}.{script.name}.stamp", log
+            )
+            if job_in_flight(marker, log):
+                state = "running"
+            elif is_due(period, stamp, now):
+                state = "due"
+            else:
+                state = "ok"
+            print(f"{period:8s} {script.name:30s} {state}")
+        return 0
+
+    if args.run_now:
+        try:
+            selected = parse_selection(args.run_now, jobs, log)
+        except SystemExit as exc:
+            return exc.code if isinstance(exc.code, int) else 2
+    else:
+        selected = jobs
+
+    if not selected:
+        log("INFO: no jobs found")
+        return 0
+
+    rc = 0
+    for period, script in selected:
+        if run_job(period, script, args.spool, args.timeout, log) != 0:
+            rc = 1
+    return rc
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -6,11 +6,4 @@
 #  │   │   │   │   │
 #  *   *   *   *   *    /usr/bin/echo sample crontab entry
 
-{{ if .obsidian.enabled }}
-   00  03  *   *   *    {{ .chezmoi.homeDir -}}/.config/crontab/obsidian-backup
-{{ end }}
-
-{{ $local := joinPath .chezmoi.homeDir ".config" "crontab" "crontab.local" }}
-{{ if stat $local }}
-{{ include $local }}
-{{ end }}
+* * * * * {{ .chezmoi.homeDir -}}/.local/bin-dotfiles/cronlet

@@ -9,15 +9,14 @@ set -eu
 
 VAULT_DIR={{- .obsidian.vaultDir | quote }}
 BACKUP_DIR={{- .obsidian.backupDir | quote }}
-TIMESTAMP="$(date -u '+%Y-%m-%dT%H%M%S')"
 HOSTNAME="$(uname -n)"
-ZIP_NAME="$TIMESTAMP--$(basename "$VAULT_DIR")--$HOSTNAME.zip"
-LOG_FILE="$BACKUP_DIR/backup.log"
+ZIP_NAME="$(date -u '+%Y-%m-%dT%H%M%S')--$(basename "$VAULT_DIR")--$HOSTNAME.zip"
+TMP_DIR=${TMPDIR:-/tmp}
+TMP_ZIP="$TMP_DIR/$ZIP_NAME.$$.tmp"
+FINAL_ZIP="$BACKUP_DIR/$ZIP_NAME"
 
 log() {
-    msg="[$(date -u '+%Y-%m-%dT%H:%M:%S') $HOSTNAME] $*"
-    echo "$msg" >&2
-    [ -d "$BACKUP_DIR" ] && echo "$msg" >> "$LOG_FILE"
+    echo "$(date -u '+%Y-%m-%dT%H:%M:%S') $HOSTNAME: $*" >&2
 }
 
 if [ ! -d "$VAULT_DIR" ]; then
@@ -35,10 +34,19 @@ if [ ! -x "$(command -v zip)" ]; then
     exit 1
 fi
 
-log "Starting backup on host: $HOSTNAME."
+if [ -e "$FINAL_ZIP" ]; then
+    log "ERROR: Destination file '$FINAL_ZIP' already exists."
+    exit 1
+fi
+
+trap 'rm -f "$TMP_ZIP"' EXIT HUP INT TERM
+
 log "Archiving: '$VAULT_DIR'."
-(cd "$VAULT_DIR" && zip -qr "$BACKUP_DIR/$ZIP_NAME" . -x '**/.DS_Store')
-SIZE=$(du -h "$BACKUP_DIR/$ZIP_NAME" | cut -f1)
-log "OK: Created: $BACKUP_DIR/$ZIP_NAME ($SIZE)."
+(cd "$VAULT_DIR" && zip -qr "$TMP_ZIP" . -x '**/.DS_Store')
+SIZE="$(du -h "$TMP_ZIP" | cut -f1)"
+log "Created archive: $ZIP_NAME ($SIZE)."
+log "Copying to: $BACKUP_DIR."
+cp "$TMP_ZIP" "$FINAL_ZIP"
+log "OK: Backup complete: $FINAL_ZIP."
 
 {{- end -}}
