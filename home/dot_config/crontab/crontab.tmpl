@@ -1,3 +1,6 @@
+HOME="{{- .chezmoi.homeDir -}}"
+SHELL=/bin/sh
+
 #  ╭─────────────────── minute (0 - 59)
 #  │   ╭─────────────── hour (0 - 23)
 #  │   │   ╭─────────── day (1 - 31)
@@ -6,4 +9,4 @@
 #  │   │   │   │   │
 #  *   *   *   *   *    /usr/bin/echo sample crontab entry
 
-* * * * * {{ .chezmoi.homeDir -}}/.local/bin-dotfiles/cronlet
+* * * * * "{{- .chezmoi.homeDir -}}/.local/bin-dotfiles/bashful" "{{- .chezmoi.homeDir -}}/.local/bin-dotfiles/cronlet"
