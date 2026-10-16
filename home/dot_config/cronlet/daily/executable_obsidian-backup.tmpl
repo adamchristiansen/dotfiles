@@ -7,7 +7,7 @@
 
 set -eu
 
-VAULT_DIR={{- .obsidian.vaultDir | quote }}
+VAULT_DIR={{- joinPath .chezmoi.destDir .obsidian.vaultDirRelativeToDestDir | quote }}
 BACKUP_DIR={{- .obsidian.backupDir | quote }}
 HOSTNAME="$(uname -n)"
 ZIP_NAME="$(date -u '+%Y-%m-%dT%H%M%S')--$(basename "$VAULT_DIR")--$HOSTNAME.zip"

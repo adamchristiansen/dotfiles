@@ -1,0 +1,21 @@
+{{- if .obsidian.enabled -}}
+
+#!/bin/sh
+
+VAULT_DIR={{- joinPath .chezmoi.destDir .obsidian.vaultDirRelativeToDestDir | quote }}
+RUMDL_CONFIG="$VAULT_DIR/.obsidian/lint/rumdl.toml"
+
+case $#:$1 in
+    0:|1:check)
+        (cd "$VAULT_DIR" && rumdl check --config "$RUMDL_CONFIG")
+        ;;
+    1:fmt)
+        (cd "$VAULT_DIR" && rumdl fmt --config "$RUMDL_CONFIG")
+        ;;
+    *)
+        echo "Usage: $0 [check|fmt]" >&2
+        exit 2
+        ;;
+esac
+
+{{- end -}}

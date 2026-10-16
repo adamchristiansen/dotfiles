@@ -1,0 +1,422 @@
+# All `rumdl` config options are included in this file
+# so that it can be easily diffed against another config.
+# This is useful to check against the default config
+# when `rumdl` receives updates.
+
+[global]
+cache = false # Caching is no faster.
+cache-dir = ".rumdl_cache"
+disable = [
+    "MD014", # Show command output in documentation.
+    "MD041", # Start Your Document with a Clear Title.
+    "MD043", # Enforce Required Document Structure.
+    "MD044", # Use Proper Capitalization for Names.
+    "MD063", # Heading Capitalization.
+    "MD073", # Table of Contents Validation.
+    "MD074", # MkDocs nav validation.
+    "MD078", # Executable Quarto chunks should have a label.
+    "MD079", # Quarto chunk labels must not contain whitespace.
+    "MD081", # Inline emphasis should not be excessive.
+]
+editorconfig = false
+enable = ["all"]
+exclude = []
+extend-disable = [] # Not needed because `enable`/`disable` are used.
+extend-enable = [] # Not needed because `enable`/`disable` are used.
+flavor = "obsidian"
+include = []
+line-length = 0
+output-format = "full" # Rust-like, verbose.
+# output-format = "grouped" # Group by file, minimal verbosity.
+respect_gitignore = true
+unfixable = [
+    "MD034", # URLs should be formatted as links.
+    "MD036", # Use real headings, not just bold text.
+    "MD042", # Avoid Empty Links.
+]
+
+[per-file-flavor]
+# None.
+
+[per-file-ignores]
+# None.
+
+[MD001] # Heading levels should only increment by one.
+front-matter-title = true
+
+# [MD002] # Rule does not exist.
+
+[MD003] # Heading style should be consistent.
+style = "atx" # Use leading # for headings.
+
+[MD004] # Unordered list style should be consistent.
+style = "dash"
+
+[MD005] # List indentation should be consistent.
+
+# [MD006] # Rule does not exist.
+
+[MD007] # Keep list indentation consistent.
+indent = 4
+start-indent = 2
+start-indented = false
+style = "fixed"
+
+# [MD008] # Rule does not exist.
+
+# In Markdown, a line break is indicated by two trailing spaces.
+# These are really hard to maintain (because they are invisible),
+# and will not be used.
+# MD009 removes trailing spaces except the number set by `br-spaces` (default: 2).
+# This is changed to the maximum value of a 32-bit unsigned integer
+# so that all trailing spaces except this exact number are stripped.
+[MD009] # Remove trailing spaces.
+br-spaces = 4_294_967_295
+list-item-empty-lines = false
+strict = true
+
+[MD010] # Use spaces instead of tabs.
+code-blocks = false
+ignore-code-languages = []
+spaces-per-tab = 4
+
+[MD011] # Fix reversed link syntax.
+
+[MD012] # Remove multiple blank lines.
+maximum = 1
+
+[MD013] # Keep lines short for better readability.
+abbreviations = []
+atomic-spans = true
+blockquotes = true
+code-blocks = true
+code-spans = true
+headings = true
+ignore-link-urls = true
+length-mode = "visual"
+line-length = 0
+math-blocks = true
+paragraphs = true
+reflow = false
+reflow-length-exemptions = false
+reflow-mode = "default"
+require-sentence-capital = true
+stern = false
+strict = false
+tables = false
+
+[MD014] # Show command output in documentation.
+show-output = true
+
+# [MD015] # Rule does not exist.
+
+# [MD016] # Rule does not exist.
+
+# [MD017] # Rule does not exist.
+
+[MD018] # No missing space after hash in heading.
+magiclink = false
+tags = false
+
+[MD019] # No multiple spaces after hash in heading.
+
+[MD020] # No missing space in closed heading.
+
+[MD021] # No multiple spaces in closed heading.
+
+[MD022] # Add blank lines around headings.
+allowed-at-start = true
+lines-above = 1
+lines-below = 1
+
+[MD023] # Start headings at the beginning of lines.
+
+[MD024] # Avoid duplicate heading text.
+allow-different-link-anchors = false
+allow-different-nesting = false
+siblings-only = false
+
+[MD025] # Keep your document organized with one main title.
+allow-document-sections = false
+allow-with-separators = false
+front-matter-title = "title"
+level = 1
+
+[MD026] # Keep headings clean and professional.
+punctuation = '-,;:!.([}@*/\&#^+<=>|~$'
+
+[MD027] # No multiple spaces after quote marker.
+list-items = false
+
+[MD028] # No blank lines inside blockquote.
+fix = false
+
+# TODO: This does not appear to be working for "ordered" but it works for other settings.
+[MD029] # Use consistent numbers for ordered lists.
+style = "ordered"
+
+[MD030] # Add consistent spacing after list markers.
+ol-align-column = 0
+ol-multi = 1
+ol-single = 1
+ul-multi = 1
+ul-single = 1
+
+[MD031] # Code blocks need blank lines around them.
+list-items = true
+
+[MD032] # Separate lists with blank lines.
+allow-lazy-continuation = false
+
+[MD033] # No HTML tags.
+allowed-elements = []
+allowed-inside = []
+br-style = "trailing-spaces"
+disallowed-elements = []
+drop-attributes = [
+    "target",
+    "rel",
+    "width",
+    "height",
+    "align",
+    "class",
+    "id",
+    "style",
+]
+fix = false
+fix-mode = "conservative"
+strip-wrapper-elements = ["p"]
+
+[MD034] # URLs should be formatted as links.
+
+[MD035] # Keep line breaks consistent.
+style = "---"
+
+[MD036] # Use real headings, not just bold text.
+fix = false
+heading-level = 2
+heading-style = "atx"
+punctuation = ".,;:!?"
+
+[MD037] # Remove extra spaces in emphasis.
+
+[MD038] # Remove extra spaces in code.
+
+[MD039] # Remove extra spaces in links.
+
+[MD040] # Code blocks should have a language specified.
+allowed-languages = []
+custom-languages = []
+disallowed-languages = []
+preferred-aliases = {}
+style = "disabled"
+unknown-language-action = "ignore"
+
+[MD041] # Start Your Document with a Clear Title.
+allow-preamble = false
+fix = false
+front-matter-title = "title"
+level = 1
+
+[MD042] # Avoid Empty Links.
+
+[MD043] # Enforce Required Document Structure.
+headings = []
+match-case = false
+
+[MD044] # Use Proper Capitalization for Names.
+code-blocks = false
+html-comments = true
+html-elements = true
+names = []
+
+[MD045] # Add Descriptive Text to Images.
+
+[MD046] # Use Consistent Code Block Style.
+style = "fenced"
+
+[MD047] # End Files with a Single Newline.
+
+[MD048] # Code fence style should be consistent.
+style = "backtick"
+
+[MD049] # Keep italic text formatting consistent.
+style = "underscore"
+
+[MD050] # Keep bold text formatting consistent.
+style = "asterisk"
+
+[MD051] # Link anchors should exist.
+anchor-style = "github"
+check-frontmatter = false
+ignore-case = true
+ignore-frontmatter-fields = []
+
+[MD052] # Fix broken reference links and images.
+ignore = []
+shortcut-syntax = false
+
+[MD053] # Remove unused link definitions.
+ignored-definitions = []
+
+[MD054] # Use consistent link and image style.
+autolink = true
+collapsed = false
+full = false
+inline = true
+preferred-style = "inline"
+shortcut = false
+url-inline = false
+
+[MD055] # Keep table formatting consistent.
+style = "leading-and-trailing"
+
+[MD056] # Keep table column count consistent.
+
+[MD057] # Check that file links work.
+absolute-links = "warn"
+check-frontmatter = false
+compact-paths = true
+ignore-frontmatter-fields = []
+roots = []
+search-paths = []
+self-referential-links = true
+
+[MD058] # Add blank lines around tables.
+minimum-after = 1
+minimum-before = 1
+
+[MD059] # Link Text Should Be Descriptive.
+prohibited-texts = [
+    "blog",
+    "here",
+    "link",
+    "more",
+    "page",
+    "post",
+    "web page",
+]
+
+[MD060] # Table Format.
+aligned-delimiter = false
+column-align = "auto"
+enabled = true
+loose-last-column = false
+max-width = 0
+style = "aligned-no-space"
+
+[MD061] # Forbidden terms.
+case-sensitive = true
+terms = []
+
+[MD062] # No whitespace in link destinations.
+
+[MD063] # Heading Capitalization.
+enabled = false
+ignore-words = []
+lowercase-words = [
+    "a", "an", "and", "as", "at", "but", "by", "for", "from", "in", "into",
+    "nor", "of", "off", "on", "or", "per", "so", "the", "to", "up", "via",
+    "with", "yet",
+]
+max-level = 6
+min-level = 1
+preserve-cased-words = true
+sentence-case-restart-after = [":"]
+style = "sentence-case"
+
+[MD064] # No Multiple Consecutive Spaces.
+allow-sentence-double-space = false
+
+[MD065] # Blank lines around horizontal rules.
+
+[MD066] # Footnote validation.
+
+[MD067] # Footnote definition order.
+
+[MD068] # Empty footnote definitions.
+
+[MD069] # No duplicate list markers.
+
+[MD070] # Nested Code Fence Collision.
+
+[MD071] # Blank line after frontmatter.
+
+[MD072] # Frontmatter key sort.
+enabled = false
+required_keys = []
+
+[MD073] # Table of Contents Validation.
+enabled = false
+enforce-order = true
+indent = 4
+max-level = 4
+min-level = 2
+
+[MD074] # MkDocs nav validation.
+absolute-links = "ignore"
+not-found = "warn"
+omitted-files = "ignore"
+
+[MD075] # Orphaned table rows / headerless tables.
+
+[MD076] # List item spacing should be consistent.
+allow-loose-continuation = false
+style = "tight"
+
+[MD077] # List continuation content indentation.
+indent = 4
+style = "aligned"
+
+[MD078] # Executable Quarto chunks should have a label.
+
+[MD079] # Quarto chunk labels must not contain whitespace.
+
+[MD080] # Heading anchors must be unique.
+# TODO: There is no "obsidian" option.
+anchor-style = "github"
+levels = [1, 2, 3, 4, 5, 6]
+
+[MD081] # Inline emphasis should not be excessive.
+max-consecutive = 0
+max-per-paragraph = 0
+targets = "all"
+
+[MD082] # Headings should have content before the next heading.
+allow-parent-headings = true
+level = 1
+
+[MD083] # Detect mojibake due to encoding issues.
+ignore = []
+ignore-code-blocks = false
+
+[MD084] # Invisible and discouraged Unicode characters.
+allow = ["U+FE0F"] # This character is used in emojis.
+strict = true
+
+[MD085] # Paragraph continuation lines should not be indented.
+
+[MD086] # Comments should be closed.
+
+[MD087] # Disable comments should suppress something.
+
+[MD088] # Normalize to ASCII quotes and dashes.
+allow = []
+normalize-dashes = true
+normalize-quotes = true
+
+[MD089] # CJK spacing.
+
+[MD090] # Horizontal rules should not precede headings.
+
+[MD091] # Markdown inside an HTML block renders as literal text.
+
+[MD092] # Unresolved merge conflict markers.
+
+# TODO: Decide if inline code should be allowed in headings.
+[MD093] # Headings should not contain inline formatting.
+code = false # Allow inline code in headings.
+strong = true
+emphasis = true
+
+[MD094] # Invalid encoding.

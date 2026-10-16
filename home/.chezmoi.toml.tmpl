@@ -10,7 +10,6 @@
 {{- $gitName := promptStringOnce . "git.name" "git author name" -}}
 {{- $musicLibraryDir := promptStringOnce . "music.libraryDir" "path to music library" -}}
 {{- $obsidianBackupDir := promptStringOnce . "obsidian.backupDir" "Obsidian backup directory (absolute path)" -}}
-{{- $obsidianVaultDir := promptStringOnce . "obsidian.vaultDir" "Obsidian vault directory (absolute path)" -}}
 {{- $shell := promptStringOnce . "shell" "shell" "bash" -}}
 {{- $umask := promptStringOnce . "umask" "umask" "022" | trunc -3 -}}
 
@@ -45,5 +44,4 @@ libraryDir = {{ $musicLibraryDir | quote }}
 
 [data.obsidian]
 backupDir = {{ $obsidianBackupDir | quote }}
-enabled = {{ or (ne $obsidianBackupDir "") (ne $obsidianVaultDir "") }}
-vaultDir = {{ $obsidianVaultDir | quote }}
+enabled = {{ ne $obsidianBackupDir "" }}

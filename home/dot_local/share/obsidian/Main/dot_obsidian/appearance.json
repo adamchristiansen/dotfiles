@@ -1,0 +1,15 @@
+{
+  "accentColor": "",
+  "baseFontSize": 16,
+  "theme": "moonstone",
+  "showRibbon": false,
+  "floatingNavigation": true,
+  "showViewHeader": true,
+  "translucency": false,
+  "monospaceFontFamily": "",
+  "nativeMenus": false,
+  "enabledCssSnippets": [
+    "enhancements"
+  ],
+  "cssTheme": ""
+}

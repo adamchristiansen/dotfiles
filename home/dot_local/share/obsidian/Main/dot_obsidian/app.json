@@ -1,0 +1,31 @@
+{
+  "pdfExportSettings": {
+    "includeName": false,
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  },
+  "showUnsupportedFiles": true,
+  "useTab": false,
+  "showLineNumber": false,
+  "tabSize": 4,
+  "vimMode": false,
+  "promptDelete": true,
+  "livePreview": false,
+  "trashOption": "none",
+  "useMarkdownLinks": false,
+  "showInlineTitle": false,
+  "defaultViewMode": "preview",
+  "alwaysUpdateLinks": true,
+  "mobileQuickRibbonItem": "",
+  "readableLineLength": true,
+  "openBehavior": "",
+  "strictLineBreaks": false,
+  "propertiesInDocument": "visible",
+  "rightToLeft": false,
+  "userIgnoreFilters": null,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "Inbox",
+  "settingsPopoutWindow": true
+}
