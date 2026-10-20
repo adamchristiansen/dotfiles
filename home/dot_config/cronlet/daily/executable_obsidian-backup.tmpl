@@ -1,5 +1,3 @@
-{{- if .obsidian.enabled -}}
-
 #!/bin/sh
 #
 # Zip the contents of my Obsidian vault and move the archive to a backup location
@@ -7,8 +5,8 @@
 
 set -eu
 
-VAULT_DIR={{- joinPath .chezmoi.destDir .obsidian.vaultDirRelativeToDestDir | quote }}
-BACKUP_DIR={{- .obsidian.backupDir | quote }}
+VAULT_DIR={{- joinPath .chezmoi.destDir .directory.obsidianVault | quote }}
+BACKUP_DIR={{- joinPath .chezmoi.destDir .directory.backup | quote }}
 HOSTNAME="$(uname -n)"
 ZIP_NAME="$(date -u '+%Y-%m-%dT%H%M%S')--$(basename "$VAULT_DIR")--$HOSTNAME.zip"
 TMP_DIR=${TMPDIR:-/tmp}
@@ -48,5 +46,3 @@ log "Created archive: $ZIP_NAME ($SIZE)."
 log "Copying to: $BACKUP_DIR."
 cp "$TMP_ZIP" "$FINAL_ZIP"
 log "OK: Backup complete: $FINAL_ZIP."
-
-{{- end -}}

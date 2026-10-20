@@ -1,8 +1,6 @@
-{{- if .obsidian.enabled -}}
-
 #!/bin/sh
 
-VAULT_DIR={{- joinPath .chezmoi.destDir .obsidian.vaultDirRelativeToDestDir | quote }}
+VAULT_DIR={{- joinPath .chezmoi.destDir .directory.obsidianVault | quote }}
 RUMDL_CONFIG="$VAULT_DIR/.obsidian/lint/rumdl.toml"
 
 case $#:$1 in
@@ -17,5 +15,3 @@ case $#:$1 in
         exit 2
         ;;
 esac
-
-{{- end -}}
