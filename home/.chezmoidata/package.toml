@@ -1,7 +1,7 @@
 # Scripts in .chezmoiscripts will use this data to install the appropriate
 # packages on a given platform.
 
-[packages.macos]
+[package.macos]
 brew = [
   "bat",
   "broot",
@@ -25,7 +25,7 @@ brew = [
   "tmuxinator",
 ]
 
-[packages.voidlinux]
+[package.voidlinux]
 xbps = [
   "alacritty",
   "alsa-utils",
