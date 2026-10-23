@@ -19,8 +19,4 @@ when_running() {
   fi
 }
 
-when_running bspwm "$XDG_CONFIG_HOME/bspwm/bspwmrc"
-send_sigusr1 picom
-when_running qutebrowser "qutebrowser --target=tab-silent :config-source"
-send_sigusr1 sxhkd
 when_running tmux "tmux source-file $XDG_CONFIG_HOME/tmux/tmux.conf"

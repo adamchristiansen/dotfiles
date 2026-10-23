@@ -6,10 +6,6 @@
 
 set -e
 
-{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "void") }}
-sudo xbps-install -Su {{ quoteList .package.voidlinux.xbps | join " " }}
-{{ end }}
-
 {{ if and (eq .chezmoi.os "darwin") (lookPath "brew") }}
 brew install {{ quoteList .package.macos.brew | join " " }}
 {{ end }}

@@ -1,9 +1,0 @@
-#!/bin/sh
-
-set -e
-
-if ! pgrep polybar; then
-  polybar bar &
-else
-  polybar-msg cmd toggle
-fi

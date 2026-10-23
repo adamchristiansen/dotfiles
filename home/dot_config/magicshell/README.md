@@ -25,4 +25,4 @@ Environment variables in _enviro_ format are defined in the following way:
 - All files matching `$HOME/.local/etc/enviro.d/*.enviro` are loaded.
 
 > **Note**: `enviro` is a non-standard environment variable format conceived
-> by me for the purpose of these dotfiles.
+> for the purpose of these dotfiles.
